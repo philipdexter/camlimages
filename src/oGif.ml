@@ -15,7 +15,6 @@
 (* $Id: oGif.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
 open OImages;;
-open Gif;;
 
 let load_first name opts = OImages.make (Gif.load_first name opts);;
 

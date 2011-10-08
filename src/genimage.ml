@@ -15,7 +15,6 @@
 (* $Id: genimage.ml,v 1.6 2009/07/04 03:39:28 furuse Exp $ *)
 
 open Color;;
-open Bitmap;;
 open Image_intf
 
 module MakeRawImage(E:ENCODE) = struct

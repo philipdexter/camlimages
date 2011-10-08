@@ -13,7 +13,6 @@
 (* $Id: imgstat.ml,v 1.2 2004/09/21 18:15:42 weis Exp $ *)
 
 open Images;;
-open Info;;
 
 Arg.parse []
  (fun s ->

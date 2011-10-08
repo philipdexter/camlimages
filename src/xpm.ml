@@ -15,7 +15,7 @@
 (* $Id: xpm.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
 open Images;;
-open Index8;;
+(* open Index8;; *)
 open Color;;
 
 external read : string -> int * int * string array * int array

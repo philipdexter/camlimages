@@ -14,7 +14,6 @@
 
 open Images;;
 open OImages;;
-open Info;;
 
 let files = ref [] in
 Arg.parse [] (fun s -> files := s :: !files) "converter src dst";

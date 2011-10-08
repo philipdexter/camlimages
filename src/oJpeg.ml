@@ -12,8 +12,6 @@
 
 (* $Id: oJpeg.ml,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-open OImages;;
-
 let load name opts = OImages.make (Jpeg.load name opts);;
 
 let load_thumbnail name opts geom_spec =

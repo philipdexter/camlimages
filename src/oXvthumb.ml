@@ -13,7 +13,6 @@
 (* $Id: oXvthumb.ml,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
 open OImages;;
-open Xvthumb;;
 
 let load name =
   let info, img = Xvthumb.load name in
