@@ -13,8 +13,6 @@
 (* $Id: resize.ml,v 1.11 2004/09/21 18:15:48 weis Exp $ *)
 
 open Images;;
-open OImages;;
-open Info;;
 
 let file = ref "";;
 let scale = ref 1.0;;

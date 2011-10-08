@@ -15,7 +15,7 @@
 (** Class interface for Images *)
 
 open Images;;
-open Color;;
+(* open Color;; *)
 
 exception Non_supported_method;;
 exception Wrong_image_class;;

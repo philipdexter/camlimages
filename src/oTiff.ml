@@ -12,8 +12,6 @@
 
 (* $Id: oTiff.ml,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-open OImages;;
-
 let load name opts = OImages.make (Tiff.load name opts);;
 
 let save name opts image =

@@ -94,7 +94,6 @@ class virtual oimage_impl = object (self)
   method virtual dump_block : int -> int -> Bitmap.Block.t
 end;;
 
-open Rgba32;;
 open Rgb24;;
 
 class type rgba32_class = object

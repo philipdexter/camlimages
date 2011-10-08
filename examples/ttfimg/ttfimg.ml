@@ -15,7 +15,6 @@
 open Images;;
 open OImages;;
 open Freetype;;
-open OFreetype;;
 open Fttext;;
 
 let fonts = ref [];;

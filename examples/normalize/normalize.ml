@@ -12,10 +12,6 @@
 
 (* $Id: normalize.ml,v 1.7 2004/09/24 10:55:10 weis Exp $ *)
 
-open Images;;
-open OImages;;
-open Info;;
-
 let files = ref [] in
 Arg.parse []
   (fun s -> files := s :: !files)

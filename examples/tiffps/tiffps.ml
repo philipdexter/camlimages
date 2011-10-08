@@ -13,7 +13,6 @@
 (* $Id: tiffps.ml,v 1.11 2008/05/17 19:55:50 furuse Exp $ *)
 
 open Images;;
-open Rgb24;;
 open Printf;;
 
 (* String utilities *)

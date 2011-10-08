@@ -13,8 +13,6 @@
 (* $Id: monochrome.ml,v 1.7 2009/02/08 15:25:37 weis Exp $ *)
 
 open Images;;
-open OImages;;
-open Info;;
 
 let files = ref [] in
 Arg.parse [] (fun s -> files := s :: !files) "monochrome src dst";

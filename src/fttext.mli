@@ -12,7 +12,6 @@
 
 (* $Id: fttext.mli,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-open Images;;
 open Color;;
 open Freetype;;
 
