@@ -15,7 +15,7 @@
 open Mstring;;
 open Unix;;
 open Images;;
-open Info;;
+(* open Info;; *)
 
 type typ =
    | ContentType of string

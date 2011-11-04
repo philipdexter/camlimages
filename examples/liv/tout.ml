@@ -13,8 +13,8 @@
 (* $Id: tout.ml,v 1.14 2004/09/21 18:15:46 weis Exp $ *)
 
 open Livmisc;;
-open Gdk;;
-open GDraw;;
+(* open Gdk;; *)
+(* open GDraw;; *)
 open GMain;;
 
 let wait = ref 0.0;;

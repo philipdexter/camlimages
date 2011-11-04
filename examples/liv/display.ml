@@ -13,13 +13,10 @@
 (* $Id: display.ml,v 1.36.2.1 2010/05/13 13:36:09 furuse Exp $ *)
 
 open Livmisc;;
-open Color;;
 open Gui;;
 open Tout;;
 
 open Gdk;;
-open GDraw;;
-open GMain;;
 
 type filter = [ `SIZE of int * int * [ `ATMOST | `ATLEAST | `NOASPECT ] ];;
 

@@ -22,11 +22,9 @@ let _ =
 module D = Display
 open D
 
-open Gc
+(* open Gc *)
 open Unix
 open LargeFile
-open Gdk
-open GDraw
 open GMain
 
 open Livmisc

@@ -14,8 +14,6 @@
 
 open Gdk;;
 open Gtk;;
-open GObj;;
-open Gui;;
 
 (* image viewer widget *)
 

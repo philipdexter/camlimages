@@ -12,10 +12,7 @@
 
 (* $Id: livsh.ml,v 1.10 2008/02/19 12:44:04 furuse Exp $ *)
 
-open OImages;;
-open GBin;;
 open GPack;;
-open Ximage;;
 open Gui;;
 open Livshtype;;
 open Livmisc;;
