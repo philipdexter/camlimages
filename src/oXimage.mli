@@ -14,8 +14,6 @@
 
 (* $Id: oXimage.mli,v 1.1.2.1 2010/05/13 13:14:47 furuse Exp $*)
 
-open Ximage;;
-
 class ximage : Ximage.t -> object
   method width : int
   method height : int

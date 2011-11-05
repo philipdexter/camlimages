@@ -12,8 +12,6 @@
 
 (* $Id: imagegdk.ml,v 1.2 2009/03/01 09:49:53 furuse Exp $*)
 
-open Images
-
 let initialized = ref None
 ;;
 
