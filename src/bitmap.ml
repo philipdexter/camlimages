@@ -380,10 +380,10 @@ module Make(B:Bitdepth) = struct
       blocks_x = 1;
       blocks_y = height;
       data =
-	[| Array.mapi (fun y scanline ->
+	[| Array.mapi (fun _y scanline ->
 	  { block_width = width;
             block_height = 1;
-            block_data = InMemory scanlines.(y);
+            block_data = InMemory scanline;
             block_size = block_size;
             last_used = 0.0;
             swap = None }) scanlines |];

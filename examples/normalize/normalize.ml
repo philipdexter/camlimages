@@ -12,19 +12,24 @@
 
 (* $Id: normalize.ml,v 1.7 2004/09/24 10:55:10 weis Exp $ *)
 
-let files = ref [] in
+let files = ref []
+;;
+
 Arg.parse []
   (fun s -> files := s :: !files)
-  "normalize src dst";
+  "normalize src dst"
+;;
 
 let src, dst =
   match List.rev !files with
   | [src; dst] -> src, dst
-  | _ -> assert false in
+  | _ -> assert false
+;;
 
-let src = OImages.rgb24 (OImages.load src []) in
+let src = OImages.rgb24 (OImages.load src [])
+;;
 
-let normalize img =
+let _ =
   (* Make monochrome *)
   let hist = Colorhist.create () in
   for x = 0 to src#width - 1 do
@@ -41,9 +46,7 @@ let normalize img =
       let new_rgb = normalizer rgb in
       src#set x y new_rgb;
     done
-  done in
+  done
+;;
 
-let saver img = img#save dst None [] in
-
-normalize src;
-saver src;;
+src#save dst None [];;

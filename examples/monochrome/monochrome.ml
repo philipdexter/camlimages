@@ -14,16 +14,16 @@
 
 open Images;;
 
-let files = ref [] in
-Arg.parse [] (fun s -> files := s :: !files) "monochrome src dst";
-let src, dst =
-  match List.rev !files with
-  | [src; dst] -> src, dst
-  | _ -> invalid_arg "you need two arguments" in
+let _ =
+  let files = ref [] in
+  Arg.parse [] (fun s -> files := s :: !files) "monochrome src dst";
+  let src, dst =
+    match List.rev !files with
+    | [src; dst] -> src, dst
+    | _ -> invalid_arg "you need two arguments" in
 
-let src = OImages.rgb24 (OImages.load src []) in
+  let src = OImages.rgb24 (OImages.load src []) in
 
-let mono img =
   (* Make monochrome *)
   for x = 0 to src#width - 1 do
     for y = 0 to src#height - 1 do
@@ -31,10 +31,7 @@ let mono img =
       let mono = Color.brightness rgb in
       src#set x y { r = mono; g = mono; b = mono; }
     done
-  done in
+  done;
 
-let saver img = img#save dst None [] in
-
-mono src;
-saver src
+  src#save dst None []
 ;;

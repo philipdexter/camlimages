@@ -123,7 +123,7 @@ let edge edgename img24 =
   done;
 
   begin match edgename, edgeimg with
-  | Some name, Some img ->
+  | Some _name, Some img ->
       for x = 0 to img24#width - 1 do
         for y = 0 to img24#height - 1 do
           if edge2.(x).(y) > 0 then begin

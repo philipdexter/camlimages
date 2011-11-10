@@ -30,7 +30,7 @@ try saver src with
   (* try to use another color model *)
   let src' =
     match OImages.tag src with
-    | Rgb24 img -> invalid_arg "Sorry! No color reduction is implemented"
+    | Rgb24 _img -> invalid_arg "Sorry! No color reduction is implemented"
     | Index8 img -> img#to_rgb24#coerce
     | Index16 img -> img#to_rgb24#coerce
     | _ -> invalid_arg "not supported" in

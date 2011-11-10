@@ -42,13 +42,14 @@ Arg.parse [
 let fonts =
   match !fonts with
   | [] -> failwith "specify font file!"
-  | l -> List.rev l in
+  | l -> List.rev l
+;;
 
-begin match !outfile, fonts with
+match !outfile, fonts with
 | None, _ -> ()
-| Some x, [ _ ] -> ()
-| Some x, _ -> failwith "just one font if you specify -o !"
-end;
+| Some _x, [ _ ] -> ()
+| Some _x, _ -> failwith "just one font if you specify -o !"
+;;
 
 let treat_font font =
   if !verbosemode then prerr_endline (Printf.sprintf "Processing %s" font);
@@ -164,7 +165,7 @@ let treat_font font =
                prerr_endline
                 (Printf.sprintf
                    "drawing glyph #%d..." (int_of_char_index encoded));
-             let x1, y1, x2, y2 = face#size_of_glyphs [|encoded|] in
+             let x1, y1, _x2, _y2 = face#size_of_glyphs [|encoded|] in
 (*prerr_endline ".";*)
              OFreetype.draw_glyphs face Fttext.func_darken_only (rgb :> rgb map)
                (w * x + 1 - truncate x1)
@@ -200,6 +201,7 @@ let treat_font font =
           rgb#save outfile None []
     end
   with
-  | Failure e -> prerr_endline (font ^ ": Failure " ^ e) in
+  | Failure e -> prerr_endline (font ^ ": Failure " ^ e)
+;;
 
 List.iter treat_font fonts;;

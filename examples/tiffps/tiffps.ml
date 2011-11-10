@@ -283,7 +283,7 @@ let main () =
         paper_height -. border *. 2.0 in
 
     (* open the file just to get the image size info. *)
-    let imgw, imgh, orgdpi, th = scanline_open conf.name in
+    let imgw, imgh, _orgdpi, th = scanline_open conf.name in
     th.close ();
 
     (* cropping area *)
