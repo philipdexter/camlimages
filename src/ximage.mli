@@ -12,8 +12,6 @@
 
 (* $Id: Exp *)
 
-open Images;;
-
 type elt = int;; (* must be int32, but lablgtk uses int *)
 
 (** ximage data structure with size information *)

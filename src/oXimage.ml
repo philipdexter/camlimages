@@ -14,7 +14,6 @@
 
 (* $Id: oXimage.ml,v 1.1.2.1 2010/05/13 13:14:47 furuse Exp $*)
 
-open Images;;
 open OImages;;
 open Ximage;;
 open Gdk;;
@@ -39,8 +38,6 @@ let get_image drawable ~x ~y ~width ~height =
 
 let of_image visual progress img =
   new ximage (Ximage.of_image visual progress img#image);;
-
-open GDraw;;
 
 let mask_of_image win img = (* It is really inefficient *)
   let mono_gc = get_mono_gc win in 

@@ -1,4 +1,3 @@
-open Gdk
 open GMain
 
 class status_bar ?packing ?show () =
