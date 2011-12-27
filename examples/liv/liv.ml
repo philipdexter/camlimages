@@ -19,6 +19,9 @@ let _ =
 ;;
 *)
 
+
+let _ = prerr_endline "init done";;
+
 module D = Display
 open D
 
@@ -123,6 +126,7 @@ let _ =
      "-Check", Arg.Unit (fun () -> check := true; gcheck := true), 
        ": ground check mode";
      "-x", Arg.Unit (fun () -> xmode := `x), ": x mode";
+     "-XXX", Arg.Unit (fun () -> xmode := `XXX), ": x mode";
      "-X", Arg.Unit (fun () -> xmode := `X), ": X mode";
      "-_", Arg.Unit (fun () -> xmode := `u), ": -_ mode";
      "--_", Arg.Unit (fun () -> xmode := `u), ": -_ mode";
@@ -143,7 +147,7 @@ let _ =
 	      try 
 		ignore (guess_extension (snd (Livmisc.get_extension f)));
 		fs := f :: !fs;
-	      with e -> (* prerr_endline ((f^": "^ Printexc.to_string e)) *) ()) f
+	      with _e -> (* prerr_endline ((f^": "^ Printexc.to_string e)) *) ()) f
 	| _ -> fs := f :: !fs
       with
       | _ -> prerr_endline ("ERROR: " ^ f)) !files;
@@ -424,7 +428,7 @@ let _ =
 
     let f = 
       if !gcheck && files.(!cur) = f then begin
-	let xlevel, enhanced, checked = Jpf.get_flags files.(!cur) in
+	let xlevel, enhanced, _checked = Jpf.get_flags files.(!cur) in
 	let newname = Jpf.set_flags files.(!cur) (xlevel,enhanced,true) in
 	if files.(!cur) <> newname then begin
 	  rename !cur newname
@@ -453,7 +457,7 @@ let _ =
 	if Filename.dirname disp_file = Filename.dirname cur_file then
 	  raise Skipped
     | None ->
-        let xlevel, enhanced, checked = Jpf.get_flags files.(!cur) in
+        let xlevel, _enhanced, checked = Jpf.get_flags files.(!cur) in
         if !gcheck && checked then raise Skipped;
         match !xmode with
         | `n -> ()
@@ -468,6 +472,18 @@ let _ =
     	    0 -> 25
     	  | 1 -> 50
     	  | 2 -> 75
+    	  | _ -> 100
+    	in
+    	if Random.int 100 < perc then () else raise Skipped
+        | `XXX ->
+(*
+    	let imgs = Array.length files in
+*)
+    	let perc = 
+              if xlevel < 0 then 0 else  
+    	  match xlevel with
+    	    0 | 1 -> 1
+          | 2 -> 10
     	  | _ -> 100
     	in
     	if Random.int 100 < perc then () else raise Skipped
@@ -569,6 +585,7 @@ let _ =
       | "P" | "B" -> prev (Some `DIR)
 (*/JPF*)
       | "q" -> Main.quit ()
+(*
       | "v" -> 
 	(* liv visual shell *)
   	  let rec func = fun file typ ->
@@ -593,11 +610,12 @@ let _ =
 	    end else dirname
 	  in
 	  ignore (new Livsh.livsh dirname func)
+*)
 (*JPF*)
       | "e" -> 
 	  if !check then begin
 	    let name = files.(!disp_cur) in
-	    let xlevel,enhance,checked = Jpf.get_flags name in
+	    let _xlevel,enhance,checked = Jpf.get_flags name in
             let xlevel' = -1 in
             let newname = Jpf.set_flags name (xlevel',enhance,checked) in
 	    if name <> newname then begin
@@ -676,7 +694,7 @@ let _ =
     ignore (window#event#connect#key_press ~callback: callback);
     ignore (infowindow#event#connect#key_press ~callback: callback);
 
-    ignore (imglist#connect#select_row ~callback: (fun ~row ~column ~event ->
+    ignore (imglist#connect#select_row ~callback: (fun ~row ~column:_ ~event:_ ->
       if !cur <> row then begin
       	cur := row;
       	display_image false files.(!cur)
@@ -691,7 +709,7 @@ let _ =
 
   let starter = ref None in
 
-  starter := Some (window#event#connect#configure ~callback: (fun ev ->
+  starter := Some (window#event#connect#configure ~callback: (fun _ev ->
     may window#misc#disconnect !starter;
     if Array.length files <> 0 then begin
       cur := 0;

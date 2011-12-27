@@ -13,7 +13,6 @@
 (* $Id: guienv.ml,v 1.6.2.1 2010/05/13 13:36:09 furuse Exp $ *)
 
 open Gdk;;
-open GDraw;;
 open GMain;;
 
 GtkMain.Main.init ();;

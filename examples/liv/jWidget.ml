@@ -27,7 +27,7 @@ class status_bar ?packing ?show () =
     p
   in
 
-  object (self)
+  object 
   inherit GObj.widget hbox#as_widget
 
   method set_text = label#set_text
@@ -133,7 +133,7 @@ class img_button ?label ?frames ?border_width ?width ?height ?packing ?show () =
     | Some id -> 
 	Timeout.remove id; timeout <- None;
 	begin match pix, frames with
-	| Some pix, Some ((img,wait)::_) -> pix#set_pixmap img; Gui.sync ()
+	| Some pix, Some ((img,_wait)::_) -> pix#set_pixmap img; Gui.sync ()
 	| _ -> ()
 	end
     | None -> ()

@@ -18,7 +18,6 @@ open Ximage;;
 open Guienv;;
 
 open Gdk;;
-open GDraw;;
 open GMain;;
 
 open Gif;;
@@ -79,7 +78,7 @@ let rec disp_frame () =
 prerr_endline "first call";
 
 let id = ref None in
-id := Some (window#event#connect#configure ~callback: (fun ev ->
+id := Some (window#event#connect#configure ~callback: (fun _ev ->
     begin match !id with
     | Some id -> window#misc#disconnect id
     | None -> ()

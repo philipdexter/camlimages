@@ -225,7 +225,7 @@ class livsh init_dir func =
       ~packing: (vbox#pack ~expand: false ~fill: false)
       ~show: true () as status_bar
 
-  method activate () = joe#start_rotate; status_bar#activate ()
+  method! activate () = joe#start_rotate; status_bar#activate ()
   method deactivate () = joe#stop_rotate; status_bar#set_fraction 0.0
 
   val mutable dir = init_dir
@@ -251,7 +251,7 @@ class livsh init_dir func =
       let x = ref 0 and y = ref 0 in
       let positions =
         List.map
-          (fun item ->
+          (fun _item ->
              let px = !x and py = !y in
              if !mx < !x + button_width then mx := !x + button_width;
              if !my < !y + button_height + label_height
@@ -270,7 +270,7 @@ class livsh init_dir func =
 
       List.iter2
         (fun item (x,y) ->
-           let ix, iy = item#position in
+           let ix, _iy = item#position in
            if ix < 0
            then fixed#put item#coerce ~x ~y
            else fixed#move item#coerce ~x ~y;

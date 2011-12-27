@@ -43,7 +43,7 @@ let parse_flags str =
   q, enhanced, checked;;
 
 let get_flags file =
-  let body, ext = Images.get_extension file in
+  let body, _ext = Images.get_extension file in
   try
     let pos = String.rindex body '~' in
     let flag_str = String.sub body (pos+1) (String.length body - (pos+1)) in

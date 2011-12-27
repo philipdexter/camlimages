@@ -58,7 +58,7 @@ let find_empty_or_eldest t =
       | Some elt ->
           match !found with
           | None -> found := Some (i, Some elt)
-          | Some (j, Some elt') when elt.time < elt'.time ->
+          | Some (_j, Some elt') when elt.time < elt'.time ->
             found := Some (i, Some elt)
           | _ -> ()
     done

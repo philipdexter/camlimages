@@ -29,7 +29,7 @@ MODULES[] =
   jpf
   liv
   livmisc
-  livsh
+#  livsh
   livshtype
   mylazy
   pathfind

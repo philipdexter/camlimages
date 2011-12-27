@@ -57,7 +57,7 @@ window#event#connect#configure (fun ev ->
 class new_progress_bar obj = object
   inherit GRange.progress_bar obj as super
   val mutable previous = 0.0
-  method set_fraction x =
+  method! set_fraction x =
     let x = floor (x *. 10.0) /. 10.0 in
     if x <> previous then begin 
       super#set_fraction x; sync (); previous <- x 
@@ -76,8 +76,8 @@ let prog_on_image = true
 class prog_nop = object
   method map () = ()
   method unmap () = ()
-  method set_text (s : string) = ()
-  method set_fraction (s : float) = ()
+  method set_text (_s : string) = ()
+  method set_fraction (_s : float) = ()
 end
 
 class prog (p : GRange.progress_bar) = object

@@ -44,7 +44,7 @@ let create_xvthumb name =
   (* prerr_endline ("thumbdir: " ^ thumbdir); *)
   if not (Sys.file_exists thumbdir) then Unix.mkdir thumbdir 0o755;
 
-  let format, hdrs = Images.file_format name in
+  let format, _hdrs = Images.file_format name in
   let w, h, img =
     match format with
     | Jpeg ->
@@ -72,7 +72,7 @@ let create_livthumb name =
   (* prerr_endline ("thumbdir: " ^ thumbdir); *)
   if not (Sys.file_exists thumbdir) then Unix.mkdir thumbdir 0o755;
 
-  let format, hdrs = Images.file_format name in
+  let format, _hdrs = Images.file_format name in
   let w, h, img =
     match format with
     | Jpeg ->
