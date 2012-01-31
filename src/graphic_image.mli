@@ -17,8 +17,6 @@
 (** Interface of images from this library to images of the Caml
    [Graphics] library. *)
 
-open Images;;
-
 val draw_image : Images.t -> int -> int -> unit;;
  (** Draw an [Images.t] value into the graphic window. *)
 
