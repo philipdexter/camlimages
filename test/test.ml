@@ -50,7 +50,7 @@ let draw_string =
     let library = Freetype.init () in
     let src_dir = (try Sys.getenv "srcdir" with Not_found -> ".") in
     let src_file = Filename.concat src_dir "micap.ttf" in
-    let face, face_info = Freetype.new_face library src_file 0 in
+    let face, _face_info = Freetype.new_face library src_file 0 in
     Freetype.set_char_size face 18.0 18.0 72 72;
 
     fun str x y ->
