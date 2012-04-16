@@ -66,13 +66,6 @@ let _ =
   let dirsample = ref false in
   let size = ref false in
 
-(*JPF*)  
-  let mtimesort = ref false in
-  let xmode = ref `n in
-  let check = ref true in
-  let gcheck = ref false in
-(*/JPF*)  
-
   Random.init (Pervasives.truncate (Unix.time ()));
   Arg.parse 
     [
@@ -112,26 +105,6 @@ let _ =
 	    base_filters := `SIZE (int_of_string w, int_of_string h,`ATMOST) :: !base_filters
   	| _ -> raise (Failure "zoom")), ": zoom [w]x[h]";
 
-(*
-      "-normalize", Arg.Unit (fun () ->
-	base_filters := `NORMALIZE :: !base_filters), 
-            ": normalize colormap";
-
-      "-enhance", Arg.Unit (fun () ->
-	base_filters := `ENHANCE :: !base_filters), 
-            ": enhance colormap";
-*)
-(*JPF*)	
-     "-check", Arg.Unit (fun () -> check := true), ": check mode";
-     "-Check", Arg.Unit (fun () -> check := true; gcheck := true), 
-       ": ground check mode";
-     "-x", Arg.Unit (fun () -> xmode := `x), ": x mode";
-     "-XXX", Arg.Unit (fun () -> xmode := `XXX), ": x mode";
-     "-X", Arg.Unit (fun () -> xmode := `X), ": X mode";
-     "-_", Arg.Unit (fun () -> xmode := `u), ": -_ mode";
-     "--_", Arg.Unit (fun () -> xmode := `u), ": -_ mode";
-     "-mtime", Arg.Unit (fun () -> mtimesort := true), ": mtimesort mode";
-(*/JPF*)
     ]  
     (fun s -> files := s :: !files)
     "liv files";
@@ -226,23 +199,6 @@ let _ =
     done
   end else if !random then random_array files;
 
-(*JPF*)
-  let files =
-    if !mtimesort then begin
-      let ctimes = 
-        Array.map (fun f ->
-    	  let st = lstat f in
-    	  let t = st.st_mtime in
-    	  f,(if !random then t +. Random.float (float (24*60*60)) else t)) files
-      in
-      Array.sort (fun (f1,t1) (f2,t2) ->
-	let c = compare t1 t2 in
-        if c = 0 then compare f1 f2 else c) ctimes;
-      Array.map fst ctimes
-    end else files
-  in 
-(*/JPF*)
-
   infowindow#show ();
 
   imglist#freeze ();
@@ -253,7 +209,7 @@ let _ =
 
   let cache = Cache.create 5 in
 
-  let rename pos newname =
+  let _rename pos newname =
     let oldname = files.(pos) in
     let xvname s = Filename.dirname s ^ "/.xvpics/" ^ Filename.basename s in
     let oldxvname = xvname oldname in
@@ -340,22 +296,6 @@ let _ =
     
     disp_cur := !cur;
     curpath := file;
-(*JPF*)
-    (* update mtime *)
-    if !check then begin
-      try
-	let st = lstat file in
-	if st.st_kind = S_LNK then begin
-	  let lnk = Unix.readlink file in
-	  Unix.unlink file;
-	  Unix.symlink lnk file
-	end else begin
-	  Unix.utimes file (Unix.time ()) (Unix.time ());
-	end
-      with
-	_ -> ()
-    end;
-(*/JPF*)
   in
 
   let display_image reload file =
@@ -381,19 +321,6 @@ let _ =
 	in
 	prerr_endline (fst typ ^ "/" ^ snd typ);  
 	match typ with
-(*JPF*)
-	| "application", "vnd.rn-realmedia"
-	| "audio", "x-pn-realaudio" ->
-	    disp_cur := !cur;
-	    curpath := file;
-	    ignore (Sys.command "killall -KILL mplayer");
-	    ignore (Sys.command (Printf.sprintf "mplayer -framedrop \"%s\" &" file))
-	| "video", _ ->
-	    disp_cur := !cur;
-	    curpath := file;	
-	    ignore (Sys.command "killall -KILL mplayer");
-	    ignore (Sys.command (Printf.sprintf "mplayer -framedrop '%s' &" file))
-(*/JPF*)
 	| _ -> raise Wrong_file_type
       with
       | _ -> ()
@@ -420,83 +347,12 @@ let _ =
       	files.(!cur)
       end else !curpath
     in
-(*JPF*)
-    let _xlevel, _enhanced, _checked = Jpf.get_flags f in
-(*
-    if enhanced then filter_toggle `ENHANCE;
-*)
-
-    let f = 
-      if !gcheck && files.(!cur) = f then begin
-	let xlevel, enhanced, _checked = Jpf.get_flags files.(!cur) in
-	let newname = Jpf.set_flags files.(!cur) (xlevel,enhanced,true) in
-	if files.(!cur) <> newname then begin
-	  rename !cur newname
-	end;
-	newname end else f
-    in
-(*/JPF*)
 
       display_image reload f;
-(*JPF*)
-(*
-    if enhanced then filter_toggle `ENHANCE;
-*)
-(*/JPF*)
 
     ()
   in
 
-(*JPF*)
-  let check_skip mode =
-    match mode with
-    | Some `FORCE -> ()
-    | Some `DIR ->
-	let disp_file = files.(!disp_cur) in
-	let cur_file = files.(!cur) in
-	if Filename.dirname disp_file = Filename.dirname cur_file then
-	  raise Skipped
-    | None ->
-        let xlevel, _enhanced, checked = Jpf.get_flags files.(!cur) in
-        if !gcheck && checked then raise Skipped;
-        match !xmode with
-        | `n -> ()
-        | `u -> if xlevel < 0 then raise Skipped
-        | `x ->
-(*
-    	let imgs = Array.length files in
-*)
-    	let perc = 
-              if xlevel < 0 then 0 else  
-    	  match xlevel with
-    	    0 -> 25
-    	  | 1 -> 50
-    	  | 2 -> 75
-    	  | _ -> 100
-    	in
-    	if Random.int 100 < perc then () else raise Skipped
-        | `XXX ->
-(*
-    	let imgs = Array.length files in
-*)
-    	let perc = 
-              if xlevel < 0 then 0 else  
-    	  match xlevel with
-    	    0 | 1 -> 1
-          | 2 -> 10
-    	  | _ -> 100
-    	in
-    	if Random.int 100 < perc then () else raise Skipped
-        | `X ->
-    	let perc = 
-              if xlevel < 0 then 0 else  
-    	  match xlevel with
-    	    0 -> 0
-    	  | _ -> 100
-    	in
-    	if Random.int 100 < perc then () else raise Skipped
-  in
-(*/JPF*)
 
   let rec next mode =
     if !cur >= 0 then begin
@@ -507,17 +363,11 @@ let _ =
       else begin
   	cur := cur';
   	try
-(*JPF*)
-	  check_skip mode;
-(*/JPF*)
   	  display_current false;
       	with
       	| Sys_error s ->
   	    prerr_endline s;
   	    next mode
-(*JPF*)
-	| Skipped -> next mode
-(*/JPF*)
         | Wrong_file_type | Wrong_image_type -> next mode
       end
     end
@@ -532,9 +382,6 @@ let _ =
       else begin
       	cur := cur';
       	try
-(*JPF*)
-	  check_skip mode;
-(*/JPF*)
   	  display_current false
       	with
       	| Sys_error s ->
@@ -555,17 +402,6 @@ let _ =
 	  display_current true
 
 *)
-(*JPF*)
-      | "E" -> 
-	  let name = files.(!disp_cur) in
-	  let xlevel,enhance,checked = Jpf.get_flags name in
-          let enhance' = not enhance in
-          let newname = Jpf.set_flags name (xlevel,enhance',checked) in
-	  if name <> newname then begin
-            rename !disp_cur newname
-	  end;
-	  display_current true
-(*/JPF*)
 (*
       | "N" -> 
 	  filter_toggle `NORMALIZE;
@@ -575,15 +411,7 @@ let _ =
       |	"l" -> display_current true
 
       | " " | "n" | "f" -> next None
-(*JPF*)
-      | "\014" (* C-N *) | "\006" (* C-F *) -> next (Some `FORCE)
-      | "N" | "F" -> next (Some `DIR)
-(*/JPF*)
       | "p" | "b" -> prev None
-(*JPF*)
-      | "\016" (* C-P *) | "\002" (* C-B *) -> prev (Some `FORCE)
-      | "P" | "B" -> prev (Some `DIR)
-(*/JPF*)
       | "q" -> Main.quit ()
 (*
       | "v" -> 
@@ -611,83 +439,6 @@ let _ =
 	  in
 	  ignore (new Livsh.livsh dirname func)
 *)
-(*JPF*)
-      | "e" -> 
-	  if !check then begin
-	    let name = files.(!disp_cur) in
-	    let _xlevel,enhance,checked = Jpf.get_flags name in
-            let xlevel' = -1 in
-            let newname = Jpf.set_flags name (xlevel',enhance,checked) in
-	    if name <> newname then begin
-              rename !disp_cur newname
-	    end;
-	    next None
-          end 
-      | "x" -> 
-	  if !check then begin
-	    let name = files.(!disp_cur) in
-	    let xlevel,enhance,checked = Jpf.get_flags name in
-            let xlevel' = xlevel + 1 in
-            let newname = Jpf.set_flags name (xlevel',enhance,checked) in
-	    if name <> newname then begin
-              rename !disp_cur newname
-	    end;
-	    next None
-	  end
-      | "r" -> 
-	  if !check then begin
-	    let name = files.(!disp_cur) in
-	    let xlevel,enhance,checked = Jpf.get_flags name in
-            let xlevel' = 
-              if xlevel > 0 then xlevel - 1 
-              else if xlevel < 0 then xlevel + 1
-              else xlevel
-            in
-            let newname = Jpf.set_flags name (xlevel',enhance,checked) in
-	    if name <> newname then begin
-              rename !disp_cur newname
-	    end;
-	    next None
-	  end
-      | "s" -> 
-	  if !check then begin
-	    let name = files.(!disp_cur) in
-	    let dir = Filename.dirname name in
-            let base = Filename.basename name in
-            let newname = 
-              let trash =
-                try string_tail dir 7 = "/series" with _ -> false 
-              in
-              if trash then
-                Filename.concat 
-                  (String.sub dir 0 (String.length dir - 7)) base 
-              else Filename.concat (Filename.concat dir "series") base 
-            in
-	    if name <> newname then begin
-              rename !disp_cur newname
-	    end;
-	    next None
-	  end
-      | "d" -> 
-	  if !check then begin
-	    let name = files.(!disp_cur) in
-	    let dir = Filename.dirname name in
-            let base = Filename.basename name in
-            let newname = 
-              let trash =
-                try string_tail dir 6 = "/trash" with _ -> false 
-              in
-              if trash then
-                Filename.concat 
-                  (String.sub dir 0 (String.length dir - 6)) base 
-              else Filename.concat (Filename.concat dir "trash") base 
-            in
-	    if name <> newname then begin
-              rename !disp_cur newname
-	    end;
-	    next None
-	  end
-(*/JPF*)
       | _ -> () 
       end; false
     in
