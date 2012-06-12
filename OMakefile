@@ -14,10 +14,6 @@
 
 include OMyMakeroot
 
-# For the author's personal use
-if $(defined WithOMyApt)
-  RequireAptPackages(libgif-dev libjpeg62-dev libtiff4-dev libpng12-dev libfreetype6-dev libxpm-dev)
-
 ########################################## You may want to change these
 
 # Specify non standard include directories
@@ -25,8 +21,25 @@ INCLUDES[]=
   /usr/include/X11
   /usr/local/include
 
+public.CheckCLib(libs, funs) =
+    LDFLAGS += $(addprefix -l, $(libs))
+
+    return $(TryLinkC $"""
+#ifdef __cplusplus
+extern "C"
+#endif
+#pragma warning( disable : 4100 )
+/* Override any gcc2 internal prototype to avoid an error.  */
+$(add-wrapper $(nl)extern char , $'();', $(funs))
+int main(int argc, char **argv) {
+    /* Usage */
+$(add-wrapper $(nl)    , $'();', $(funs))
+    return 0;
+}
+""")
+
 # Specify non standard library directories
-LDFLAGS[]+= 
+LDFLAGS[]+=
 # for example, 
 # LDFLAGS[]+= -L/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/
 
