@@ -1,3 +1,6 @@
+4.0.2
+	* ppm save was somehow disabled.
+
 4.0.1
 	* Minor bug fixes, patch submitted by Damien Doligez 
  
