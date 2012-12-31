@@ -21,6 +21,10 @@ SUB_PACKAGES[]= all graphics freetype
 
 BuildExample(test, test, $(SUB_PACKAGES))
 
+# BuildExample is badly written, so we need reseting OCAML_LIBS
+OCAML_LIBS=
+BuildExample(test2, test2, $(SUB_PACKAGES))
+
 clean:
   rm -f $(filter-proper-targets $(ls R, .))
   rm -f out.image

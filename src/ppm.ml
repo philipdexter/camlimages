@@ -269,15 +269,9 @@ let gen_save_raw_pbm_oc is_white img oc l c =
 let save_raw_pbm_oc =
  gen_save_raw_pbm_oc (fun c -> c.r = 255 && c.g = 255 && c.b = 255);; 
 
-(*
-(* Save a transparency mask as a bitmap in raw form. *)
-let save_mask = gen_save_raw_pbm_oc (fun c -> c = transp);;
-*)
-
 (* Save a pixmap in raw form. *)
 let save_raw_ppm_oc img oc l c =
   save_ppm_header img P6 oc l c;
-  let has_transp = ref false in
   for i = 0 to l - 1 do
    for j = 0 to c - 1 do
     let color = Rgb24.get img j i in
@@ -285,26 +279,14 @@ let save_raw_ppm_oc img oc l c =
     output_byte oc color.g;
     output_byte oc color.b
    done
-  done;
-  !has_transp;;
+  done
 
-let save_ppm_oc img _oc =
+let save_ppm_oc img oc =
   let l = img.Rgb24.height in
   if l = 0 then invalid_arg "save_ppm: invalid null line number";
   let c = img.Rgb24.width in
   if c = 0 then invalid_arg "save_ppm: invalid null column number";
-  (*
-  let has_transp = save_raw_ppm_oc img oc l c in
-  if has_transp then
-   begin
-    (* Save the transparency mask *)
-    output_char oc '\n';
-    save_mask img oc l c;
-    (* and correct the magic number *)
-    seek_out oc 1;
-    output_char oc '0';
-   end*)
-   ();;
+  save_raw_ppm_oc img oc l c
 
 let save_ppm s img =
  let oc = open_out_bin s in
