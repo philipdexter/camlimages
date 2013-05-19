@@ -155,10 +155,10 @@ value read_png_file_as_rgb24( name )
       memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
       Store_field( r, i, tmp );
     }
-    res = alloc_tuple(3);
-    Store_field( res, 0, Val_int(width) );
-    Store_field( res, 1, Val_int(height) );
-    Store_field( res, 2, r );
+    res = alloc_small(3,0);
+    Field( res, 0 ) =  Val_int(width);
+    Field( res, 1 ) =  Val_int(height);
+    Field( res, 2 ) =  r;
 
     /* close the file */
     fclose(fp);
@@ -182,7 +182,7 @@ value Val_PngColor( png_color *col )
   r[0] = Val_int( col->red );
   r[1] = Val_int( col->green );
   r[2] = Val_int( col->blue );
-  res = alloc_tuple(3);
+  res = alloc_small(3,0);
   for(i=0; i<3; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
@@ -197,7 +197,7 @@ value Val_PngPalette( png_colorp plte, int len )
   if ( len != 0 ) {
     cmap = alloc_tuple( len );
     for(i= 0; i< len; i++){
-      modify(&Field(cmap,i), Val_PngColor( &plte[i] ));
+        Store_field(cmap, i, Val_PngColor( &plte[i] ));
     }
   } else {
     cmap = Atom(0);
@@ -352,9 +352,9 @@ fprintf(stderr, "pngread.c: byte/pix= %d/%d\n", (int)(rowbytes), (int)width); ff
         r1 = alloc( 2, tag );
         r2 = alloc_tuple(height);
         for( i = 0; i < height; i ++ ){
-	  tmp = caml_alloc_string(rowbytes);
-	  memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
-	  Store_field( r2, i, tmp );
+            tmp = caml_alloc_string(rowbytes);
+            memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
+            Store_field( r2, i, tmp );
         }
         Store_field( r1, 0, r2 );
         Store_field( r1, 1, Val_PngPalette( palette, num_palette ) );
@@ -369,17 +369,17 @@ fprintf(stderr, "pngread.c: byte/pix= %d/%d\n", (int)(rowbytes), (int)width); ff
     case PNG_COLOR_TYPE_RGB:
     case PNG_COLOR_TYPE_RGB_ALPHA:
       /*
-      fprintf(stderr, "pngread.c: rgb image\n"); fflush(stderr);
-      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stderr);
+        fprintf(stderr, "pngread.c: rgb image\n"); fflush(stderr);
+sc      fprintf(stderr, "width rowbytes: %d %d\n", width, rowbytes); fflush(stderr);
       */
       r1 = alloc( 1,
                   color_type == PNG_COLOR_TYPE_RGB ?
                                 PNG_TAG_RGB24 : PNG_TAG_RGBA32 );
       r2 = alloc_tuple( height );
       for( i = 0; i < height; i ++ ){
-	tmp = caml_alloc_string(rowbytes);
-	memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
-	Store_field( r2, i, tmp );
+          tmp = caml_alloc_string(rowbytes);
+          memcpy(String_val(tmp), buf+rowbytes*i, rowbytes);
+          Store_field( r2, i, tmp );
       }
       Store_field( r1, 0, r2 );
       Store_field( res, 0, Val_int(width) );
