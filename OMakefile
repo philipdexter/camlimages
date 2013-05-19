@@ -14,34 +14,16 @@
 
 include OMyMakeroot
 
-########################################## You may want to change these
+########################################## External arguments
 
-# Specify non standard include directories
-INCLUDES[]=
-  /usr/include/X11
-  /usr/local/include
+DEFAULT_INCLUDES[]=
+   /usr/include/X11
+   /usr/local/include
+if $(not $(defined INCLUDES)):
+    setvar(public.INCLUDES, $(DEFAULT_INCLUDES))
 
-public.CheckCLib(libs, funs) =
-    LDFLAGS += $(addprefix -l, $(libs))
-
-    return $(TryLinkC $"""
-#ifdef __cplusplus
-extern "C"
-#endif
-#pragma warning( disable : 4100 )
-/* Override any gcc2 internal prototype to avoid an error.  */
-$(add-wrapper $(nl)extern char , $'();', $(funs))
-int main(int argc, char **argv) {
-    /* Usage */
-$(add-wrapper $(nl)    , $'();', $(funs))
-    return 0;
-}
-""")
-
-# Specify non standard library directories
-LDFLAGS[]+=
-# for example, 
-# LDFLAGS[]+= -L/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ImageIO.framework/Versions/A/Resources/
+if $(not $(defined LDFLAGS)):
+    setvar(public.LDFLAGS, $(EMPTY))
 
 # Specify directories where X's rgb.txt can be found
 PATH_RGB_TXT[]=
@@ -49,11 +31,13 @@ PATH_RGB_TXT[]=
   /usr/share/X11
 
 BYTE_ENABLED=1
-NATIVE_ENABLED=1
+if $(not $(defined NATIVE_ENABLED)):
+    setvar(public.NATIVE_ENABLED, 1)
+    export
 
 ########################################################################
 
-VERSION=4.0.3
+VERSION=4.0.4
 
 # for src/META
 PACKAGE_NAME=camlimages
@@ -62,6 +46,11 @@ PACKAGE_VERSION=$(VERSION)
 OCAMLMKLIB=ocamlmklib
 
 ##################################################### Auto configuration
+
+failwith(msg) =
+  eprintln(Error: $(msg))
+  exit 1
+
 
 print_configured() =
   println(--- Configuring)
@@ -91,6 +80,12 @@ print_configured() =
   println(CFLAGS:   $(string $(CFLAGS)))
   println(LDFLAGS:  $(string $(LDFLAGS)))
   println(---)
+
+true_if_not_defined(var)=
+    if $(not $(defined $(var))): 
+      true
+    else
+      $(var)
 
 .STATIC:
   # Variables must be initialized inside .STATIC, if they should be
@@ -126,78 +121,131 @@ print_configured() =
   # OCaml packages found likable
   OCAMLPACKS[]=
 
-  HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
-  SUPPORT_GIF = $(HAVE_GIF)
+  SUPPORT_GIF = false
   LDFLAGS_gif=
-  if $(SUPPORT_GIF)
-    LDFLAGS_gif=-lgif
-    SUPPORTED_FORMATS+=gif
+
+  if $(true_if_not_defined ARG_WANT_GIF)
+    HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
+    SUPPORT_GIF = $(HAVE_GIF)
+    if $(SUPPORT_GIF)
+      LDFLAGS_gif=-lgif
+      SUPPORTED_FORMATS+=gif
+      export
     export
 
-  HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
-  HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
-  SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
+  SUPPORT_PNG=false
   LDFLAGS_png=
-  if $(SUPPORT_PNG)
-    LDFLAGS_png=-lpng -lz
-    SUPPORTED_FORMATS+=png
+  if $(true_if_not_defined ARG_WANT_PNG)
+    HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
+    HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
+    SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
+    if $(SUPPORT_PNG)
+      LDFLAGS_png=-lpng -lz
+      SUPPORTED_FORMATS+=png
+      export
+    else
+      failwith(png requested but not found)
     export
 
-  HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
-  SUPPORT_JPEG = $(HAVE_JPEG)
+  SUPPORT_JPEG=false
   LDFLAGS_jpeg=
-  if $(SUPPORT_JPEG)
-    LDFLAGS_jpeg=-ljpeg
-    SUPPORTED_FORMATS+=jpeg
+  if $(true_if_not_defined ARG_WANT_JPEG)
+    HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
+    SUPPORT_JPEG = $(HAVE_JPEG)
+    if $(SUPPORT_JPEG)
+      LDFLAGS_jpeg=-ljpeg
+      SUPPORTED_FORMATS+=jpeg
+      export
+    else
+      failwith(jpeg requested but not found)
     export
 
-  HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
-  SUPPORT_TIFF = $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
+  SUPPORT_TIFF=false
   LDFLAGS_tiff=
-  if $(SUPPORT_TIFF)
-    LDFLAGS_tiff=$(array -ltiff -ljpeg -lz)
-    SUPPORTED_FORMATS+=tiff
+  if $(true_if_not_defined ARG_WANT_TIFF)
+    HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
+    SUPPORT_TIFF = $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
+    if $(SUPPORT_TIFF)
+      LDFLAGS_tiff=$(array -ltiff -ljpeg -lz)
+      SUPPORTED_FORMATS+=tiff
+      export
+    else
+      failwith(tiff requested but not found)
     export
 
-  HAVE_XPM = $(Check_header_library Xpm, xpm.h, XpmReadFileToXpmImage)
-  SUPPORT_XPM = $(HAVE_XPM)
+  SUPPORT_XPM=false
   LDFLAGS_xpm=
-  if $(SUPPORT_XPM)
-    LDFLAGS_xpm=-lXpm
-    SUPPORTED_FORMATS+=xpm
+  if $(true_if_not_defined ARG_WANT_XPM)
+    HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
+    SUPPORT_XPM = $(HAVE_XPM)
+    if $(SUPPORT_XPM)
+      LDFLAGS_xpm=-lXpm
+      SUPPORTED_FORMATS+=xpm
+      export
+    else
+      failwith(xpm requested but not found)
     export
 
-  SUPPORT_PS = $(Check_prog_in_path gs)
-  PATH_GS = $(WHERE)
+  SUPPORT_PS=false
+  $(Check_prog_in_path gs)
+  PATH_GS=$(WHERE)
   LDFLAGS_ps=
-  if $(SUPPORT_PS)
-    LDFLAGS_ps=
-    SUPPORTED_FORMATS+=ps
+  if $(true_if_not_defined ARG_WANT_GS)
+    # SUPPORT_PS = $(Check_prog_in_path gs)
+    SUPPORT_PS = true
+    if $(defined ARG_PATH_GS):
+        PATH_GS = $(ARG_PATH_GS)
+        export
+    if $(SUPPORT_PS)
+      SUPPORTED_FORMATS+=ps
+      export
+    else
+      failwith(ps requested but not found)
     export
 
-  SUPPORT_LABLGTK2 = $(Check_ocamlfind_package lablgtk2)
-  if $(SUPPORT_LABLGTK2)
-    SUPPORTED_NON_FORMATS+=lablgtk2
-    OCAMLPACKS+=lablgtk2
+  SUPPORT_LABLGTK2=false
+  if $(true_if_not_defined ARG_WANT_LABLGTK2)
+    SUPPORT_LABLGTK2 = $(Check_ocamlfind_package lablgtk2)
+    if $(SUPPORT_LABLGTK2)
+      SUPPORTED_NON_FORMATS+=lablgtk2
+      OCAMLPACKS+=lablgtk2
+      export
+    else
+      failwith(lablgtk2 requested but not found)
     export
 
-  # CR: ocamlfind registers graphics even if not available
-  SUPPORT_GRAPHICS = $(Check_ocamlfind_package_compilation graphics, Graphics)
-  if $(SUPPORT_GRAPHICS)
-    SUPPORTED_NON_FORMATS+=graphics
-    OCAMLPACKS+=graphics
+  SUPPORT_GRAPHICS=false
+  if $(true_if_not_defined ARG_WANT_GRAPHICS)
+    # CR: ocamlfind registers graphics even if not available
+    SUPPORT_GRAPHICS = $(Check_ocamlfind_package_compilation graphics, Graphics)
+    if $(SUPPORT_GRAPHICS)
+      SUPPORTED_NON_FORMATS+=graphics
+      OCAMLPACKS+=graphics
+      export
+    else
+      failwith(graphics requested but not found)
     export
 
-  SUPPORT_FREETYPE = $(Check_prog_in_path freetype-config)
+  SUPPORT_FREETYPE = false
+  $(Check_prog_in_path freetype-config)
   PATH_FREETYPE_CONFIG = $(WHERE)
   LDFLAGS_freetype=
-  if $(SUPPORT_FREETYPE)
-    println(SUPPORT_FREETYPE=$(SUPPORT_FREETYPE)!)
-    CFLAGS= $(CFLAGS) $(shell freetype-config --cflags)
-    LDFLAGS_freetype= $(shell freetype-config --libs)
-    export
-  if $(SUPPORT_FREETYPE)
-    SUPPORTED_NON_FORMATS+=freetype
+  if $(true_if_not_defined ARG_WANT_FREETYPE)
+    # SUPPORT_FREETYPE = $(Check_prog_in_path freetype-config)
+    SUPPORT_FREETYPE = true
+    if $(defined ARG_FREETYPE_CONFIG):
+        PATH_FREETYPE_CONFIG = $(ARG_FREETYPE_CONFIG)
+        export
+    if $(SUPPORT_FREETYPE)
+      println(SUPPORT_FREETYPE=$(SUPPORT_FREETYPE)!)
+      CFLAGS= $(CFLAGS) $(shell freetype-config --cflags)
+      LDFLAGS_freetype= $(shell freetype-config --libs)
+      export
+    if $(SUPPORT_FREETYPE)
+      SUPPORTED_NON_FORMATS+=freetype
+      export
+    else
+      failwith(freetype requested but not found)
     export
 
   SUPPORTED_SUBPACKAGES= $(SUPPORTED_FORMATS) $(SUPPORTED_NON_FORMATS)
@@ -219,5 +267,8 @@ section:
   SIZEOF_LONG=$(WORD_SIZE)
   VERSION=$(PACKAGE_VERSION)
   ConfReplaceConfigH(config.h)
+
+.PHONY: configure
+configure:
 
 .SUBDIRS: src test examples

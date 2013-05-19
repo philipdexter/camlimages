@@ -2,8 +2,7 @@ name = "CamlImages"
 version = "@PACKAGE_VERSION@"
 description = "Objective Caml image processing library"
 
-archive(byte) = "camlimages.cma"
-archive(native) = "camlimages.cmxa"
+requires = "camlimages.core"
 
 package "core" (
   archive(byte) = "camlimages_core.cma"
@@ -36,6 +35,7 @@ package "tiff" (
 
 package "freetype" (
   requires = "camlimages.core"
+  exists_if = "camlimages_freetype.cma"
   archive(byte) = "camlimages_freetype.cma"
   archive(native) = "camlimages_freetype.cmxa"
 )
@@ -54,12 +54,14 @@ package "ps" (
 
 package "graphics" (
   requires = "camlimages.core, graphics"
+  exists_if = "camlimages_graphics.cma"
   archive(byte) = "camlimages_graphics.cma"
   archive(native) = "camlimages_graphics.cmxa"
 )
 
 package "lablgtk2" (
   requires = "camlimages.core, lablgtk2"
+  exists_if = "camlimages_graphics.cma"
   archive(byte) = "camlimages_lablgtk2.cma"
   archive(native) = "camlimages_lablgtk2.cmxa"
 )

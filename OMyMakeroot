@@ -24,6 +24,26 @@ OCAML_WHERE = $(shell ocamlc -where)
 
 open configure/Configure
 
+public.CheckCLib(libs, funs) =
+    # This is broken in omake:
+    LDFLAGS += $(addprefix -l, $(libs))
+
+    program = $"""
+#ifdef __cplusplus
+extern "C"
+#endif
+#pragma warning( disable : 4100 )
+/* Override any gcc2 internal prototype to avoid an error.  */
+$(add-wrapper $(nl)extern char , $'();', $(funs))
+int main(int argc, char **argv) {
+    /* Usage */
+$(add-wrapper $(nl)    , $'();', $(funs))
+    return 0;
+}
+"""
+    #echo "program = $(program)"
+    return $(TryLinkC $(program))
+
 Check_header_library(xlib, xheader, xfunc) =
   return $(and $(VerboseCheckCHeader $(xheader)), $(VerboseCheckCLib $(xlib), $(xfunc)))
 
