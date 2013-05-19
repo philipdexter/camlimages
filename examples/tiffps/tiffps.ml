@@ -65,7 +65,7 @@ type scanlined_loader = {
 let scanline_open name =
   match Images.file_format name with
   | Jpeg, _ ->
-      let w,h,ic = Jpeg.open_in name in
+      let w,h,ic,_rev_markers = Jpeg.open_in name in
       let y = ref 0 in 
       w, h, 200.0,
       { read_next_line = (fun buf -> Jpeg.read_scanline ic buf !y; incr y);
