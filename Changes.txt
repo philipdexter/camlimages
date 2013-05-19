@@ -1,3 +1,13 @@
+4.0.3
+        * Applied GODI's patches. Now omake takes the following variable definitions:
+             - INCLUDES
+             - LDFLAGS
+             - NATIVE_ENABLED
+             - ARG_WANT_XXX
+             - ARG_PATH_GS
+             - ARG_FREETYPE_CONFIG
+          If they are not defined, some default values are deduced.
+
 4.0.2
 	* ppm save was somehow disabled.
 
