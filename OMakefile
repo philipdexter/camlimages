@@ -16,28 +16,14 @@ include OMyMakeroot
 
 ########################################## External arguments
 
-DEFAULT_INCLUDES[]=
-   /usr/include/X11
-   /usr/local/include
-if $(not $(defined INCLUDES)):
-    setvar(public.INCLUDES, $(DEFAULT_INCLUDES))
-
-if $(not $(defined LDFLAGS)):
-    setvar(public.LDFLAGS, $(EMPTY))
-
 # Specify directories where X's rgb.txt can be found
 PATH_RGB_TXT[]=
   /etc/X11
   /usr/share/X11
 
-BYTE_ENABLED=1
-if $(not $(defined NATIVE_ENABLED)):
-    setvar(public.NATIVE_ENABLED, 1)
-    export
-
 ########################################################################
 
-VERSION=4.0.4
+VERSION=4.1.0
 
 # for src/META
 PACKAGE_NAME=camlimages
@@ -57,17 +43,19 @@ print_configured() =
   println(wordsize  $(WORD_SIZE))
   println(--- C libraries)
   println(libgif:   $(HAVE_GIF))
-  println(libpng:	  $(HAVE_PNG))
+  println(libpng:   $(HAVE_PNG))
   println(libjpeg:  $(HAVE_JPEG))
+  println(libexif:  $(HAVE_EXIF))
   println(libtiff:  $(HAVE_TIFF))
-  println(libxpm:	  $(HAVE_XPM))
-  println(libz:	  $(HAVE_Z))
+  println(libxpm:   $(HAVE_XPM))
+  println(libz:   $(HAVE_Z))
   println(--- Subpackages)
-  println(gif:      $(SUPPORT_GIF) \($(string $(LDFLAGS_gif)\)))
-  println(png:	  $(SUPPORT_PNG) \($(string $(LDFLAGS_png)\)))
-  println(jpeg:	  $(SUPPORT_JPEG) \($(string $(LDFLAGS_jpeg)\)))
-  println(tiff:	  $(SUPPORT_TIFF) \($(string $(LDFLAGS_tiff)\)))
-  println(xpm:	  $(SUPPORT_XPM) \($(string $(LDFLAGS_xpm)\)))
+  println(gif:    $(SUPPORT_GIF) \($(string $(LDFLAGS_gif)\)))
+  println(png:    $(SUPPORT_PNG) \($(string $(LDFLAGS_png)\)))
+  println(jpeg:   $(SUPPORT_JPEG) \($(string $(LDFLAGS_jpeg)\)))
+  println(exif:   $(SUPPORT_EXIF) \($(string $(LDFLAGS_exif)\)))
+  println(tiff:   $(SUPPORT_TIFF) \($(string $(LDFLAGS_tiff)\)))
+  println(xpm:    $(SUPPORT_XPM) \($(string $(LDFLAGS_xpm)\)))
   println(freetype: $(SUPPORT_FREETYPE) \($(PATH_FREETYPE_CONFIG)\) \($(string $(LDFLAGS_freetype))\))
   println(ps:       $(SUPPORT_PS) \($(PATH_GS)\))
   println(rgb.txt:  $(SUPPORT_RGB_TXT) \($(string $(PATH_RGB_TXT))\))
@@ -77,8 +65,12 @@ print_configured() =
   println(supported subpackages:  $(string $(SUPPORTED_SUBPACKAGES)))
   println(supported formats:  $(string $(SUPPORTED_FORMATS)))
   println(supported non-formats:  $(string $(SUPPORTED_NON_FORMATS)))
-  println(CFLAGS:   $(string $(CFLAGS)))
-  println(LDFLAGS:  $(string $(LDFLAGS)))
+  # CFLAGS and LDFLAGS are already defined when print_configured()
+  # is defined, so using CFLAGS here just prints the value of 
+  # when this function is defined.
+  # CR jfuruse: Something messy which I do not understand yet happens here!
+  println(CFLAGS:   $(string $(CAMLIMAGES_CFLAGS)))
+  println(LDFLAGS:  $(string $(CAMLIMAGES_LDFLAGS)))
   println(---)
 
 true_if_not_defined(var)=
@@ -102,12 +94,18 @@ true_if_not_defined(var)=
      eprintln(You need to install ocamlmklib and run "omake --configure".)
      exit 1
 
-  CFLAGS = $(addprefix -I , $(INCLUDES))
+  BYTE_ENABLED=1
+  if $(not $(defined NATIVE_ENABLED)):
+      setvar(public.NATIVE_ENABLED, 1)
+      export
+
+  # It seems changing CFLAGS and INCLUDES in .STATIC is not a good idea.
+  CAMLIMAGES_CFLAGS = $(CFLAGS) $(addprefix -I , $(INCLUDES))
 
   WORD_SIZE = $(Word_size)
 
   # Image formats implemented using external libraries or binaries
-  FORMATS= gif png jpeg tiff xpm ps
+  FORMATS= gif png jpeg exif tiff xpm ps
 
   # Image formats with necessary libraries supported
   SUPPORTED_FORMATS[]=
@@ -158,6 +156,19 @@ true_if_not_defined(var)=
       export
     else
       failwith(jpeg requested but not found)
+    export
+
+  SUPPORT_EXIF=false
+  if $(true_if_not_defined ARG_WANT_EXIF)
+    HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
+    SUPPORT_EXIF = $(HAVE_EXIF)
+    LDFLAGS_exif=
+    if $(SUPPORT_EXIF)
+      LDFLAGS_exif=-lexif
+      SUPPORTED_FORMATS+=exif
+      export
+    else
+      failwith(exif requested but not found)
     export
 
   SUPPORT_TIFF=false
@@ -238,7 +249,7 @@ true_if_not_defined(var)=
         export
     if $(SUPPORT_FREETYPE)
       println(SUPPORT_FREETYPE=$(SUPPORT_FREETYPE)!)
-      CFLAGS= $(CFLAGS) $(shell freetype-config --cflags)
+      CAMLIMAGES_CFLAGS+= $(shell freetype-config --cflags)
       LDFLAGS_freetype= $(shell freetype-config --libs)
       export
     if $(SUPPORT_FREETYPE)
@@ -253,7 +264,13 @@ true_if_not_defined(var)=
   SUPPORT_RGB_TXT = $(Check_file_in_path $(PATH_RGB_TXT), rgb.txt)
   PATH_RGB_TXT = $(WHERE)
 
+  # CR jfuruse: Something messy which I do not understand yet happens here!
+  CAMLIMAGES_LDFLAGS=$(LDFLAGS)
   print_configured()
+
+# CR jfuruse: Something messy which I do not understand yet happens here!
+CFLAGS=$(CAMLIMAGES_CFLAGS)
+LDFLAGS=$(CAMLIMAGES_LDFLAGS)
 
 # for config.h
 CGeneratedFiles(config.h)

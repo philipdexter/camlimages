@@ -186,7 +186,7 @@ SRCDIR = $(ROOT)/src
 ################################################################### local build
 
 Subpackages_available(packs) =
-  sequence-forall($(fun elem, $(mem $(elem), all supported $(SUPPORTED_SUBPACKAGES))), $(packs))
+  sequence-forall($(fun elem, $(mem $(elem), core all_formats supported $(SUPPORTED_SUBPACKAGES))), $(packs))
 
 BuildExample(namex, modules, packages) = 
   .PHONY: clean
@@ -198,13 +198,15 @@ BuildExample(namex, modules, packages) =
     OCAMLINCLUDES += $(SRCDIR)
     OCAML_LIBS+= $(addprefix $(SRCDIR)/camlimages_, $(subs))
     OCAML_BYTE_LINK_FLAGS+=-dllpath $(SRCDIR)
+    OCAMLPACKS[]+=unix # exif requires unix
     export
     .DEFAULT: $(OCamlProgram $(namex), $(modules))
   else
     println(Warning: $(namex) is not built: it requires $(string $(packages)))
+    println(Warning: Supported: $(string all_formats supported $(SUPPORTED_SUBPACKAGES)))
 
   clean:
-    rm -f $(filter-proper-targets $(ls R, .))
+    rm -f $(filter-proper-targets $(ls R, .)) *.cmt* *.sp*t
 
   export
 
