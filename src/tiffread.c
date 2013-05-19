@@ -24,6 +24,10 @@
 #include "oversized.h"
 
 /* These are defined in caml/config.h */
+#undef int16
+#undef uint16
+#undef int32
+#undef uint32
 #define int16 int16tiff
 #define uint16 uint16tiff
 #define int32 int32tiff
