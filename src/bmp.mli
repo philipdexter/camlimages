@@ -99,11 +99,13 @@ and bibitcount =
     (** 8 The bitmap has a maximum of 256 colors, and the bmiColors
           field contains up to 256 entries. In this case, each byte in the
           array represents a single pixel. *)
-  | ColorM
+  | ColorRGB
     (** 24 The bitmap has a maximum of 2^24 colors. The bmiColors
           field is NULL, and each three bytes in the bitmap array
           represents the relative intensities of red, green, and blue,
           respectively, of a pixel. *)
+  | ColorRGBA
+    (** 32 The bitmap *)
 ;;
 
 val load_bmp : string -> bmp;;

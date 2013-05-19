@@ -29,10 +29,10 @@ open Images;;
    - BYTES []            : bit map
 *)
 type bmp = {
-   bmpFileHeader : bitmapfileheader;           (* Bytes <0  14< *)
-   bmpInfoHeader : bitmapinfoheader;           (* Bytes <14 54< *)
-   bmpRgbQuad : rgb array;                     (* Bytes <54 ... *)
-   bmpBytes : string;                          (* Bytes <bfOffBits ... *)
+  bmpFileHeader : bitmapfileheader;           (* Bytes <0  14< *)
+  bmpInfoHeader : bitmapinfoheader;           (* Bytes <14 54< *)
+  bmpRgbQuad : rgb array;                     (* Bytes <54 ... *)
+  bmpBytes : string;                          (* Bytes <bfOffBits ... *)
 }
 
 and bitmapfileheader = {
@@ -58,43 +58,45 @@ and bitmapinfoheader = {
 }
 
 and bicompression =
-| BI_RGB
-  (* Specifies that the bitmap is not compressed. *)
-| BI_RLE8
-  (* Specifies a run-length encoded format for bitmaps with 8 bits
-     per pixel. The compression format is a two-bytes format
-     consisting of a count byte followed by a byte containing a color
-     index. *)
-| BI_RLE4
-  (* Specifies a run-length encoded format for bitmaps with 4 bits
-     per pixel. The compression format is a two-byte format consisting of
-     a count byte followed by two word-length color indexes. *)
+  | BI_RGB
+    (* Specifies that the bitmap is not compressed. *)
+  | BI_RLE8
+    (* Specifies a run-length encoded format for bitmaps with 8 bits
+       per pixel. The compression format is a two-bytes format
+       consisting of a count byte followed by a byte containing a color
+       index. *)
+  | BI_RLE4
+    (* Specifies a run-length encoded format for bitmaps with 4 bits
+       per pixel. The compression format is a two-byte format consisting of
+       a count byte followed by two word-length color indexes. *)
 
 and bibitcount =
-| Monochrome
+  | Monochrome
   (* 1	The bitmap is monochrome, and the bmiColors field must 
-	contain two entries. Each bit in the bitmap array represents a 
-	pixel. If the bit is clear, the pixel is displayed with the
- 	color of the first entry in the bmiColors table; if the bit is
- 	set, the pixel has the color of the second entry in the
-        table. *)
-| Color16
+     contain two entries. Each bit in the bitmap array represents a 
+     pixel. If the bit is clear, the pixel is displayed with the
+     color of the first entry in the bmiColors table; if the bit is
+     set, the pixel has the color of the second entry in the
+     table. *)
+  | Color16
   (* 4	The bitmap has a maximum of 16 colors, and the bmiColors 
-	field contains up to 16 entries. Each pixel in the bitmap is 
-	represented by a four-bit index into the color table.
-	For example, if the first byte in the bitmap is 0x1F,  then the 
-	byte represents two pixels. The first pixel contains the color 
-	in the second table entry, and the second pixel contains the 
-	color in the 16th table entry. *)
-| Color256
+     field contains up to 16 entries. Each pixel in the bitmap is 
+     represented by a four-bit index into the color table.
+     For example, if the first byte in the bitmap is 0x1F,  then the 
+     byte represents two pixels. The first pixel contains the color 
+     in the second table entry, and the second pixel contains the 
+     color in the 16th table entry. *)
+  | Color256
   (* 8	The bitmap has a maximum of 256 colors, and the bmiColors 
-	field contains up to 256 entries. In this case, each byte in the 
-	array represents a single pixel. *)
-| ColorM
+     field contains up to 256 entries. In this case, each byte in the 
+     array represents a single pixel. *)
+  | ColorRGB
   (* 24 The bitmap has a maximum of 2^24 colors. The bmiColors
-        field is NULL, and each three bytes in the bitmap array
-        represents the relative intensities of red, green, and blue,
-        respectively, of a pixel. *)
+     field is NULL, and each three bytes in the bitmap array
+     represents the relative intensities of red, green, and blue,
+     respectively, of a pixel. *)
+  | ColorRGBA
+  (* 32 The bitmap, RGBA *)
 ;;
 
 (* =================================================================== *)
@@ -127,7 +129,7 @@ let read_dword ic =
 
 let read_bit_count ic =
  match read_word ic with
- | 1 -> Monochrome | 4 -> Color16 | 8 -> Color256 | 24 -> ColorM
+ | 1 -> Monochrome | 4 -> Color16 | 8 -> Color256 | 24 -> ColorRGB | 32 -> ColorRGBA
  | n -> failwith ("invalid colors number : " ^ string_of_int n)
 ;;
 
@@ -168,37 +170,40 @@ let load_rgbquad ic =
 ;;
 
 let load_bitmapfileheader ic =
- let bfType = read_word ic in
- if bfType <> 19778 (* BM *) then failwith "Invalid file tag";
- let bfSize = read_dword ic in
- let bfReserved1 = read_word ic in
- let bfReserved2 = read_word ic in
- let bfOffBits = read_dword ic in
- { bfType = bfType; bfSize = bfSize; bfReserved1 = bfReserved1;
-   bfReserved2 = bfReserved2; bfOffBits = bfOffBits;
- }
+  let bfType = read_word ic in
+  if bfType <> 19778 (* BM *) then failwith "Invalid file tag";
+  let bfSize = read_dword ic in
+  let bfReserved1 = read_word ic in
+  let bfReserved2 = read_word ic in
+  let bfOffBits = read_dword ic in
+  { bfType; bfSize; bfReserved1; bfReserved2; bfOffBits; }
 ;;
 
 let load_bitmapinfoheader ic =
- (* Found a tagBITMAPINFO *)
- let biSize = read_dword ic in
- let biWidth = read_dword ic in
- let biHeight = read_dword ic in
- let biPlanes = read_word ic in
- let biBitCount = read_bit_count ic in
- let biCompression = read_compression ic in
- let biSizeImage = read_dword ic in
- let biXPelsPerMeter = read_dword ic in
- let biYPelsPerMeter = read_dword ic in
- let biClrUsed = read_dword ic in
- let biClrImportant = read_dword ic in
- (* header = tagBITMAPINFOHEADER *)
- { biSize = biSize; biWidth = biWidth; biHeight = biHeight;
-   biPlanes = biPlanes; biBitCount = biBitCount;
-   biCompression = biCompression; biSizeImage = biSizeImage;
-   biXPelsPerMeter = biXPelsPerMeter; biYPelsPerMeter = biYPelsPerMeter;
-   biClrUsed = biClrUsed; biClrImportant = biClrImportant;
- }
+  try
+  (* Found a tagBITMAPINFO *)
+  let biSize = read_dword ic in
+  let biWidth = read_dword ic in
+  let biHeight = read_dword ic in
+  let biPlanes = read_word ic in
+  let biBitCount = read_bit_count ic in
+  let biCompression = read_compression ic in
+  let biSizeImage = read_dword ic in
+  let biXPelsPerMeter = read_dword ic in
+  let biYPelsPerMeter = read_dword ic in
+  let biClrUsed = read_dword ic in
+  let biClrImportant = read_dword ic in
+  (* header = tagBITMAPINFOHEADER *)
+  { biSize; biWidth; biHeight;
+    biPlanes; biBitCount;
+    biCompression; biSizeImage;
+    biXPelsPerMeter; biYPelsPerMeter;
+    biClrUsed; biClrImportant;
+  }
+  with
+  | (Failure s as e) -> 
+      prerr_endline s;
+      raise e
 ;;
 
 let load_colors bfh _bih ic =
@@ -423,6 +428,30 @@ let load_image24data bih ic =
   bitmap
 ;;
 
+let load_image32data bih ic =
+  (* Bitmap is a string of RGB bytes *)
+  let bitmap = String.create ((bih.biWidth * bih.biHeight) * 4) in
+(*
+  let pad = (4 - ((bih.biWidth * 4) mod 4)) land 0x03 in
+  let pad = 1 in
+*)
+  let pp = ref 0 in
+  for i = bih.biHeight - 1 downto 0 do
+    pp := (i * bih.biWidth * 4);
+    for j = 0 to bih.biWidth - 1 do
+      bitmap.[!pp + 2] <- Char.chr (read_byte ic);   (* Blue *)
+      bitmap.[!pp + 1] <- Char.chr (read_byte ic);   (* Green *)
+      bitmap.[!pp + 0] <- Char.chr (read_byte ic);   (* Red *)
+      bitmap.[!pp + 3] <- Char.chr (read_byte ic);   (* Alpha *)
+      pp := !pp + 4
+    done;
+(*
+    for j = 0 to pad - 1 do skip_byte ic done;
+*)
+  done;
+  bitmap
+;;
+
 let load_imagedata bih ic =
  (* The bits in the array are packed together, but each scan line *)
  (* must be zero-padded to end on a LONG boundary. *)
@@ -430,47 +459,48 @@ let load_imagedata bih ic =
  | Monochrome -> load_image1data bih ic
  | Color16 -> load_image4data bih ic
  | Color256 -> load_image8data bih ic
- | ColorM -> load_image24data bih ic
+ | ColorRGB -> load_image24data bih ic
+ | ColorRGBA -> load_image32data bih ic
 ;;
 
 let skip_to ic n =
- while !bytes_read <> n do skip_byte ic done
+  while !bytes_read <> n do skip_byte ic done
 ;;
 
 let check_header fname =
- let ic = open_in_bin fname in
- bytes_read := 0;
- try
-   let _bfh = load_bitmapfileheader ic in
-   let bih = load_bitmapinfoheader ic in
-   close_in ic;
-   { header_width = bih.biWidth;
-     header_height = bih.biHeight;
-     header_infos = []; }
- with
- | _ ->
-     close_in ic;
-     raise Wrong_file_type
+  let ic = open_in_bin fname in
+  bytes_read := 0;
+  try
+    let _bfh = load_bitmapfileheader ic in
+    let bih = load_bitmapinfoheader ic in
+    close_in ic;
+    { header_width = bih.biWidth;
+      header_height = bih.biHeight;
+      header_infos = []; }
+  with
+  | _ ->
+      close_in ic;
+      raise Wrong_file_type
 ;;
 
 let read_bmp ic =
- bytes_read := 0;
- let bfh = load_bitmapfileheader ic in
- let bih = load_bitmapinfoheader ic in
- let colormap = load_colors bfh bih ic in
- skip_to ic bfh.bfOffBits;
- let bitmap = load_imagedata bih ic in
- { bmpFileHeader = bfh;
-   bmpInfoHeader = bih;
-   bmpRgbQuad = colormap;
-   bmpBytes = bitmap; }
+  bytes_read := 0;
+  let bfh = load_bitmapfileheader ic in
+  let bih = load_bitmapinfoheader ic in
+  let colormap = load_colors bfh bih ic in
+  skip_to ic bfh.bfOffBits;
+  let bitmap = load_imagedata bih ic in
+  { bmpFileHeader = bfh;
+    bmpInfoHeader = bih;
+    bmpRgbQuad = colormap;
+    bmpBytes = bitmap; }
 ;;
 
 let read_bmp_file fname =
- let ic = open_in_bin fname in
- let bmp = read_bmp ic in
- close_in ic;
- bmp
+  let ic = open_in_bin fname in
+  let bmp = read_bmp ic in
+  close_in ic;
+  bmp
 ;;
 
 let image_of_bmp = function
@@ -479,9 +509,11 @@ let image_of_bmp = function
    bmpRgbQuad = colormap;
    bmpBytes = bitmap; } ->
    match bih.biBitCount with
-   | ColorM ->
+   | ColorRGB ->
        Rgb24 (Rgb24.create_with bih.biWidth bih.biHeight [] bitmap)
-   | _ ->
+   | ColorRGBA ->
+       Rgba32 (Rgba32.create_with bih.biWidth bih.biHeight [] bitmap)
+   | Monochrome | Color16 | Color256 ->
        Index8
          (Index8.create_with bih.biWidth bih.biHeight []
             { map = colormap; max = 256; } (-1) bitmap)
@@ -530,7 +562,7 @@ let write_dword oc dw =
 
 let write_bit_count oc bc =
  let byte = match bc with
- | Monochrome -> 1 | Color16 -> 4 | Color256 -> 8 | ColorM -> 24 in
+ | Monochrome -> 1 | Color16 -> 4 | Color256 -> 8 | ColorRGB -> 24 | ColorRGBA -> 32 in
  write_word oc byte
 ;;
 
@@ -679,7 +711,7 @@ let write_image1data bmp oc =
 let write_image24data bmp oc =
  let bih = bmp.bmpInfoHeader in
  if bih.biCompression <> BI_RGB
-  then failwith "invalid compression for a monochrome bitmap" else
+  then failwith "invalid compression for a rgb bitmap" else
 
  let start_bitmap_index = !bytes_written in
  let bitmap = bmp.bmpBytes in
@@ -706,6 +738,43 @@ let write_image24data bmp oc =
  done;
  let end_bitmap_index = !bytes_written in
  start_bitmap_index, end_bitmap_index
+;;
+
+let write_image32data bmp oc =
+  let bih = bmp.bmpInfoHeader in
+  if bih.biCompression <> BI_RGB
+  then failwith "invalid compression for a rgba bitmap" else
+
+  let start_bitmap_index = !bytes_written in
+  let bitmap = bmp.bmpBytes in
+  let width = bih.biWidth in
+  let height = bih.biHeight in
+
+(*
+  let extra_padding_bytes = pad_bytes (width * 4) in
+*)
+
+  for i = height - 1 downto 0 do
+  (* For each pixel in the line *)
+    let start = i * width * 3 in
+    let lim = (i + 1) * width * 4 - 1 in
+    let rec write_line x =
+      write_byte oc (Char.code bitmap.[x + 3]);   (* Alpha *)
+      write_byte oc (Char.code bitmap.[x + 2]);   (* Blue *)
+      write_byte oc (Char.code bitmap.[x + 1]);   (* Green *)
+      write_byte oc (Char.code bitmap.[x]);       (* Red *)
+      let new_x = x + 4 in
+      if new_x < lim then write_line new_x in
+
+    write_line start;
+  (* No end of scan line in bi_RGB mode *)
+(*
+  (* Padding *)
+    write_pad oc extra_padding_bytes;
+*)
+  done;
+  let end_bitmap_index = !bytes_written in
+  start_bitmap_index, end_bitmap_index
 ;;
 
 let write_image4data bmp oc =
@@ -838,12 +907,13 @@ let write_image8data bmp oc =
     failwith ("Invalid compression mode : BI_RLE8");;
 
 let write_image_data oc bmp =
- let bih = bmp.bmpInfoHeader in
- match bih.biBitCount with
- | Monochrome -> write_image1data bmp oc
- | Color16 -> write_image4data bmp oc
- | Color256 -> write_image8data bmp oc
- | ColorM -> write_image24data bmp oc
+  let bih = bmp.bmpInfoHeader in
+  match bih.biBitCount with
+  | Monochrome -> write_image1data bmp oc
+  | Color16 -> write_image4data bmp oc
+  | Color256 -> write_image8data bmp oc
+  | ColorRGB -> write_image24data bmp oc
+  | ColorRGBA -> write_image32data bmp oc
 ;;
 
 let bmp_of_image img =
@@ -868,7 +938,47 @@ let bmp_of_image img =
         (* According to the format, Must be set to 1. *)
         biPlanes = 1;
         (* 24 bits pixels. *)
-        biBitCount = ColorM;
+        biBitCount = ColorRGB;
+        (* Compression is no compression: we output pixels as
+           rgb rgb ... with padding. *)
+        biCompression = BI_RGB;
+        (* The size of the actual image pixels representation in the
+           file. Due to padding, cannot be computed here. *)
+        biSizeImage = -1 (* Unknown to be updated *);
+        (* This should be OK *)
+        biXPelsPerMeter = 600; biYPelsPerMeter = 600;
+        (* Unknown: the number of colors actually
+           used by the image. Must be computed while writing the
+           image. *)
+        biClrUsed = 0;
+        (* Number of important colors. If 0, all colors are important *)
+        biClrImportant = 0 } in
+
+    { bmpFileHeader = bfh;
+      bmpInfoHeader = bih;
+      bmpRgbQuad = [||];
+      bmpBytes = data }
+  | Rgba32 bitmap ->
+    let biW = bitmap.Rgba32.width
+    and biH = bitmap.Rgba32.height
+    and data = Rgba32.dump bitmap in
+    let bfh = {
+      (* WORD *) bfType = 19778 (* BM *);
+      (* DWORD *) bfSize = -1 (* Unknown to be updated *);
+      (* WORD *) bfReserved1 = 0;
+      (* WORD *) bfReserved2 = 0;
+      (* DWORD *) bfOffBits = -1 (* Unknown to be updated *)
+    } in
+
+    let bih =
+      { (* The size in bytes of this header. *)
+        biSize = -1;  (* Unknown to be updated *)
+        (* Width and height of the image *)
+        biWidth = biW; biHeight = biH;
+        (* According to the format, Must be set to 1. *)
+        biPlanes = 1;
+        (* 24 bits pixels. *)
+        biBitCount = ColorRGBA;
         (* Compression is no compression: we output pixels as
            rgb rgb ... with padding. *)
         biCompression = BI_RGB;
