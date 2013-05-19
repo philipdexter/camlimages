@@ -98,11 +98,11 @@ type colormodel = Info.colormodel =
 
 (** Infos attached to bitmaps *)
 type info = Info.info =
-   | Info_DPI of float (** dot per inch *)
+   | Info_DPI of float                  (** dot per inch *)
    | Info_BigEndian | Info_LittleEndian (** endianness of image file *)
-   | Info_ColorModel of colormodel (** color model of image file *)
-   | Info_Depth of int (** Image bit depth *)
-   | Info_Corrupted (** For corrupted PNG files *);;
+   | Info_ColorModel of colormodel      (** color model of image file *)
+   | Info_Depth of int                  (** Image bit depth *)
+   | Info_Corrupted                     (** For corrupted PNG files *);;
 
 (** Info query *)
 val dpi : info list -> float option;;
