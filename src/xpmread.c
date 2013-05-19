@@ -59,10 +59,10 @@ value read_xpm_file( name )
       */
 
       if( color->c_color == NULL ) {
-	fprintf(stderr, "color id %d has no c_color\n", i);
-	Store_field(cmap, i, copy_string("null"));
+          fprintf(stderr, "color id %d has no c_color\n", i);
+          Store_field(cmap, i, copy_string("null"));
       } else {
-	Store_field(cmap, i, copy_string(color->c_color));
+          Store_field(cmap, i, copy_string(color->c_color));
       }
     }
 
@@ -71,17 +71,17 @@ value read_xpm_file( name )
 
       imap = alloc_tuple( size );
       for(i=0; i<size; i++){
-	Field(imap,i) = Val_int(image.data[i]);
+          Store_field(imap,i,Val_int(image.data[i]));
       }
     }
 
     
     { /* connect the result */
-      result = alloc_tuple(4);
-      Field(result,0) = Val_int(image.width);
-      Field(result,1) = Val_int(image.height);
-      Field(result,2) = cmap;
-      Field(result,3) = imap;
+        result = alloc_small(4,0);
+        Field(result,0) = Val_int(image.width);
+        Field(result,1) = Val_int(image.height);
+        Field(result,2) = cmap;
+        Field(result,3) = imap;
     }
 
     XpmFreeXpmImage( &image );
