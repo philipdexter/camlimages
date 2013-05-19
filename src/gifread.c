@@ -200,7 +200,7 @@ value dGifGetLine( value hdl )
 
   if( DGifGetLine(GifFile, String_val(buf), GifFile->Image.Width ) 
       == GIF_ERROR ){
-    PrintGifError ();
+    // PrintGifError ();
     failwith("DGifGetLine");
   }
   CAMLreturn(buf);

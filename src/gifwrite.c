@@ -133,7 +133,7 @@ value eGifPutLine( value oc, value buf )
 
   if ( EGifPutLine(GifFileOut, String_val(buf), GifFileOut->Image.Width) 
        == GIF_ERROR ){
-    PrintGifError ();
+    // PrintGifError ();
     failwith("EGifPutLine");
   }
   CAMLreturn(Val_unit);
