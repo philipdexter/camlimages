@@ -37,7 +37,7 @@ value Val_GifColorType( GifColorType *color )
   r[0] = Val_int( color->Red );
   r[1] = Val_int( color->Green );
   r[2] = Val_int( color->Blue );
-  res = alloc_tuple(3);
+  res = alloc_small(3,0);
   for(i=0; i<3; i++) Field(res, i) = r[i];
 #ifdef DEBUG_GIF
 fprintf(stderr, "Color(%d,%d,%d)\n", color->Red, color->Green, color->Blue);
@@ -60,7 +60,7 @@ value Val_ColorMapObject( ColorMapObject *colorMap )
 
     cmap = alloc_tuple(colorMap->ColorCount);
     for(i= 0; i< colorMap->ColorCount; i++){
-      modify(&Field(cmap,i), Val_GifColorType( &colorMap->Colors[i] ));
+        Store_field(cmap,i, Val_GifColorType( &colorMap->Colors[i] ));
     }
   } else {
 #ifdef DEBUG_GIF
@@ -107,7 +107,7 @@ fflush(stderr);
   r[3] = Val_int( imageDesc->Height );
   r[4] = Val_int( imageDesc->Interlace );
   r[5] = Val_ColorMapObject( imageDesc->ColorMap );
-  res = alloc_tuple(6);
+  res = alloc_small(6,0);
   for(i=0; i<6; i++) Field(res, i) = r[i];
   CAMLreturn(res);
 }
@@ -125,7 +125,7 @@ value Val_ScreenInfo( GifFileType *GifFile )
   r[2] = Val_int(GifFile->SColorResolution);
   r[3] = Val_int(GifFile->SBackGroundColor);
   r[4] = Val_ColorMapObject(GifFile->SColorMap);
-  res = alloc_tuple(5);
+  res = alloc_small(5,0);
   for(i=0; i<5; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
@@ -146,13 +146,13 @@ value dGifOpenFileName( value name )
 
   r[0] = Val_ScreenInfo( GifFile );
   r[1] = (value) GifFile;
-  res = alloc_tuple(2);
+  res = alloc_small(2,0);
   for(i=0; i<2; i++) Field(res, i) = r[i];
 
   CAMLreturn(res);
 } 
 
-value dGifCloseFile( value hdl )
+void dGifCloseFile( value hdl )
 {
   CAMLparam1(hdl);
 
@@ -162,7 +162,7 @@ value dGifCloseFile( value hdl )
   ((GifFileType *)hdl)->Image.ColorMap = NULL; 
 
   DGifCloseFile( (GifFileType *) hdl );
-  CAMLreturn(Val_unit);
+  CAMLreturn0;
 }
 
 value dGifGetRecordType( value hdl )
@@ -231,7 +231,7 @@ value dGifGetExtension( value hdl )
     exts= newres;
     DGifGetExtensionNext(GifFile, &extData);
   }
-  res = alloc_tuple(2);
+  res = alloc_small(2,0);
   Field(res,0) = Val_int(func);
   Field(res,1) = exts;
 

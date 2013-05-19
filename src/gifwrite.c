@@ -38,13 +38,12 @@ int list_length( value list )
 
 ColorMapObject *ColorMapObject_val( value cmap )
 {
-  CAMLparam1(cmap);
-
+  // no caml allocation inside.
   int len;
   int i;
   ColorMapObject *cmapobj;
 
-  if( cmap == Atom(0) ){ CAMLreturn(NULL); } 
+  if( cmap == Atom(0) ){ return NULL; } 
 
   len = Wosize_val(cmap);
 
@@ -58,7 +57,7 @@ fflush(stderr);
     cmapobj->Colors[i].Green = Int_val(Field(Field(cmap,i),1));
     cmapobj->Colors[i].Blue  = Int_val(Field(Field(cmap,i),2));
   }
-  CAMLreturn(cmapobj); 
+  return cmapobj; 
 }
 
 value eGifOpenFileName( name )
@@ -79,7 +78,7 @@ value eGifOpenFileName( name )
   CAMLreturn((value)GifFileOut);
 }
 
-value eGifCloseFile( value hdl )
+void eGifCloseFile( value hdl )
 {
   CAMLparam1(hdl);
 
@@ -89,10 +88,10 @@ value eGifCloseFile( value hdl )
   ((GifFileType *)hdl)->Image.ColorMap = NULL; 
 
   EGifCloseFile( (GifFileType *) hdl );
-  CAMLreturn(Val_unit);
+  CAMLreturn0;
 }
 
-value eGifPutScreenDesc( value oc, value sdesc )
+void eGifPutScreenDesc( value oc, value sdesc )
 {
   CAMLparam2(oc,sdesc);
 
@@ -105,10 +104,10 @@ value eGifPutScreenDesc( value oc, value sdesc )
 			 ColorMapObject_val( Field(sdesc, 4) )) == GIF_ERROR){
     failwith("EGifPutScreenDesc");
   }
-  CAMLreturn(Val_unit);
+  CAMLreturn0;
 }
 
-value eGifPutImageDesc( value oc, value idesc )
+void eGifPutImageDesc( value oc, value idesc )
 {
   CAMLparam2(oc,idesc);
 
@@ -122,10 +121,10 @@ value eGifPutImageDesc( value oc, value idesc )
 			ColorMapObject_val( Field(idesc, 5) )) == GIF_ERROR){
     failwith("EGifPutImageDesc");
   }
-  CAMLreturn(Val_unit);
+  CAMLreturn0;
 }
 
-value eGifPutLine( value oc, value buf )
+void eGifPutLine( value oc, value buf )
 {
   CAMLparam2(oc,buf);
 
@@ -136,10 +135,10 @@ value eGifPutLine( value oc, value buf )
     // PrintGifError ();
     failwith("EGifPutLine");
   }
-  CAMLreturn(Val_unit);
+  CAMLreturn0;
 }
 
-value eGifPutExtension( value oc, value ext )
+void eGifPutExtension( value oc, value ext )
 {
   CAMLparam2(oc,ext);
   CAMLlocal1(l);
@@ -176,5 +175,5 @@ value eGifPutExtension( value oc, value ext )
     free(extension);
     failwith("EGifPutExtension");
   }
-  CAMLreturn(Val_unit);
+  CAMLreturn0;
 }
