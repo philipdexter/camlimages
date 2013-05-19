@@ -1,4 +1,12 @@
-4.0.3
+4.1.0 (not yet)
+        * bmp was not linked with examples. Since bmp is pure ML libarary, 
+          you may need to add -linkall to linker command to your build script,
+          otherwise the module is silently ignored. 
+        * bmp 32bit RGBA is now supported
+        * added jpeg marker load/saving (not tested well)
+        * added exif support (you need libexif)
+        ! refactored ocamlfind package names (probably introduce some incompatibility)
+        * removed unused old configure and make scripts
         * Applied GODI's patches. Now omake takes the following variable definitions:
              - INCLUDES
              - LDFLAGS
