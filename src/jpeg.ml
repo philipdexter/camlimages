@@ -17,14 +17,34 @@
 open Images;;
 open Rgb24;;
 
-external read : string -> int * int * string
-    = "read_JPEG_file";;
-external write : string -> string -> int -> int -> int -> unit
-    = "write_JPEG_file";;
-
 type in_handle;;
 
-external open_in_header : string -> int * int * in_handle
+module Marker = struct
+  type raw = {
+    code : int;
+    data : string
+  }
+
+  type t = 
+    | Comment of string
+    | App of int * string
+
+  let t_of_raw r = 
+    match r.code with
+    | 0xFE -> Comment r.data
+    | n -> App (n - 0xE0, r.data)
+
+  let raw_of_t = function
+    | Comment s -> { code = 0xFE; data = s }
+    | App (n, s) -> { code = 0xE0 + n; data = s }
+
+  open Format
+  let format ppf = function
+    | Comment s -> fprintf ppf "Comment: %s" s
+    | App (n, s) -> fprintf ppf "App%d (%d bytes)" n (String.length s)
+end
+
+external open_in_header : string -> int * int * in_handle * Marker.raw list
     = "open_jpeg_file_for_read";;
 external set_scale_denom : in_handle -> int -> unit
     = "jpeg_set_scale_denom";;
@@ -43,19 +63,22 @@ external open_out : string -> int -> int -> int -> out_handle
     = "open_jpeg_file_for_write";;
 external open_out_cmyk : string -> int -> int -> int -> out_handle
     = "open_jpeg_file_for_write_cmyk";;
+external write_marker : out_handle -> Marker.raw -> unit 
+  = "caml_jpeg_write_marker"
 external write_scanline : out_handle -> string -> unit
     = "write_jpeg_scanline";;
 external close_out : out_handle -> unit
     = "close_jpeg_file_for_write";;
 
 let open_in name =
-  let _, _, ic = open_in_header name in
-  open_in_start ic;;
+  let _, _, ic, rev_markers = open_in_header name in
+  let w, h, ic = open_in_start ic in
+  w, h, ic, List.rev_map Marker.t_of_raw rev_markers
 
 let open_in_thumbnail name geom_spec =
   if geom_spec.Geometry.spec_aspect = Geometry.Dont_keep then
     raise (Invalid_argument "Jpeg.open_in_thumbnail: illegal geom_spec");
-  let image_width, image_height, ic = open_in_header name in
+  let image_width, image_height, ic, rev_markers = open_in_header name in
   let scale =
     try
       let geom = Geometry.compute geom_spec image_width image_height in
@@ -70,7 +93,8 @@ let open_in_thumbnail name geom_spec =
     if scale < 4 then 2 else
     if scale < 8 then 4 else 8 in
   set_scale_denom ic denom;
-  image_width, image_height, open_in_start ic;;
+  image_width, image_height, open_in_start ic, 
+  List.rev_map Marker.t_of_raw rev_markers;;
 
 let load_aux prog ic w h = 
   let prog y = 
@@ -106,16 +130,16 @@ let load_aux prog ic w h =
   Rgb24 img;;
 
 let load name load_opts =
-  let w, h, ic = open_in name in
+  let w, h, ic, _markers = open_in name in
   let prog = Images.load_progress load_opts in
   load_aux prog ic w h
 
 let load_thumbnail name load_opts geom_spec =
   let prog = Images.load_progress load_opts in
-  let ow, oh, (w, h, ic) = open_in_thumbnail name geom_spec in
+  let ow, oh, (w, h, ic), _markers = open_in_thumbnail name geom_spec in
   ow, oh, load_aux prog ic w h
 
-let save name opts image =
+let save_with_markers name opts image markers =
   let quality =
     match Images.save_quality opts with
     | Some q -> q
@@ -125,6 +149,8 @@ let save name opts image =
   match image with
   | Rgb24 bmp ->
       let oc = open_out name bmp.width bmp.height quality in
+      List.iter (fun mrk ->
+        write_marker oc (Marker.raw_of_t mrk)) markers;
       for y = 0 to bmp.height - 1 do
         write_scanline oc (Rgb24.get_scanline bmp y);
         match prog with
@@ -133,6 +159,8 @@ let save name opts image =
       done;
       close_out oc
   | _ -> raise Wrong_image_type;;
+
+let save name opts image = save_with_markers name opts image []
 
 let save_as_cmyk name opts trans image =
   let quality =
@@ -233,11 +261,11 @@ let check_header filename =
     let str = String.create len in
     really_input ic str 0 len;
     if
-      (* some jpeg's start with 7f58, the 7th bit is missing *)
-      int_of_char str.[0] lor 0x80 = 0xff &&
-      int_of_char str.[1] lor 0x80 = 0xd8
-      (* int_of_char str.[0] = 0xff && int_of_char str.[1] = 0xd8 *)
-      (* && String.sub str 6 4 = "JFIF" --- strict *) then begin
+      (* I had some jpeg started with 7f58, the 7th bits were missing... *)
+      (* int_of_char str.[0] lor 0x80 = 0xff &&
+         int_of_char str.[1] lor 0x80 = 0xd8 *)
+      int_of_char str.[0] = 0xff && int_of_char str.[1] = 0xd8
+      (* && String.sub str 6 4 = "JFIF" --- JFIF standard *) then begin
       let w, h =
         try find_jpeg_size ic with
         | Not_found -> -1, -1 in
@@ -252,9 +280,17 @@ let check_header filename =
       Pervasives.close_in ic;
       raise Wrong_file_type;;
 
-add_methods Jpeg
+let read_markers filename = 
+  let _, _, ic, rev_markers = open_in_header filename in
+  close_in ic;
+  List.rev_map Marker.t_of_raw rev_markers
+
+let write_marker oh mrk = write_marker oh (Marker.raw_of_t mrk)
+
+let () = add_methods Jpeg
   { check_header = check_header;
     load = Some load;
     save = Some save;
     load_sequence = None;
     save_sequence = None};;
+
