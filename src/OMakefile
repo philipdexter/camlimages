@@ -40,6 +40,12 @@ CFILES_jpeg[]=
 CFILES_jpeg_na[]=
   jpeg_na
 
+CFILES_exif[]=
+  exif_c
+
+CFILES_exif_na[]=
+  exif_na
+
 CFILES_png[]=
   pngread
   pngwrite
@@ -66,14 +72,14 @@ CFILES_ps[]=
 CFILES_ps_na[]=
 
 CFILES_lib(name) =
-  CFILES_VAR = $(if $(mem $(name), all supported $(SUPPORTED_SUBPACKAGES)), CFILES_$(name), CFILES_$(name)_na)
+  CFILES_VAR = $(if $(mem $(name), all all_formats supported $(SUPPORTED_SUBPACKAGES)), CFILES_$(name), CFILES_$(name)_na)
   value $(getvar $(CFILES_VAR))
 
 CFILES_supported=
   foreach(p, $(SUPPORTED_FORMATS))
     value $(CFILES_lib $(p))
 
-CFILES_all=
+CFILES_all_formats=
   foreach(p, $(FORMATS))
     value $(CFILES_lib $(p))
 
@@ -117,6 +123,14 @@ FILES_jpeg[]=
   jpeg
   oJpeg
 
+FILES_exif[]=
+  exifutil
+  exif
+  exifanalyze
+
+exifanalyze.auto.mli: exifanalyze.ml
+    $(OCamlC) -c -i exifanalyze.ml > $@
+
 FILES_png[]=
   png
   oPng
@@ -143,7 +157,7 @@ FILES_supported=
   foreach(p, $(SUPPORTED_FORMATS))
     value $(getvar FILES_$(p))
 
-FILES_all=
+FILES_all_formats=
   foreach(p, $(FORMATS))
     value $(getvar FILES_$(p))
 
@@ -162,10 +176,6 @@ FILES_lablgtk2[]=
 
 LDFLAGS_core[]=
 
-#LDFLAGS_supported=
-#  foreach(p, $(SUPPORTED_FORMATS))
-#    value $(getvar LDFLAGS_$(p))
-
 LDFLAGS_supported=
   x=
   foreach(p, $(SUPPORTED_FORMATS))
@@ -173,7 +183,7 @@ LDFLAGS_supported=
     export
   value $(x)
 
-LDFLAGS_all=
+LDFLAGS_all_formats=
   x=
   foreach(p, $(FORMATS))
     x+= $(getvar LDFLAGS_$(p))
@@ -234,13 +244,13 @@ MakeLibOCaml(name) =
 
 LIBRARIES=
   # CR jfurue: lablgtk2, freetype and graphics may not be buildable
-  foreach(i, core $(FORMATS) supported all $(SUPPORTED_NON_FORMATS))
+  foreach(i, core $(FORMATS) all_formats supported $(SUPPORTED_NON_FORMATS))
     MakeLibOCaml($(i))
 
 libraries: $(LIBRARIES)
 
 clean:
-  rm -f $(LIBRARY_PREFIX).spot
+  rm -f *.sp*t *.cmt*
   rm -f $(filter-proper-targets $(ls R, .))
 
 LocalOCamlGeneratedFiles(camlimages.ml)
@@ -254,8 +264,8 @@ INSTALL_TARGETS()=
     value META \
       $(glob i, *.mli) \
       $(glob i, *.cmi) \
-      $(glob i, *.spot) \
-      $(glob i, *.spit) \
+      $(glob i, *.cmt) \
+      $(glob i, *.cmti) \
       $(glob i, *.cma) \
       $(glob i, *.cmxa) \
       $(glob i, *.a) \
@@ -268,12 +278,13 @@ UNINSTALL()=
   value $(OCAMLFIND) remove $(LIBRARY_PREFIX)
 
 install: all
+  $(UNINSTALL) # I get bored typing ocamlfind remove camlimages each time before omake install
   $(INSTALL)
 
 .PHONY: uninstall
 
 uninstall:
-  $(OCAMLFIND) remove camlimages
+  $(UNINSTALL)
 
 # Author's personal thing
 if $(defined BIG_ROOT)
