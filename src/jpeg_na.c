@@ -30,3 +30,4 @@ value write_jpeg_scanline(){ failwith("unsupported"); }
 value close_jpeg_file_for_write(){ failwith("unsupported"); }
 value read_JPEG_file(){ failwith("unsupported"); }
 value write_JPEG_file(){ failwith("unsupported"); }
+void caml_jpeg_write_marker(){ failwith("unsupported"); }
