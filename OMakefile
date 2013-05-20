@@ -48,23 +48,24 @@ print_configured() =
   println(libexif:  $(HAVE_EXIF))
   println(libtiff:  $(HAVE_TIFF))
   println(libxpm:   $(HAVE_XPM))
-  println(libz:   $(HAVE_Z))
+  println(libz:     $(HAVE_Z))
   println(--- Subpackages)
-  println(gif:    $(SUPPORT_GIF) \($(string $(LDFLAGS_gif)\)))
-  println(png:    $(SUPPORT_PNG) \($(string $(LDFLAGS_png)\)))
-  println(jpeg:   $(SUPPORT_JPEG) \($(string $(LDFLAGS_jpeg)\)))
-  println(exif:   $(SUPPORT_EXIF) \($(string $(LDFLAGS_exif)\)))
-  println(tiff:   $(SUPPORT_TIFF) \($(string $(LDFLAGS_tiff)\)))
-  println(xpm:    $(SUPPORT_XPM) \($(string $(LDFLAGS_xpm)\)))
+  println(gif:      $(SUPPORT_GIF) \($(string $(LDFLAGS_gif)\)))
+  println(png:      $(SUPPORT_PNG) \($(string $(LDFLAGS_png)\)))
+  println(jpeg:     $(SUPPORT_JPEG) \($(string $(LDFLAGS_jpeg)\)))
+  println(exif:     $(SUPPORT_EXIF) \($(string $(LDFLAGS_exif)\)))
+  println(tiff:     $(SUPPORT_TIFF) \($(string $(LDFLAGS_tiff)\)))
+  println(xpm:      $(SUPPORT_XPM) \($(string $(LDFLAGS_xpm)\)))
   println(freetype: $(SUPPORT_FREETYPE) \($(PATH_FREETYPE_CONFIG)\) \($(string $(LDFLAGS_freetype))\))
   println(ps:       $(SUPPORT_PS) \($(PATH_GS)\))
   println(rgb.txt:  $(SUPPORT_RGB_TXT) \($(string $(PATH_RGB_TXT))\))
   println(lablgtk2: $(SUPPORT_LABLGTK2))
   println(graphics: $(SUPPORT_GRAPHICS))
   println(--- Summary)
-  println(supported subpackages:  $(string $(SUPPORTED_SUBPACKAGES)))
-  println(supported formats:  $(string $(SUPPORTED_FORMATS)))
-  println(supported non-formats:  $(string $(SUPPORTED_NON_FORMATS)))
+  println(supported subpackages: $(string $(SUPPORTED_SUBPACKAGES)))
+  println(supported formats:     $(string $(SUPPORTED_FORMATS)))
+  println(supported non-formats: $(string $(SUPPORTED_NON_FORMATS)))
+  println(--- Global compilation switch)
   # CFLAGS and LDFLAGS are already defined when print_configured()
   # is defined, so using CFLAGS here just prints the value of 
   # when this function is defined.
@@ -119,9 +120,9 @@ true_if_not_defined(var)=
   # OCaml packages found likable
   OCAMLPACKS[]=
 
+  # GIF
   SUPPORT_GIF = false
   LDFLAGS_gif=
-
   if $(true_if_not_defined ARG_WANT_GIF)
     HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
     SUPPORT_GIF = $(HAVE_GIF)
@@ -131,6 +132,7 @@ true_if_not_defined(var)=
       export
     export
 
+  # PNG
   SUPPORT_PNG=false
   LDFLAGS_png=
   if $(true_if_not_defined ARG_WANT_PNG)
@@ -145,6 +147,7 @@ true_if_not_defined(var)=
       failwith(png requested but not found)
     export
 
+  # JPEG
   SUPPORT_JPEG=false
   LDFLAGS_jpeg=
   if $(true_if_not_defined ARG_WANT_JPEG)
@@ -158,6 +161,7 @@ true_if_not_defined(var)=
       failwith(jpeg requested but not found)
     export
 
+  # EXIF
   SUPPORT_EXIF=false
   if $(true_if_not_defined ARG_WANT_EXIF)
     HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
@@ -171,6 +175,7 @@ true_if_not_defined(var)=
       failwith(exif requested but not found)
     export
 
+  # TIFF
   SUPPORT_TIFF=false
   LDFLAGS_tiff=
   if $(true_if_not_defined ARG_WANT_TIFF)
@@ -184,6 +189,7 @@ true_if_not_defined(var)=
       failwith(tiff requested but not found)
     export
 
+  # XPM
   SUPPORT_XPM=false
   LDFLAGS_xpm=
   if $(true_if_not_defined ARG_WANT_XPM)
@@ -197,6 +203,7 @@ true_if_not_defined(var)=
       failwith(xpm requested but not found)
     export
 
+  # PS
   SUPPORT_PS=false
   $(Check_prog_in_path gs)
   PATH_GS=$(WHERE)
@@ -214,6 +221,7 @@ true_if_not_defined(var)=
       failwith(ps requested but not found)
     export
 
+  # LABLGTK2
   SUPPORT_LABLGTK2=false
   if $(true_if_not_defined ARG_WANT_LABLGTK2)
     SUPPORT_LABLGTK2 = $(Check_ocamlfind_package lablgtk2)
@@ -225,6 +233,7 @@ true_if_not_defined(var)=
       failwith(lablgtk2 requested but not found)
     export
 
+  # GRAPHICS
   SUPPORT_GRAPHICS=false
   if $(true_if_not_defined ARG_WANT_GRAPHICS)
     # CR: ocamlfind registers graphics even if not available
@@ -237,6 +246,7 @@ true_if_not_defined(var)=
       failwith(graphics requested but not found)
     export
 
+  # FREETYPE
   SUPPORT_FREETYPE = false
   $(Check_prog_in_path freetype-config)
   PATH_FREETYPE_CONFIG = $(WHERE)
@@ -248,7 +258,7 @@ true_if_not_defined(var)=
         PATH_FREETYPE_CONFIG = $(ARG_FREETYPE_CONFIG)
         export
     if $(SUPPORT_FREETYPE)
-      println(SUPPORT_FREETYPE=$(SUPPORT_FREETYPE)!)
+      # println(SUPPORT_FREETYPE=$(SUPPORT_FREETYPE)!)
       CAMLIMAGES_CFLAGS+= $(shell freetype-config --cflags)
       LDFLAGS_freetype= $(shell freetype-config --libs)
       export
