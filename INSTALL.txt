@@ -61,6 +61,27 @@ to add extra header and library search paths respectively. For example,
 
     % omake --configure CFLAGS="-I /usr/include/libexif" LDFLAGS="-L/opt/blah"
 
+List of configurable variables
+
+  CFLASG, INCLUDES, LDFLAGS: as usual.
+
+  ARG_WANT_<feature>=bool
+      Without specifying ARG_WANT_<feature>, omake --configure automatically
+      searches the availability of <feature> and enables it when found.
+
+      If ARG_WANT_<feature>=0, the feature is not checked, and disabled.
+
+      If ARG_WANT_<feature>=1, the feature must exist and is enabled.
+      If omake fails to find the feature, the entire build fails.
+
+      Currently the following features are available:
+        GIF, PNG, JPEG, EXIF, TIFF, XPM, GS, LABLGTK2, GRAPHICS, FREETYPE
+
+  ARG_FREETYPE_CONFIG=string
+  ARG_PATH_GS=string
+      PATH of freetype-config and gs. 
+      Without specifying, omake tries to find them in the PATH.
+
 Test
 ----
   Before you actually install the library, you can check that it
