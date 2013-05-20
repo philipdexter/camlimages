@@ -33,11 +33,6 @@ OCAMLMKLIB=ocamlmklib
 
 ##################################################### Auto configuration
 
-failwith(msg) =
-  eprintln(Error: $(msg))
-  exit 1
-
-
 print_configured() =
   println(--- Configuring)
   println(wordsize  $(WORD_SIZE))
@@ -75,10 +70,15 @@ print_configured() =
   println(---)
 
 true_if_not_defined(var)=
-    if $(not $(defined $(var))): 
+    if $(not $(defined $(var))) 
       true
     else
-      $(var)
+      value $(getvar $(var))
+
+failwith_if_defined(var, msg) =
+  if $(defined $(var)):
+      eprintln(Error: $(msg))
+      exit 1
 
 .STATIC:
   # Variables must be initialized inside .STATIC, if they should be
@@ -121,8 +121,9 @@ true_if_not_defined(var)=
   OCAMLPACKS[]=
 
   # GIF
-  SUPPORT_GIF = false
+  SUPPORT_GIF=false
   LDFLAGS_gif=
+  HAVE_GIF=
   if $(true_if_not_defined ARG_WANT_GIF)
     HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
     SUPPORT_GIF = $(HAVE_GIF)
@@ -130,11 +131,15 @@ true_if_not_defined(var)=
       LDFLAGS_gif=-lgif
       SUPPORTED_FORMATS+=gif
       export
+    else
+      failwith_if_defined(ARG_WANT_GIF, gif requested but not found)
     export
 
   # PNG
   SUPPORT_PNG=false
   LDFLAGS_png=
+  HAVE_Z=
+  HAVE_PNG=
   if $(true_if_not_defined ARG_WANT_PNG)
     HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
     HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
@@ -144,12 +149,13 @@ true_if_not_defined(var)=
       SUPPORTED_FORMATS+=png
       export
     else
-      failwith(png requested but not found)
+      failwith_if_defined(ARG_WANT_PNG, png requested but not found)
     export
 
   # JPEG
   SUPPORT_JPEG=false
   LDFLAGS_jpeg=
+  HAVE_JPEG=
   if $(true_if_not_defined ARG_WANT_JPEG)
     HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
     SUPPORT_JPEG = $(HAVE_JPEG)
@@ -158,26 +164,28 @@ true_if_not_defined(var)=
       SUPPORTED_FORMATS+=jpeg
       export
     else
-      failwith(jpeg requested but not found)
+      failwith_if_defined(ARG_WANT_JPEG, jpeg requested but not found)
     export
 
   # EXIF
   SUPPORT_EXIF=false
+  HAVE_EXIF=
+  LDFLAGS_exif=
   if $(true_if_not_defined ARG_WANT_EXIF)
     HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
     SUPPORT_EXIF = $(HAVE_EXIF)
-    LDFLAGS_exif=
     if $(SUPPORT_EXIF)
       LDFLAGS_exif=-lexif
       SUPPORTED_FORMATS+=exif
       export
     else
-      failwith(exif requested but not found)
+      failwith_if_defined(ARG_WANT_EXIF, exif requested but not found)
     export
 
   # TIFF
   SUPPORT_TIFF=false
   LDFLAGS_tiff=
+  HAVE_TIFF=
   if $(true_if_not_defined ARG_WANT_TIFF)
     HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
     SUPPORT_TIFF = $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
@@ -186,12 +194,13 @@ true_if_not_defined(var)=
       SUPPORTED_FORMATS+=tiff
       export
     else
-      failwith(tiff requested but not found)
+      failwith_if_defined(ARG_WANT_TIFF, tiff requested but not found)
     export
 
   # XPM
   SUPPORT_XPM=false
   LDFLAGS_xpm=
+  HAVE_XPM=
   if $(true_if_not_defined ARG_WANT_XPM)
     HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
     SUPPORT_XPM = $(HAVE_XPM)
@@ -200,7 +209,7 @@ true_if_not_defined(var)=
       SUPPORTED_FORMATS+=xpm
       export
     else
-      failwith(xpm requested but not found)
+      failwith_if_defined(ARG_WANT_XPM, xpm requested but not found)
     export
 
   # PS
@@ -218,7 +227,7 @@ true_if_not_defined(var)=
       SUPPORTED_FORMATS+=ps
       export
     else
-      failwith(ps requested but not found)
+      failwith_if_defined(ARG_WANT_GS, ps requested but not found)
     export
 
   # LABLGTK2
@@ -230,7 +239,7 @@ true_if_not_defined(var)=
       OCAMLPACKS+=lablgtk2
       export
     else
-      failwith(lablgtk2 requested but not found)
+      failwith_if_defined(ARG_WANT_LABLGTK2, lablgtk2 requested but not found)
     export
 
   # GRAPHICS
@@ -243,7 +252,7 @@ true_if_not_defined(var)=
       OCAMLPACKS+=graphics
       export
     else
-      failwith(graphics requested but not found)
+      failwith_if_defined(ARG_WANT_GRAPHICS, graphics requested but not found)
     export
 
   # FREETYPE
@@ -266,7 +275,7 @@ true_if_not_defined(var)=
       SUPPORTED_NON_FORMATS+=freetype
       export
     else
-      failwith(freetype requested but not found)
+      failwith_if_defined(ARG_WANT_FREETYPE, freetype requested but not found)
     export
 
   SUPPORTED_SUBPACKAGES= $(SUPPORTED_FORMATS) $(SUPPORTED_NON_FORMATS)
