@@ -23,6 +23,9 @@ doc/sphinx/_build
 
 test/out\.image$
 test/test$
+test/jpgexif$
+test/jpgmark$
+test/test2$
 
 examples/converter/converter$
 examples/converter-external/converter$
