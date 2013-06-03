@@ -103,8 +103,8 @@ value open_tiff_file_for_read( name )
     }
     /* r[3] is defined above */ 
     r[4] = (value)tif;
-    res = alloc_tuple(5);
-    for(i=0; i<5; i++) Field(res, i) = r[i];
+    res = alloc_small(5,0);
+    for(i=0; i<5; i++) Store_field(res, i, r[i]);
 
     CAMLreturn(res);
   } else {
