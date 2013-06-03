@@ -91,7 +91,7 @@ package "lablgtk2" (
 )
 
 package "all_formats" (
-  requires = "camlimages.core"
+  requires = "camlimages.core, unix"
   archive(byte) = "camlimages_all_formats.cma"
   archive(native) = "camlimages_all_formats.cmxa"
   version = "@PACKAGE_VERSION@"
