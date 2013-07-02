@@ -7,5 +7,5 @@ build: [
 remove: [
   ["ocamlfind" "remove" "camlimages"]
 ]
-depends: ["ocamlfind" "unix" "omake"]
+depends: ["ocamlfind" "base-unix" "omake"]
 depopts: ["lablgtk"]
