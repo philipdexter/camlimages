@@ -1,4 +1,4 @@
-4.1.0 (not yet)
+4.1.0
         * bmp was not linked with examples. Since bmp is pure ML libarary, 
           you may need to add -linkall to linker command to your build script,
           otherwise the module is silently ignored. 
