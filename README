@@ -111,3 +111,7 @@ somewhere else. The variables COMPFLAGS_CAMLIMAGES
 and LINKFLAGS_CAMLIMAGES are defined in Makefile.config; you should
 add them to the compiler and linker options. A sample Makefile is
 available at sample/Makefile.sample.
+
+4. Where to report issues?
+
+https://bitbucket.org/camlspotter/camlimages/issues?status=new&status=open
