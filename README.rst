@@ -1,8 +1,15 @@
+========================================================
 CamlImages - Objective Caml image processing library
+========================================================
+
+The latest released version is 4.1.0.
+========================================================
 
 Note: This library is currently under development.
+========================================================
 
-0. What is CamlImages ?
+What is CamlImages ?
+========================================================
 
 This is an image processing library, which provides some basic
 functions of image processing and loading/saving various image file
@@ -10,13 +17,16 @@ formats. In addition the library can handle huge images that cannot be
 (or can hardly be) stored into the memory (the library automatically
 creates swap files and escapes them to reduce the memory usage).
 
-1. Installation
+Installation
+========================================================
 
-	Read the file INSTALL.
+	Read the file INSTALL.txt
 
-2. Using CamlImages
+Using CamlImages
+========================================================
 
-2.1 Color models
+Color models
+--------------------------------------------------------
 
 CamlImages supports the following color models:
 
@@ -27,7 +37,8 @@ CamlImages supports the following color models:
 For each color models, the corresponding module is provided. Use the module
 Rgb24 if you want to access 24bit depth full color images, for example.
 
-2.2 Load/Save image files and other fancy features
+Load/Save image files and other fancy features
+--------------------------------------------------------
 
 CamlImages supports loading and saving of the following file formats:
 
@@ -55,11 +66,13 @@ the Graphics window).
 You can also draw strings on images using the Freetype library, which 
 is an external library to load and render TrueType fonts.
 
-2.3 Class interface
+Class interface
+--------------------------------------------------------
 
 The modules begins the letter 'o' are the class interface for CamlImages.
 
-2.4 Image swap
+Image swap
+--------------------------------------------------------
 
   When you create/load a huge image, the computer memory may not be
 sufficient to contain all the data. (For example, this may happen if
@@ -71,26 +84,31 @@ partitioned into several blocks and if there is not enough free
 memory, the blocks which have not been accessed recently are swapped
 to temporary files.  If a program requests to access to such a swapped
 block, the library silently loads it back into memory.
+
   By default, image swapping is disabled, because it slows down the
 programs. To activate this function, you have to modify
 Bitmap.maximum_live and Bitmap.maximum_block_size. Bitmap.maximum_live
 is the maximum heap live data size of the program (in words) and
 Bitmap.maximum_block_size is the maximum size of swap blocks (in
 words).
+
   For example, if you do not want to use more than 10M words (that is
 40Mb for a 32bit architecture or 80Mb for a 64bit architecture), set
 Bitmap.maximum_live to 10000000. You may (and you should) enable heap
 compaction, look at the GC interface file, gc.mli, in the standard
 library for more details (you should change the compaction configuration).
+
   Bitmap.maximum_block_size affects the speed and frequency of image
 block swapping. If it is larger, each swapping becomes slower. If it
 is smaller, more swappings will occur. Too large and too small
 maximum_block_size, both may make the program slower. I suggest to
 have maximum_block_size set to !Bitmap.maximum_live / 10.
+
   If you activated image swapping, cache files for unused swapped 
 blocks will be removed automatically by Caml GC finalization, 
 but you may free them explicitly by hand also. The functions and methods 
 named "destroy" will free those blocks. 
+
   The swap files are usually created in the /tmp directory.  If you
 set the environment variable "CAMLIMAGESTMPDIR", then its value
 replaces the default "/tmp" directory. The temporary files are erased
@@ -98,20 +116,7 @@ when the program exits successfully. In other situations, for instance
 in case of spurious exception, you may need to erase temporary files
 manually.
 
-3. Miscellaneous
-
-3.1 How do I organize my Makefile to use the library ?
-
-Put the following line at the top of your Makefile:
-
-	include /usr/local/lib/ocaml/camlimages/Makefile.config
-
-The library directory can be different if the library is installed 
-somewhere else. The variables COMPFLAGS_CAMLIMAGES
-and LINKFLAGS_CAMLIMAGES are defined in Makefile.config; you should
-add them to the compiler and linker options. A sample Makefile is
-available at sample/Makefile.sample.
-
-4. Where to report issues?
+Where to report issues?
+==========================================================
 
 https://bitbucket.org/camlspotter/camlimages/issues?status=new&status=open
