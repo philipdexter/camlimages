@@ -33,29 +33,96 @@ OCAMLMKLIB=ocamlmklib
 
 ##################################################### Auto configuration
 
+get_have(varname) =
+  # The following tries to get the variable content even if the condition is false!!
+  # $(if $(defined this.HAVE_$(varname)), $(getvar this.HAVE_$(varname)), not checked) 
+  if $(defined this.HAVE_$(varname))
+    value $(getvar this.HAVE_$(varname))
+  else
+    if $(defined this.CONFIG_$(varname))
+      if $(getvar this.CONFIG_$(varname))
+        value true
+      else
+        value false
+    else
+      value false
+
+get_config(varname) =
+  if $(defined this.CONFIG_$(varname))
+    value $(getvar this.CONFIG_$(varname))
+  else
+    value NA
+
+get_config_string(varname) =
+  if $(defined this.CONFIG_$(varname))
+    o= $(getvar this.CONFIG_$(varname))
+    if $(o)
+        value $(o.string)
+    else
+        value NA
+  else
+    value NA
+
+get_ldflags(varname) =
+  if $(defined CONFIG_$(varname))
+    o = $(getvar CONFIG_$(varname))
+    if $(o.Available)
+        value $(o.LDFLAGS)
+    else
+        value $(EMPTY)
+  else
+        value $(EMPTY)
+#     if $(defined LDFLAGS_$(varname))
+#       value $(getvar LDFLAGS_$(varname))
+#     else
+#       value $(EMPTY)
+
+get_cflags(varname) =
+  if $(defined this.CONFIG_$(varname))
+    o = $(getvar this.CONFIG_$(varname))
+    value o.CFLAGS
+  else
+    if $(defined CFLAGS_$(varname))
+      value $(getvar CFLAGS_$(varname))
+    else
+      value $(EMPTY)
+
+get_supported(varname) =
+  if $(defined this.CONFIG_$(varname))
+    o = $(getvar this.CONFIG_$(varname))
+    value $(o.Available)
+  else
+    if $(defined SUPPORTED_$(varname))
+      value $(getvar SUPPORTED_$(varname))
+    else
+      value false
+
 print_configured() =
+
   println(--- Configuring)
   println(wordsize  $(WORD_SIZE))
+  println(--- Pkg-config)
+  println(pkg-config: $(PATH_PKG_CONFIG))
   println(--- C libraries)
-  println(libgif:   $(HAVE_GIF))
-  println(libpng:   $(HAVE_PNG))
-  println(libjpeg:  $(HAVE_JPEG))
-  println(libexif:  $(HAVE_EXIF))
-  println(libtiff:  $(HAVE_TIFF))
-  println(libxpm:   $(HAVE_XPM))
-  println(libz:     $(HAVE_Z))
+  println(libz:     $(get_have Z))
+  println(libgif:   $(get_have GIF))
+  println(libpng:   $(get_have PNG))
+  println(libjpeg:  $(get_have JPEG))
+  println(libexif:  $(get_have EXIF))
+  println(libtiff:  $(get_have TIFF))
+  println(libxpm:   $(get_have XPM))
   println(--- Subpackages)
-  println(gif:      $(SUPPORT_GIF) \($(string $(LDFLAGS_gif)\)))
-  println(png:      $(SUPPORT_PNG) \($(string $(LDFLAGS_png)\)))
-  println(jpeg:     $(SUPPORT_JPEG) \($(string $(LDFLAGS_jpeg)\)))
-  println(exif:     $(SUPPORT_EXIF) \($(string $(LDFLAGS_exif)\)))
-  println(tiff:     $(SUPPORT_TIFF) \($(string $(LDFLAGS_tiff)\)))
-  println(xpm:      $(SUPPORT_XPM) \($(string $(LDFLAGS_xpm)\)))
-  println(freetype: $(SUPPORT_FREETYPE) \($(PATH_FREETYPE_CONFIG)\) \($(string $(LDFLAGS_freetype))\))
-  println(ps:       $(SUPPORT_PS) \($(PATH_GS)\))
-  println(rgb.txt:  $(SUPPORT_RGB_TXT) \($(string $(PATH_RGB_TXT))\))
-  println(lablgtk2: $(SUPPORT_LABLGTK2))
-  println(graphics: $(SUPPORT_GRAPHICS))
+  println(gif:      $(get_supported GIF) \($(get_config_string GIF)\))
+  println(png:      $(get_supported PNG) \($(get_config_string PNG)\))
+  println(jpeg:     $(get_supported JPEG) \($(get_config_string JPEG)\))
+  println(exif:     $(get_supported EXIF) \($(get_config_string EXIF)\))
+  println(tiff:     $(get_supported TIFF) \($(get_config_string TIFF)\))
+  println(xpm:      $(get_supported XPM)  \($(get_config_string XPM)\))
+  println(freetype: $(get_supported FREETYPE) \($(PATH_FREETYPE_CONFIG)\) \($(get_config_string FREETYPE)\))
+  println(ps:       $(get_supported PS) \($(get_config_string PS)\))
+  println(rgb.txt:  $(get_supported RGB_TXT) \($(string $(PATH_RGB_TXT))\))
+  println(lablgtk2: $(get_supported LABLGTK2))
+  println(graphics: $(get_supported GRAPHICS))
   println(--- Summary)
   println(supported subpackages: $(string $(SUPPORTED_SUBPACKAGES)))
   println(supported formats:     $(string $(SUPPORTED_FORMATS)))
@@ -71,7 +138,13 @@ print_configured() =
 
 true_if_not_defined(var)=
     if $(not $(defined $(var))) 
-      true
+      value true
+    else
+      value $(getvar $(var))
+
+false_if_not_defined(var)=
+    if $(not $(defined $(var))) 
+      value false
     else
       value $(getvar $(var))
 
@@ -79,6 +152,12 @@ failwith_if_defined(var, msg) =
   if $(defined $(var)):
       eprintln(Error: $(msg))
       exit 1
+
+GET_PATH_GS() =
+    if $(defined ARG_PATH_GS):
+        value $(ARG_PATH_GS)
+    else
+	value $(Check_prog_in_path gs)
 
 .STATIC:
   # Variables must be initialized inside .STATIC, if they should be
@@ -117,117 +196,123 @@ failwith_if_defined(var, msg) =
   # SUPPORTED_FORMATS + SUPPORTED_NON_FORMATS
   SUPPORTED_SUBPACKAGES[]=
 
-  # OCaml packages found likable
+  # OCaml packages found linkable
   OCAMLPACKS[]=
 
+  # pkg-config
+  PATH_PKG_CONFIG = $(Check_prog_in_path pkg-config) 
+
+  HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
+
   # GIF
-  SUPPORT_GIF=false
-  LDFLAGS_gif=
-  HAVE_GIF=
   if $(true_if_not_defined ARG_WANT_GIF)
-    HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
-    SUPPORT_GIF = $(HAVE_GIF)
-    if $(SUPPORT_GIF)
-      LDFLAGS_gif=-lgif
-      SUPPORTED_FORMATS+=gif
+    CONFIG_GIF=$(by_pkg_config libgif)
+    if $(not $(CONFIG_GIF.Available))
+      HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
+      if $(HAVE_GIF)
+        CONFIG_GIF. =
+           extends $(Config)
+           LDFLAGS=-lgif
+        export CONFIG_GIF
+      else
+        failwith_if_defined(ARG_WANT_GIF, gif requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_GIF, gif requested but not found)
     export
 
-  # PNG
-  SUPPORT_PNG=false
-  LDFLAGS_png=
-  HAVE_Z=
-  HAVE_PNG=
+  # PNG	
   if $(true_if_not_defined ARG_WANT_PNG)
-    HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
-    HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
-    SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
-    if $(SUPPORT_PNG)
-      LDFLAGS_png=-lpng -lz
-      SUPPORTED_FORMATS+=png
+    CONFIG_PNG=$(by_pkg_config libpng)
+    if $(not $(CONFIG_PNG.Available))
+      HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
+      if $(and $(HAVE_Z) $(HAVE_PNG))
+        CONFIG_PNG. =
+           extends $(Config)
+           LDFLAGS=-lpng -lz
+        export CONFIG_PNG
+      else
+        failwith_if_defined(ARG_WANT_PNG, png requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_PNG, png requested but not found)
     export
 
-  # JPEG
-  SUPPORT_JPEG=false
-  LDFLAGS_jpeg=
-  HAVE_JPEG=
+  # JPEG	
   if $(true_if_not_defined ARG_WANT_JPEG)
-    HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
-    SUPPORT_JPEG = $(HAVE_JPEG)
-    if $(SUPPORT_JPEG)
-      LDFLAGS_jpeg=-ljpeg
-      SUPPORTED_FORMATS+=jpeg
+    CONFIG_JPEG=$(by_pkg_config libjpeg)
+    if $(not $(CONFIG_JPEG.Available))
+      HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
+      if $(HAVE_JPEG)
+        CONFIG_JPEG. =
+           extends $(Config)
+           LDFLAGS=-ljpeg
+        export CONFIG_JPEG
+      else
+        failwith_if_defined(ARG_WANT_JPEG, jpeg requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_JPEG, jpeg requested but not found)
     export
 
   # EXIF
-  SUPPORT_EXIF=false
-  HAVE_EXIF=
-  LDFLAGS_exif=
   if $(true_if_not_defined ARG_WANT_EXIF)
-    HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
-    SUPPORT_EXIF = $(HAVE_EXIF)
-    if $(SUPPORT_EXIF)
-      LDFLAGS_exif=-lexif
-      SUPPORTED_FORMATS+=exif
+    CONFIG_EXIF=$(by_pkg_config libexif)
+    if $(not $(CONFIG_EXIF.Available))
+      HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
+      if $(HAVE_EXIF)
+	CONFIG_EXIF. =
+           extends $(Config)
+	   LDFLAGS=-lexif
+        export CONFIG_EXIF
+      else
+        failwith_if_defined(ARG_WANT_EXIF, exif requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_EXIF, exif requested but not found)
     export
 
   # TIFF
-  SUPPORT_TIFF=false
-  LDFLAGS_tiff=
-  HAVE_TIFF=
   if $(true_if_not_defined ARG_WANT_TIFF)
-    HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
-    SUPPORT_TIFF = $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
-    if $(SUPPORT_TIFF)
-      LDFLAGS_tiff=$(array -ltiff -ljpeg -lz)
-      SUPPORTED_FORMATS+=tiff
+    CONFIG_TIFF=$(by_pkg_config libtiff-4)
+    if $(not $(CONFIG_TIFF.Available))  
+      HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
+      if $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
+	CONFIG_TIFF. =
+          extends $(Config)
+	  LDFLAGS=-ltiff -ljpeg -lz
+        export CONFIG_TIFF
+      else
+        failwith_if_defined(ARG_WANT_TIFF, tiff requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_TIFF, tiff requested but not found)
     export
 
   # XPM
-  SUPPORT_XPM=false
-  LDFLAGS_xpm=
-  HAVE_XPM=
   if $(true_if_not_defined ARG_WANT_XPM)
-    HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
-    SUPPORT_XPM = $(HAVE_XPM)
-    if $(SUPPORT_XPM)
-      LDFLAGS_xpm=-lXpm
-      SUPPORTED_FORMATS+=xpm
+    CONFIG_XPM=$(by_pkg_config xpm)
+    if $(not $(CONFIG_XPM).Available)  
+      HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
+      if $(HAVE_XPM)
+	CONFIG_XPM. =
+          extends $(Config)
+	  LDFLAGS=-lXpm
+        export CONFIG_XPM
+      else
+        failwith_if_defined(ARG_WANT_XPM, xpm requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_XPM, xpm requested but not found)
     export
 
   # PS
-  SUPPORT_PS=false
-  $(Check_prog_in_path gs)
-  PATH_GS=$(WHERE)
-  LDFLAGS_ps=
   if $(true_if_not_defined ARG_WANT_GS)
-    # SUPPORT_PS = $(Check_prog_in_path gs)
-    SUPPORT_PS = true
-    if $(defined ARG_PATH_GS):
-        PATH_GS = $(ARG_PATH_GS)
-        export
-    if $(SUPPORT_PS)
-      SUPPORTED_FORMATS+=ps
-      export
+    PATH_GS = $(GET_PATH_GS)
+    if $(not $(PATH_GS))
+        failwith_if_defined(ARG_WANT_GS, ps requested but not found)
+	export PATH_GS
+    if $(PATH_GS)
+	x = $(PATH_GS) # We must bind to a new variable otherwise PATH_GS is resolved later
+        CONFIG_PS. =
+           extends $(Config)
+           PATH=$(x)
+           string() =
+               value $(x)
+        export CONFIG_PS
     else
-      failwith_if_defined(ARG_WANT_GS, ps requested but not found)
+      println(PATH_GS not found)
+      CONFIG_PS. =
+	   extends $(Invalid)
+      export CONFIG_PS
     export
 
   # LABLGTK2
@@ -256,23 +341,23 @@ failwith_if_defined(var, msg) =
     export
 
   # FREETYPE
-  SUPPORT_FREETYPE = false
-  $(Check_prog_in_path freetype-config)
-  PATH_FREETYPE_CONFIG = $(WHERE)
-  LDFLAGS_freetype=
+  PATH_FREETYPE_CONFIG=
   if $(true_if_not_defined ARG_WANT_FREETYPE)
-    # SUPPORT_FREETYPE = $(Check_prog_in_path freetype-config)
-    SUPPORT_FREETYPE = true
-    if $(defined ARG_FREETYPE_CONFIG):
-        PATH_FREETYPE_CONFIG = $(ARG_FREETYPE_CONFIG)
-        export
-    if $(SUPPORT_FREETYPE)
-      # println(SUPPORT_FREETYPE=$(SUPPORT_FREETYPE)!)
-      CAMLIMAGES_CFLAGS+= $(shell freetype-config --cflags)
-      LDFLAGS_freetype= $(shell freetype-config --libs)
+    if $(defined ARG_FREETYPE_CONFIG)
+      SUPPORT_FREETYPE = true
+      PATH_FREETYPE_CONFIG = $(ARG_FREETYPE_CONFIG)
       export
-    if $(SUPPORT_FREETYPE)
-      SUPPORTED_NON_FORMATS+=freetype
+    else
+      PATH_FREETYPE_CONFIG = $(Check_prog_in_path freetype-config)
+      export
+    if $(PATH_FREETYPE_CONFIG)
+      # Strange scoping... 	
+      CFLAGS_= $(shell $(PATH_FREETYPE_CONFIG) --cflags)
+      LDFLAGS_= $(shell $(PATH_FREETYPE_CONFIG) --libs)
+      CONFIG_FREETYPE. =
+        extends $(Config)
+        CFLAGS=$(CFLAGS_)
+        LDFLAGS=$(LDFLAGS_)
       export
     else
       failwith_if_defined(ARG_WANT_FREETYPE, freetype requested but not found)
