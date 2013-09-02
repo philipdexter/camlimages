@@ -174,19 +174,19 @@ FILES_lablgtk2[]=
 
 ####################################################################### LDFLAGS
 
-LDFLAGS_core[]=
+LDFLAGS_CORE[]=
 
-LDFLAGS_supported=
+LDFLAGS_SUPPORTED=
   x=
   foreach(p, $(SUPPORTED_FORMATS))
-    x+= $(getvar LDFLAGS_$(p))
+    x+= $(getvar LDFLAGS_$(uppercase $(p)))
     export
   value $(x)
 
-LDFLAGS_all_formats=
+LDFLAGS_ALL_FORMATS=
   x=
   foreach(p, $(FORMATS))
-    x+= $(getvar LDFLAGS_$(p))
+    x+= $(get_ldflags $(uppercase $(p)))
     export
   value $(x)
 
@@ -205,7 +205,7 @@ CFLAGS+= -fPIC -I $(OCAML_WHERE)
 MakeLibC(name) =
   OCamlMkLibC($(LIBRARY_PREFIX)_$(name), \
 	$(CFILES_lib $(name)), \
-	$(getvar LDFLAGS_$(name)))
+	$(get_ldflags $(uppercase $(name))))
 
 ################################################################# ML BUILD RULE
 
@@ -239,7 +239,7 @@ MakeLibOCaml(name) =
     OCAMLOPTFLAGS+=-cclib -l$(LIBRARY_PREFIX)_$(name)
     # use mapprefix instead of addprefix, otherwise "-cclib -lgif"
     # is considered one option.
-    OCAML_LIB_FLAGS=-linkall $(mapprefix -cclib, $(LDFLAGS) $(getvar LDFLAGS_$(name)))
+    OCAML_LIB_FLAGS=-linkall $(mapprefix -cclib, $(LDFLAGS) $(get_ldflags $(uppercase $(name))))
     OCamlLibrary($(LIBRARY_PREFIX)_$(name), $(getvar FILES_$(name)))
 
 LIBRARIES=
