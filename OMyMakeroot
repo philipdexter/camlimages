@@ -218,10 +218,11 @@ BuildExample(namex, modules, packages) =
 pkg_config(name, libname) =
   if $(and $(defined this.PATH_PKG_CONFIG), $(equal 0, $(shell-code $(PATH_PKG_CONFIG) $(libname))))
     println(Found pkg-config $(libname))
-    setvar(LDFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --libs $(libname)))
-    setvar(CFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --cflags $(libname)))
-    setvar(SUPPORT_$(uppercase $(name)), true)
-    setvar(HAVE_$(uppercase $(name)), true)
+    # this is required since it is called in .STATIC
+    setvar(this.LDFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --libs $(libname)))
+    setvar(this.CFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --cflags $(libname)))
+    setvar(this.SUPPORT_$(uppercase $(name)), true)
+    setvar(this.HAVE_$(uppercase $(name)), true)
     export
     value true
   else 

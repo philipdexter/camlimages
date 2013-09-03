@@ -200,7 +200,14 @@ PACKS_lablgtk2[]=
 
 ################################################################## C BUILD RULE
 
-CFLAGS+= -fPIC -I $(OCAML_WHERE)
+CFLAGS_supported=
+  x=
+  foreach(p, $(SUPPORTED_SUBPACKAGES))
+    x+= $(getvar CFLAGS_$(p))
+    export
+  value $(x)
+
+CFLAGS+= -fPIC -I $(OCAML_WHERE) $(CFLAGS_supported)
 
 MakeLibC(name) =
   OCamlMkLibC($(LIBRARY_PREFIX)_$(name), \
