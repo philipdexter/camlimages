@@ -1,54 +1,52 @@
+=========================================================
 CamlImages - Objective Caml image processing library
+=========================================================
 
-This library is reliable but still under development.
-
-*** Requirements
+Requirements
+=================
 
  To install CamlImages library, you need the following softwares:
 
-        * OCaml 4.00.1 or higher 
-          (OCaml 3.11 and above might work with small trivial fixes, 
-           but never tested)
-	* Findlib (aka ocamlfind, 
-	  	   http://www.camlcity.org/archive/programming/findlib.html)
-        * OMake (http://omake.metaprl.org/index.html)
+* OCaml 4.00.1 or higher (OCaml 3.11 and above might work with small trivial fixes, but never tested)
+* Findlib (aka ocamlfind, http://www.camlcity.org/archive/programming/findlib.html )
+* OMake ( http://omake.metaprl.org/index.html )
 
 Note that this is the minimum requirement: you can read/write BMP or
 PXM (PPM, PGM, PBM) image formats but no other formats. If you want to
 deal with other image formats, you need to install the corresponding
 external libraries:
 
-        * libpng for PNG format
-                http://www.libpng.org/pub/png/libpng.html
-                http://sourceforge.net/projects/libpng/
+* libpng for PNG format
+        http://www.libpng.org/pub/png/libpng.html
+        http://sourceforge.net/projects/libpng/
 
-        * libjpeg for JPEG format
-                The Independent JPEG Group's software
-                ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
+* libjpeg for JPEG format
+        The Independent JPEG Group's software
+        ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
-        * libexif for EXIF tags in JPEG files
+* libexif for EXIF tags in JPEG files
 
-        * libtiff for TIFF format
-                http://www.libtiff.org/
-                ftp://ftp.remotesensing.org/pub/libtiff/
+* libtiff for TIFF format
+        http://www.libtiff.org/
+        ftp://ftp.remotesensing.org/pub/libtiff/
 
-        * libxpm for XPM format (could be already by the X server installation)
-                X contrib libraries ftp directory
-                ftp://ftp.x.org/contrib/libraries
+* libxpm for XPM format (could be already by the X server installation)
+        X contrib libraries ftp directory
+        ftp://ftp.x.org/contrib/libraries
 
-        * freetype for drawing texts using truetype fonts
-                The FREETYPE Project
-                http://sourceforge.net/projects/freetype/
+* freetype for drawing texts using truetype fonts
+        The FREETYPE Project
+        http://sourceforge.net/projects/freetype/
 
-        * libungif for GIF format
-                Libungif, a library for using GIFs
-                  http://sourceforge.net/projects/libungif/
+* libungif for GIF format
+        Libungif, a library for using GIFs
+          http://sourceforge.net/projects/libungif/
 
-        * ghostscript for PS format
-                See http://www.ghostscript.com/
+* ghostscript for PS format
+        See http://www.ghostscript.com/
 
-        * lablgtk2, an Objective Caml interface to gtk+
-                http://wwwfun.kurims.kyoto-u.ac.jp/soft/olabl/lablgtk.html
+* lablgtk2, an Objective Caml interface to gtk+
+        http://wwwfun.kurims.kyoto-u.ac.jp/soft/olabl/lablgtk.html
 
 *** Installation procedure by omake
 
