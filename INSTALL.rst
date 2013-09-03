@@ -5,7 +5,7 @@ CamlImages - Objective Caml image processing library
 Requirements
 =================
 
- To install CamlImages library, you need the following softwares:
+To install CamlImages library, you need the following softwares:
 
 * OCaml 4.00.1 or higher (OCaml 3.11 and above might work with small trivial fixes, but never tested)
 * Findlib (aka ocamlfind, http://www.camlcity.org/archive/programming/findlib.html )
@@ -17,42 +17,23 @@ deal with other image formats, you need to install the corresponding
 external libraries:
 
 * libpng for PNG format
-        http://www.libpng.org/pub/png/libpng.html
-        http://sourceforge.net/projects/libpng/
-
 * libjpeg for JPEG format
-        The Independent JPEG Group's software
-        ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
-
 * libexif for EXIF tags in JPEG files
-
 * libtiff for TIFF format
-        http://www.libtiff.org/
-        ftp://ftp.remotesensing.org/pub/libtiff/
-
 * libxpm for XPM format (could be already by the X server installation)
-        X contrib libraries ftp directory
-        ftp://ftp.x.org/contrib/libraries
-
 * freetype for drawing texts using truetype fonts
-        The FREETYPE Project
-        http://sourceforge.net/projects/freetype/
-
-* libungif for GIF format
-        Libungif, a library for using GIFs
-          http://sourceforge.net/projects/libungif/
-
+* libungif/libgif for GIF format
 * ghostscript for PS format
-        See http://www.ghostscript.com/
+* lablgtk2, an OCaml interface to gtk+
 
-* lablgtk2, an Objective Caml interface to gtk+
-        http://wwwfun.kurims.kyoto-u.ac.jp/soft/olabl/lablgtk.html
+Installation
+=====================================
 
-*** Installation procedure by omake
+::
 
- % yes no | omake --install 
- % omake --configure <configuration options>
- % omake install
+    % yes no | omake --install 
+    % omake --configure <configuration options>
+    % omake install
 
 At omake --configure, you can specify CFLAGS and LDFLAGS 
 to add extra header and library search paths respectively. For example,
@@ -60,10 +41,12 @@ to add extra header and library search paths respectively. For example,
     % omake --configure CFLAGS="-I /usr/include/libexif" LDFLAGS="-L/opt/blah"
 
 List of configurable variables
+---------------------------------
 
-  CFLASG, INCLUDES, LDFLAGS: as usual.
+CFLASG, INCLUDES, LDFLAGS: as usual.
 
-  ARG_WANT_<feature>=bool
+ARG_WANT_<feature>=bool
+
       Without specifying ARG_WANT_<feature>, omake --configure automatically
       searches the availability of <feature> and enables it when found.
 
@@ -75,9 +58,10 @@ List of configurable variables
       Currently the following features are available:
         GIF, PNG, JPEG, EXIF, TIFF, XPM, GS, LABLGTK2, GRAPHICS, FREETYPE
 
-  ARG_FREETYPE_CONFIG=string
-  ARG_PATH_GS=string
-      PATH of freetype-config and gs. 
+ARG_PATH_PKG_CONFIG=string
+ARG_PATH_FREETYPE_CONFIG=string
+ARG_PATH_GS=string
+      PATH of external commands like pkg-config, freetype-config and gs
       Without specifying, omake tries to find them in the PATH.
 
 Test
@@ -87,7 +71,7 @@ really works, by running examples in the test directory. For the test
 programs,
 
         % cd test
-        % make
+        % omake
         % ./test
         % ./test.run
 
