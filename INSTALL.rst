@@ -36,7 +36,7 @@ Installation
     % omake install
 
 At omake --configure, you can specify CFLAGS and LDFLAGS 
-to add extra header and library search paths respectively. For example,
+to add extra header and library search paths respectively. For example,::
 
     % omake --configure CFLAGS="-I /usr/include/libexif" LDFLAGS="-L/opt/blah"
 
@@ -77,3 +77,8 @@ programs,
 
 (./test.run is the bytecode executable and ./test the binary
 executable).
+
+Where to report building issues?
+==========================================================
+
+https://bitbucket.org/camlspotter/camlimages/issues?status=new&status=open
