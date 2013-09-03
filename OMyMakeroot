@@ -55,10 +55,9 @@ Check_ocamlfind_package(package) =
   ConfMsgChecking($(package))
   ConfMsgFound($(shell-success ocamlfind query $(package)))
 
-# never used
-#Check_pkg_config(package, option) =
-#  ConfMsgChecking(Freetype)
-#  ConfMsgFound($(shell-success $(package)-config $(option)))
+Check_pkg_config(package, option) =
+  ConfMsgChecking(Freetype)
+  ConfMsgFound($(shell-success $(package)-config $(option)))
 
 where1(com) =
   WHERE = $(where $(prog))
@@ -67,7 +66,7 @@ where1(com) =
   else
     value
 
-# The path or false
+# export $(WHERE)
 Check_prog_in_path(prog) =
    ConfMsgChecking(for $(prog))
    WHERE = $(where1 $(prog))
@@ -213,30 +212,3 @@ BuildExample(namex, modules, packages) =
 
 ###############################################################################
 
-Config. =
-    class Config
-    Available=true
-    LDFLAGS=
-    CFLAGS=
-    string() = 
-      value $(string $(CFLAGS) $(LDFLAGS))
-
-Invalid. =
-    class Invalid
-    Available=false
-    string() =
-      value NA
-        
-by_pkg_config(libname) =
-  if $(and $(defined this.PATH_PKG_CONFIG), $(equal 0, $(shell-code $(PATH_PKG_CONFIG) $(libname))))
-    println(Found pkg-config $(libname))
-    CONFIG. =
-      extends $(Config)
-      LDFLAGS= $(shell pkg-config --libs $(libname))
-      CFLAGS= $(shell pkg-config --cflags $(libname))
-    value $(CONFIG)
-  else 
-    println(Not found pkg-config $(libname))
-    INVALID. =
-       extends $(Invalid)
-    value $(INVALID)
