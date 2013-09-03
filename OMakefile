@@ -33,29 +33,49 @@ OCAMLMKLIB=ocamlmklib
 
 ##################################################### Auto configuration
 
+with_default(def, varname) =
+    if $(not $(defined $(varname))) 
+      return $(def)
+    else
+      getvar($(varname))
+
+true_if_not_defined(var)=
+    with_default(true, $(var))
+
+failwith_if_defined(var, msg) =
+  if $(defined $(var)):
+      eprintln(Error: $(msg))
+      exit 1
+
+get_have(varname) =
+    with_default(false, this.HAVE_$(varname)) # this required
+
+get_support(varname) =
+    with_default(false, this.SUPPORT_$(varname)) # this required
+
 print_configured() =
   println(--- Configuring)
   println(wordsize  $(WORD_SIZE))
   println(--- C libraries)
-  println(libgif:   $(HAVE_GIF))
-  println(libpng:   $(HAVE_PNG))
-  println(libjpeg:  $(HAVE_JPEG))
-  println(libexif:  $(HAVE_EXIF))
-  println(libtiff:  $(HAVE_TIFF))
-  println(libxpm:   $(HAVE_XPM))
-  println(libz:     $(HAVE_Z))
+  println(libgif:   $(get_have GIF))
+  println(libpng:   $(get_have PNG))
+  println(libjpeg:  $(get_have JPEG))
+  println(libexif:  $(get_have EXIF))
+  println(libtiff:  $(get_have TIFF))
+  println(libxpm:   $(get_have XPM))
+  println(libz:     $(get_have Z))
   println(--- Subpackages)
-  println(gif:      $(SUPPORT_GIF) \($(string $(LDFLAGS_gif)\)))
-  println(png:      $(SUPPORT_PNG) \($(string $(LDFLAGS_png)\)))
-  println(jpeg:     $(SUPPORT_JPEG) \($(string $(LDFLAGS_jpeg)\)))
-  println(exif:     $(SUPPORT_EXIF) \($(string $(LDFLAGS_exif)\)))
-  println(tiff:     $(SUPPORT_TIFF) \($(string $(LDFLAGS_tiff)\)))
-  println(xpm:      $(SUPPORT_XPM) \($(string $(LDFLAGS_xpm)\)))
-  println(freetype: $(SUPPORT_FREETYPE) \($(PATH_FREETYPE_CONFIG)\) \($(string $(LDFLAGS_freetype))\))
-  println(ps:       $(SUPPORT_PS) \($(PATH_GS)\))
-  println(rgb.txt:  $(SUPPORT_RGB_TXT) \($(string $(PATH_RGB_TXT))\))
-  println(lablgtk2: $(SUPPORT_LABLGTK2))
-  println(graphics: $(SUPPORT_GRAPHICS))
+  println(gif:      $(get_support GIF) \($(string $(LDFLAGS_gif)\)))
+  println(png:      $(get_support PNG) \($(string $(LDFLAGS_png)\)))
+  println(jpeg:     $(get_support JPEG) \($(string $(LDFLAGS_jpeg)\)))
+  println(exif:     $(get_support EXIF) \($(string $(LDFLAGS_exif)\)))
+  println(tiff:     $(get_support TIFF) \($(string $(LDFLAGS_tiff)\)))
+  println(xpm:      $(get_support XPM) \($(string $(LDFLAGS_xpm)\)))
+  println(freetype: $(get_support FREETYPE) \($(PATH_FREETYPE_CONFIG)\) \($(string $(LDFLAGS_freetype))\))
+  println(ps:       $(get_support PS) \($(PATH_GS)\))
+  println(rgb.txt:  $(get_support RGB_TXT) \($(string $(PATH_RGB_TXT))\))
+  println(lablgtk2: $(get_support LABLGTK2))
+  println(graphics: $(get_support GRAPHICS))
   println(--- Summary)
   println(supported subpackages: $(string $(SUPPORTED_SUBPACKAGES)))
   println(supported formats:     $(string $(SUPPORTED_FORMATS)))
@@ -68,17 +88,6 @@ print_configured() =
   println(CFLAGS:   $(string $(CAMLIMAGES_CFLAGS)))
   println(LDFLAGS:  $(string $(CAMLIMAGES_LDFLAGS)))
   println(---)
-
-true_if_not_defined(var)=
-    if $(not $(defined $(var))) 
-      true
-    else
-      value $(getvar $(var))
-
-failwith_if_defined(var, msg) =
-  if $(defined $(var)):
-      eprintln(Error: $(msg))
-      exit 1
 
 .STATIC:
   # Variables must be initialized inside .STATIC, if they should be
@@ -120,10 +129,12 @@ failwith_if_defined(var, msg) =
   # OCaml packages found likable
   OCAMLPACKS[]=
 
+  # Zlib
+
+  HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
+
   # GIF
-  SUPPORT_GIF=false
   LDFLAGS_gif=
-  HAVE_GIF=
   if $(true_if_not_defined ARG_WANT_GIF)
     HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
     SUPPORT_GIF = $(HAVE_GIF)
@@ -136,12 +147,8 @@ failwith_if_defined(var, msg) =
     export
 
   # PNG
-  SUPPORT_PNG=false
   LDFLAGS_png=
-  HAVE_Z=
-  HAVE_PNG=
   if $(true_if_not_defined ARG_WANT_PNG)
-    HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
     HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
     SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
     if $(SUPPORT_PNG)
@@ -153,9 +160,7 @@ failwith_if_defined(var, msg) =
     export
 
   # JPEG
-  SUPPORT_JPEG=false
   LDFLAGS_jpeg=
-  HAVE_JPEG=
   if $(true_if_not_defined ARG_WANT_JPEG)
     HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
     SUPPORT_JPEG = $(HAVE_JPEG)
@@ -168,8 +173,6 @@ failwith_if_defined(var, msg) =
     export
 
   # EXIF
-  SUPPORT_EXIF=false
-  HAVE_EXIF=
   LDFLAGS_exif=
   if $(true_if_not_defined ARG_WANT_EXIF)
     HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
@@ -183,9 +186,7 @@ failwith_if_defined(var, msg) =
     export
 
   # TIFF
-  SUPPORT_TIFF=false
   LDFLAGS_tiff=
-  HAVE_TIFF=
   if $(true_if_not_defined ARG_WANT_TIFF)
     HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
     SUPPORT_TIFF = $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
@@ -198,9 +199,7 @@ failwith_if_defined(var, msg) =
     export
 
   # XPM
-  SUPPORT_XPM=false
   LDFLAGS_xpm=
-  HAVE_XPM=
   if $(true_if_not_defined ARG_WANT_XPM)
     HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
     SUPPORT_XPM = $(HAVE_XPM)
@@ -213,7 +212,6 @@ failwith_if_defined(var, msg) =
     export
 
   # PS
-  SUPPORT_PS=false
   LDFLAGS_ps=
   if $(true_if_not_defined ARG_WANT_GS)
     PATH_GS=$(Check_prog_in_path gs)
@@ -229,7 +227,6 @@ failwith_if_defined(var, msg) =
     export
 
   # LABLGTK2
-  SUPPORT_LABLGTK2=false
   if $(true_if_not_defined ARG_WANT_LABLGTK2)
     SUPPORT_LABLGTK2 = $(Check_ocamlfind_package lablgtk2)
     if $(SUPPORT_LABLGTK2)
@@ -241,7 +238,6 @@ failwith_if_defined(var, msg) =
     export
 
   # GRAPHICS
-  SUPPORT_GRAPHICS=false
   if $(true_if_not_defined ARG_WANT_GRAPHICS)
     # CR: ocamlfind registers graphics even if not available
     SUPPORT_GRAPHICS = $(Check_ocamlfind_package_compilation graphics, Graphics)
@@ -254,7 +250,6 @@ failwith_if_defined(var, msg) =
     export
 
   # FREETYPE
-  SUPPORT_FREETYPE = false
   LDFLAGS_freetype=
   if $(true_if_not_defined ARG_WANT_FREETYPE)
     PATH_FREETYPE_CONFIG=

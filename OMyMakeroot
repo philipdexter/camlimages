@@ -161,7 +161,10 @@ ConfReplaceAt(file)=
       stdout = $(fopen $(file), w)
       fsubst($(file).in)
       case $"@\([A-Z0-9_]+\)@" g
-        getvar($1)
+        if $(defined $1)
+          getvar($1)
+        else
+          value false
       close($(stdout))
 
 ConfReplaceConfigH(file)=
