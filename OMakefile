@@ -129,6 +129,17 @@ print_configured() =
   # OCaml packages found likable
   OCAMLPACKS[]=
 
+  # pkg-config
+
+  if $(true_if_not_defined ARG_WANT_PKG_CONFIG)
+    if $(defined ARG_PATH_PKG_CONFIG):
+        PATH_PKG_CONFIG = $(ARG_PATH_PKG_CONFIG)
+        export
+    else
+        PATH_PKG_CONFIG = $(Check_prog_in_path pkg-config)
+        export
+    export
+
   # Zlib
 
   HAVE_Z = $(Check_header_library z, zlib.h, zlibVersion)
@@ -136,88 +147,111 @@ print_configured() =
   # GIF
   LDFLAGS_gif=
   if $(true_if_not_defined ARG_WANT_GIF)
-    HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
-    SUPPORT_GIF = $(HAVE_GIF)
-    if $(SUPPORT_GIF)
-      LDFLAGS_gif=-lgif
-      SUPPORTED_FORMATS+=gif
+    if $(not $(pkg_config gif, libgif))
+      HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
+      SUPPORT_GIF = $(HAVE_GIF)
+      if $(SUPPORT_GIF)
+        LDFLAGS_gif=-lgif
+        SUPPORTED_FORMATS+=gif
+        export
+      else
+        failwith_if_defined(ARG_WANT_GIF, gif requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_GIF, gif requested but not found)
     export
 
   # PNG
   LDFLAGS_png=
   if $(true_if_not_defined ARG_WANT_PNG)
-    HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
-    SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
-    if $(SUPPORT_PNG)
-      LDFLAGS_png=-lpng -lz
-      SUPPORTED_FORMATS+=png
+    res=$(pkg_config png, libpng) # we need a separate statement to get the vars defined in pkg_config reflected.
+    if $(not $(res))
+      HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
+      SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
+      if $(SUPPORT_PNG)
+        LDFLAGS_png=-lpng -lz
+        SUPPORTED_FORMATS+=png
+        export
+      else
+        failwith_if_defined(ARG_WANT_PNG, png requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_PNG, png requested but not found)
     export
 
   # JPEG
   LDFLAGS_jpeg=
   if $(true_if_not_defined ARG_WANT_JPEG)
-    HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
-    SUPPORT_JPEG = $(HAVE_JPEG)
-    if $(SUPPORT_JPEG)
-      LDFLAGS_jpeg=-ljpeg
-      SUPPORTED_FORMATS+=jpeg
+    res=$(pkg_config jpeg, libjpeg)
+    if $(not $(res))
+      HAVE_JPEG = $(Check_header_library jpeg, jpeglib.h, jpeg_read_header)
+      SUPPORT_JPEG = $(HAVE_JPEG)
+      if $(SUPPORT_JPEG)
+        LDFLAGS_jpeg=-ljpeg
+        SUPPORTED_FORMATS+=jpeg
+        export
+      else
+        failwith_if_defined(ARG_WANT_JPEG, jpeg requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_JPEG, jpeg requested but not found)
     export
 
   # EXIF
   LDFLAGS_exif=
   if $(true_if_not_defined ARG_WANT_EXIF)
-    HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
-    SUPPORT_EXIF = $(HAVE_EXIF)
-    if $(SUPPORT_EXIF)
-      LDFLAGS_exif=-lexif
-      SUPPORTED_FORMATS+=exif
+    res=$(pkg_config exif, libexif)
+    if $(not $(res))
+      HAVE_EXIF = $(Check_header_library exif, exif-data.h, exif_data_load_data)
+      SUPPORT_EXIF = $(HAVE_EXIF)
+      if $(SUPPORT_EXIF)
+        LDFLAGS_exif=-lexif
+        SUPPORTED_FORMATS+=exif
+        export
+      else
+        failwith_if_defined(ARG_WANT_EXIF, exif requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_EXIF, exif requested but not found)
     export
 
   # TIFF
   LDFLAGS_tiff=
   if $(true_if_not_defined ARG_WANT_TIFF)
-    HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
-    SUPPORT_TIFF = $(and $(HAVE_Z) $(HAVE_JPEG) $(HAVE_TIFF))
-    if $(SUPPORT_TIFF)
-      LDFLAGS_tiff=$(array -ltiff -ljpeg -lz)
-      SUPPORTED_FORMATS+=tiff
+    res=$(pkg_config tiff, libtiff-4)
+    if $(not $(res))
+      HAVE_TIFF = $(Check_header_library tiff, tiff.h, TIFFOpen)
+      # CR jfuruse: libtiff depends on jpeg and z too, which are required for -static.
+      # Impossible to resolve all the cases:
+      # the current OCaml cma has no capability to have different lib flags for dyn and static	
+      SUPPORT_TIFF = $(HAVE_TIFF))
+      if $(SUPPORT_TIFF)
+        LDFLAGS_tiff=-ltiff
+        SUPPORTED_FORMATS+=tiff
+        export
+      else
+        failwith_if_defined(ARG_WANT_TIFF, tiff requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_TIFF, tiff requested but not found)
     export
 
   # XPM
   LDFLAGS_xpm=
   if $(true_if_not_defined ARG_WANT_XPM)
-    HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
-    SUPPORT_XPM = $(HAVE_XPM)
-    if $(SUPPORT_XPM)
-      LDFLAGS_xpm=-lXpm
-      SUPPORTED_FORMATS+=xpm
+    res=$(pkg_config xpm, xpm)
+    if $(not $(res))
+      HAVE_XPM = $(Check_header_library Xpm, X11/xpm.h, XpmReadFileToXpmImage)
+      SUPPORT_XPM = $(HAVE_XPM)
+      if $(SUPPORT_XPM)
+        LDFLAGS_xpm=-lXpm
+        SUPPORTED_FORMATS+=xpm
+        export
+      else
+        failwith_if_defined(ARG_WANT_XPM, xpm requested but not found)
       export
-    else
-      failwith_if_defined(ARG_WANT_XPM, xpm requested but not found)
     export
 
   # PS
   LDFLAGS_ps=
   if $(true_if_not_defined ARG_WANT_GS)
-    PATH_GS=$(Check_prog_in_path gs)
-    SUPPORT_PS=$(if $(PATH_GS), true, false)
     if $(defined ARG_PATH_GS):
         PATH_GS = $(ARG_PATH_GS)
+        SUPPORT_PS=true
+        export
+    else
+        PATH_GS=$(Check_prog_in_path gs)
+        SUPPORT_PS=$(if $(PATH_GS), true, false)
         export
     if $(SUPPORT_PS)
       SUPPORTED_FORMATS+=ps
@@ -253,8 +287,8 @@ print_configured() =
   LDFLAGS_freetype=
   if $(true_if_not_defined ARG_WANT_FREETYPE)
     PATH_FREETYPE_CONFIG=
-    if $(defined ARG_FREETYPE_CONFIG):
-        PATH_FREETYPE_CONFIG = $(ARG_FREETYPE_CONFIG)
+    if $(defined ARG_PATH_FREETYPE_CONFIG):
+        PATH_FREETYPE_CONFIG = $(ARG_PATH_FREETYPE_CONFIG)
         SUPPORT_FREETYPE = true
         export
     else

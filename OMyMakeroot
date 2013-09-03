@@ -215,3 +215,16 @@ BuildExample(namex, modules, packages) =
 
 ###############################################################################
 
+pkg_config(name, libname) =
+  if $(and $(defined this.PATH_PKG_CONFIG), $(equal 0, $(shell-code $(PATH_PKG_CONFIG) $(libname))))
+    println(Found pkg-config $(libname))
+    setvar(LDFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --libs $(libname)))
+    setvar(CFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --cflags $(libname)))
+    setvar(SUPPORT_$(uppercase $(name)), true)
+    setvar(HAVE_$(uppercase $(name)), true)
+    export
+    value true
+  else 
+    println(Not found $(PATH_PKG_CONFIG) $(libname))
+    value false
+  export
