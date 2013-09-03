@@ -66,9 +66,10 @@ ARG_PATH_GS=string
 
 Test
 ----
-  Before you actually install the library, you can check that it
+
+Before you actually install the library, you can check that it
 really works, by running examples in the test directory. For the test
-programs,
+programs,::
 
         % cd test
         % omake
