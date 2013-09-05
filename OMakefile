@@ -143,6 +143,7 @@ print_configured() =
   # GIF
   CFLAGS_gif=
   LDFLAGS_gif=
+  SUPPORT_GIF=false 
   if $(true_if_not_defined ARG_WANT_GIF)
     if $(not $(pkg_config gif, libgif))
       HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
@@ -161,6 +162,7 @@ print_configured() =
   # PNG
   CFLAGS_png=
   LDFLAGS_png=
+  SUPPORT_PNG=false 
   if $(true_if_not_defined ARG_WANT_PNG)
     res=$(pkg_config png, libpng) # we need a separate statement to get the vars defined in pkg_config reflected.
     if $(not $(res))
@@ -180,6 +182,7 @@ print_configured() =
   # JPEG
   CFLAGS_jpeg=
   LDFLAGS_jpeg=
+  SUPPORT_JPEG=false 
   if $(true_if_not_defined ARG_WANT_JPEG)
     res=$(pkg_config jpeg, libjpeg)
     if $(not $(res))
@@ -199,6 +202,7 @@ print_configured() =
   # EXIF
   CFLAGS_exif=
   LDFLAGS_exif=
+  SUPPORT_EXIF=false 
   if $(true_if_not_defined ARG_WANT_EXIF)
     res=$(pkg_config exif, libexif)
     if $(not $(res))
@@ -218,6 +222,7 @@ print_configured() =
   # TIFF
   CFLAGS_tiff=
   LDFLAGS_tiff=
+  SUPPORT_TIFF=false 
   if $(true_if_not_defined ARG_WANT_TIFF)
     res=$(pkg_config tiff, libtiff-4)
     if $(not $(res))
@@ -240,6 +245,7 @@ print_configured() =
   # XPM
   CFLAGS_xpm=
   LDFLAGS_xpm=
+  SUPPORT_XPM=false 
   if $(true_if_not_defined ARG_WANT_XPM)
     res=$(pkg_config xpm, xpm)
     if $(not $(res))
@@ -259,6 +265,7 @@ print_configured() =
   # PS
   CFLAGS_ps=
   LDFLAGS_ps=
+  SUPPORT_PS=false 
   if $(true_if_not_defined ARG_WANT_GS)
     if $(defined ARG_PATH_GS):
         PATH_GS = $(ARG_PATH_GS)
@@ -278,6 +285,7 @@ print_configured() =
   # LABLGTK2
   CFLAGS_lablgtk2=
   LDFLAGS_lablgtk2=
+  SUPPORT_LABLGTK2=false 
   if $(true_if_not_defined ARG_WANT_LABLGTK2)
     SUPPORT_LABLGTK2 = $(Check_ocamlfind_package lablgtk2)
     if $(SUPPORT_LABLGTK2)
@@ -291,6 +299,7 @@ print_configured() =
   # GRAPHICS
   CFLAGS_graphics=
   LDFLAGS_graphics=
+  SUPPORT_GRAPHICS=false 
   if $(true_if_not_defined ARG_WANT_GRAPHICS)
     # CR: ocamlfind registers graphics even if not available
     SUPPORT_GRAPHICS = $(Check_ocamlfind_package_compilation graphics, Graphics)
@@ -305,6 +314,7 @@ print_configured() =
   # FREETYPE
   CFLAGS_freetype=
   LDFLAGS_freetype=
+  SUPPORT_FREETYPE=false 
   if $(true_if_not_defined ARG_WANT_FREETYPE)
     PATH_FREETYPE_CONFIG=
     if $(defined ARG_PATH_FREETYPE_CONFIG):

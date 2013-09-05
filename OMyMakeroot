@@ -216,16 +216,17 @@ BuildExample(namex, modules, packages) =
 ###############################################################################
 
 pkg_config(name, libname) =
+  ConfMsgChecking(for $(libname) by pkg-config)
   if $(and $(defined this.PATH_PKG_CONFIG), $(equal 0, $(shell-code $(PATH_PKG_CONFIG) $(libname))))
-    println(Found pkg-config $(libname))
     # this is required since it is called in .STATIC
     setvar(this.LDFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --libs $(libname)))
     setvar(this.CFLAGS_$(name), $(shell $(PATH_PKG_CONFIG) --cflags $(libname)))
     setvar(this.SUPPORT_$(uppercase $(name)), true)
     setvar(this.HAVE_$(uppercase $(name)), true)
+    ConfMsgResult(found)
     export
     value true
   else 
-    println(Not found $(PATH_PKG_CONFIG) $(libname))
+    ConfMsgResult(failed ($(PATH_PKG_CONFIG) $(libname)))
     value false
   export
