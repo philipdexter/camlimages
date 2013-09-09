@@ -20,15 +20,13 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-/* These are defined in caml/config.h */
+/* These are defined both in caml/config.h and in tiff.h */
 #undef int16
 #undef uint16
 #undef int32
 #undef uint32
-#define int16 int16tiff
-#define uint16 uint16tiff
-#define int32 int32tiff
-#define uint32 uint32tiff
+#undef int64
+#undef uint64
 
 #include <tiffio.h>
 
