@@ -20,13 +20,15 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-/* These are defined both in caml/config.h and in tiff.h */
-#undef int16
-#undef uint16
-#undef int32
-#undef uint32
-#undef int64
-#undef uint64
+// This is to resolve the conflict of these int types in caml/config.h and tiff.h
+// Replace all the occurrences of (u?int[0-9]+) by $1_tiff, tiff.h's int types have
+// now different names from caml's.
+#define int16 int16_tiff
+#define uint16 uint16_tiff
+#define int32 int32_tiff
+#define uint32 uint32_tiff
+#define int64 int64_tiff
+#define uint64 uint64_tiff
 
 #include <tiffio.h>
 
