@@ -23,6 +23,12 @@
 // This is to resolve the conflict of these int types in caml/config.h and tiff.h
 // Replace all the occurrences of (u?int[0-9]+) by $1_tiff, tiff.h's int types have
 // now different names from caml's.
+#undef int16
+#undef uint16
+#undef int32
+#undef uint32
+#undef int64
+#undef uint64
 #define int16 int16_tiff
 #define uint16 uint16_tiff
 #define int32 int32_tiff
