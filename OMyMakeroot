@@ -227,6 +227,6 @@ pkg_config(name, libname) =
     export
     value true
   else 
-    ConfMsgResult(failed ($(PATH_PKG_CONFIG) $(libname)))
+    ConfMsgResult(failed $(PATH_PKG_CONFIG) $(libname))
     value false
   export
