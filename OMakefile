@@ -164,7 +164,8 @@ print_configured() =
   LDFLAGS_png=
   SUPPORT_PNG=false 
   if $(true_if_not_defined ARG_WANT_PNG)
-    res=$(pkg_config png, libpng) # we need a separate statement to get the vars defined in pkg_config reflected.
+    # we need a separate statement to get the vars defined in pkg_config reflected.
+    res=$(pkg_config png, libpng)
     if $(not $(res))
       HAVE_PNG = $(Check_header_library png, png.h, png_create_read_struct)
       SUPPORT_PNG = $(and $(HAVE_Z) $(HAVE_PNG))
