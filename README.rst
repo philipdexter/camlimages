@@ -174,6 +174,26 @@ You can normally compile them by::
 
 Some may just fail because some of required libraries are not found in your system.
 
+Basic image manipulation
+--------------------------------------
+
+We have a basic image manipulation modules for each image pixel type:
+Index8, Index16, Rgb24, Rgba32 and Cmyk32. All they have the same interface
+documented in Image_intf.IMAGE.
+
+Image saving/loading
+--------------------------------------
+
+To save or load an image to some image format, use the corresponding module
+for the image format. Jpeg, Gif, Png and so on.
+
+Here is a simple code to create a 1x1 RGB24 image and save it to a jpeg file::
+
+    let () =
+      let img = Rgb24.create 1 1 in
+      Rgb24.set img 0 0 { Color.r = 255; g = 0; b = 0 };
+      Jpeg.save "sample.jpg" [] (Images.Rgb24 img)
+
 Where to report issues?
 ==========================================================
 
