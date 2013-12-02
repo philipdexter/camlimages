@@ -156,24 +156,6 @@ to compile a module using CamlImages, or to build an executable,
 
     $ ocamlfind ocamlc -linkpkg -package camlimages.all blah.ml
 
-Examples
---------------------------------------
-
-Some one-ML-file examples are found in CamlImages source directory. 
-You should see the following:
-
-* examples/edgedetect : Good to learn basic image loading/saving and pixel color manipulation
-* examples/imgstat : Image header check which is written in pure OCaml code.
-* tests/test.ml : Various image load/save tests displaying them on OCaml's Graphics window.
-* examples/gifanim : How to handle Gif animation frames and how to write LablGtk app
-* examples/resize : Resizing image
-
-You can normally compile them by::
-
-    $ ocamlfind ocamlc -linkpkg -package camlimages.all -o XXX XXX.ml
-
-Some may just fail because some of required libraries are not found in your system.
-
 Basic image manipulation
 --------------------------------------
 
@@ -189,10 +171,36 @@ for the image format. Jpeg, Gif, Png and so on.
 
 Here is a simple code to create a 1x1 RGB24 image and save it to a jpeg file::
 
+    (* save it to sample.ml *)
     let () =
       let img = Rgb24.create 1 1 in
       Rgb24.set img 0 0 { Color.r = 255; g = 0; b = 0 };
       Jpeg.save "sample.jpg" [] (Images.Rgb24 img)
+
+You should be able to compile it by
+
+    $ ocamlfind ocamlc -linkpkg -package camlimages.all -o sample sample.ml
+
+and "./sample" should create an image file "sample.jpg". 
+(To run the code correctly, your CamlImages must be compiled with JPEG library.)
+
+Examples
+--------------------------------------
+
+Some one-ML-file examples are found in CamlImages source directory. 
+Here are some recommendations:
+
+* examples/edgedetect : Good to learn basic image loading/saving and pixel color manipulation
+* examples/imgstat : Image header check which is written in pure OCaml code.
+* tests/test.ml : Various image load/save tests displaying them on OCaml's Graphics window.
+* examples/gifanim : How to handle Gif animation frames and how to write LablGtk app
+* examples/resize : Resizing image
+
+You can normally compile them by::
+
+    $ ocamlfind ocamlc -linkpkg -package camlimages.all -o XXX XXX.ml
+
+Some may just fail because some of required libraries are not found in your system.
 
 Where to report issues?
 ==========================================================
