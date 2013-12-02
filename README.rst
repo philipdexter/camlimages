@@ -22,7 +22,7 @@ Installation
 
 Read the file INSTALL.txt
 
-Using CamlImages
+CamlImages concepts
 ========================================================
 
 Color models
@@ -119,6 +119,60 @@ replaces the default "/tmp" directory. The temporary files are erased
 when the program exits successfully. In other situations, for instance
 in case of spurious exception, you may need to erase temporary files
 manually.
+
+Use of CamlImages
+====================================
+
+OCamlFind
+------------------------------------
+
+Due to the library complexity, we recommend using OCamlFind.
+You can get the list of related packages by::
+
+    $ ocamlfind list | grep camlimages
+    camlimages          (version: 4.1.1)
+    camlimages.all      (version: 4.1.1)
+    camlimages.all_formats (version: 4.1.1)
+    camlimages.core     (version: 4.1.1)
+    camlimages.exif     (version: 4.1.1)
+    camlimages.freetype (version: 4.1.1)
+    camlimages.gif      (version: 4.1.1)
+    camlimages.graphics (version: 4.1.1)
+    camlimages.jpeg     (version: 4.1.1)
+    camlimages.lablgtk2 (version: 4.1.1)
+    camlimages.png      (version: 4.1.1)
+    camlimages.ps       (version: 4.1.1)
+    camlimages.tiff     (version: 4.1.1)
+    camlimages.xpm      (version: 4.1.1)
+ 
+After successful installation of CamlImages, you should see something similar above.
+At compilation of your program, you should list the packages of image formats and GUI of you needs.
+But if you are not sure which one is required, just use 'camlimages.all':
+it contains everything. Normally your compilation command should look like::
+
+    $ ocamlfind ocamlc -c -package camlimages.all blah.ml
+
+to compile a module using CamlImages, or to build an executable,
+
+    $ ocamlfind ocamlc -linkpkg -package camlimages.all blah.ml
+
+Examples
+--------------------------------------
+
+Some one-ML-file examples are found in CamlImages source directory. 
+You should see the following:
+
+* examples/edgedetect : Good to learn basic image loading/saving and pixel color manipulation
+* examples/imgstat : Image header check which is written in pure OCaml code.
+* tests/test.ml : Various image load/save tests displaying them on OCaml's Graphics window.
+* examples/gifanim : How to handle Gif animation frames and how to write LablGtk app
+* examples/resize : Resizing image
+
+You can normally compile them by::
+
+    $ ocamlfind ocamlc -linkpkg -package camlimages.all -o XXX XXX.ml
+
+Some may just fail because some of required libraries are not found in your system.
 
 Where to report issues?
 ==========================================================
