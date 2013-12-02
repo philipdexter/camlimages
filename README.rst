@@ -152,7 +152,7 @@ it contains everything. Normally your compilation command should look like::
 
     $ ocamlfind ocamlc -c -package camlimages.all blah.ml
 
-to compile a module using CamlImages, or to build an executable,
+to compile a module using CamlImages, or to build an executable,::
 
     $ ocamlfind ocamlc -linkpkg -package camlimages.all blah.ml
 
@@ -177,7 +177,7 @@ Here is a simple code to create a 1x1 RGB24 image and save it to a jpeg file::
       Rgb24.set img 0 0 { Color.r = 255; g = 0; b = 0 };
       Jpeg.save "sample.jpg" [] (Images.Rgb24 img)
 
-You should be able to compile it by
+You should be able to compile it by::
 
     $ ocamlfind ocamlc -linkpkg -package camlimages.all -o sample sample.ml
 
