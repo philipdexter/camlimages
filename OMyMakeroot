@@ -55,10 +55,6 @@ Check_ocamlfind_package(package) =
   ConfMsgChecking($(package))
   ConfMsgFound($(shell-success ocamlfind query $(package)))
 
-Check_pkg_config(package, option) =
-  ConfMsgChecking(Freetype)
-  ConfMsgFound($(shell-success $(package)-config $(option)))
-
 where1(com) =
   WHERE = $(where $(prog))
   if $(WHERE)
