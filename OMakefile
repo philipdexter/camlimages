@@ -145,7 +145,7 @@ print_configured() =
   LDFLAGS_gif=
   SUPPORT_GIF=false 
   if $(true_if_not_defined ARG_WANT_GIF)
-    if $(not $(pkg_config gif, libgif))
+    if $(not $(pkg_config_between_vers gif, libgif, 4.0.0, 5.0.0))
       HAVE_GIF = $(Check_header_library gif, gif_lib.h, DGifOpenFileName)
       SUPPORT_GIF = $(HAVE_GIF)
       if $(SUPPORT_GIF)

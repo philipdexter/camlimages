@@ -226,3 +226,23 @@ pkg_config(name, libname) =
     ConfMsgResult(failed $(PATH_PKG_CONFIG) $(libname))
     value false
   export
+
+# PATH_PKG_CONFIG must be well defined
+pkg_config_version(libname) =
+  value $(shell $(PATH_PKG_CONFIG) $(libname) --modversion) 
+
+pkg_config_between_vers(name, libname, min_ver, too_high_ver) =
+  if $(pkg_config $(name), $(libname))
+    ConfMsgChecking($(libname): $(min_ver) <= version < $(too_high_ver))
+    ver=$(pkg_config_version $(libname)) 
+    if $(and $(le $(cmp-versions $(min_ver), $(ver)), 0), $(lt $(cmp-versions $(ver), $(too_high_ver)), 0))
+      ConfMsgResult($(ver) ... yes)
+      value true
+      export
+    else
+      ConfMsgResult($(ver) ... no)
+      value false # do not export
+    export
+  else
+    value false
+  export
