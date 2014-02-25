@@ -2,7 +2,7 @@
 /*                                                                     */
 /*                           Objective Caml                            */
 /*                                                                     */
-/*            François Pessaux, projet Cristal, INRIA Rocquencourt     */
+/*            Franè¼Ÿis Pessaux, projet Cristal, INRIA Rocquencourt     */
 /*            Pierre Weis, projet Cristal, INRIA Rocquencourt          */
 /*            Jun Furuse, projet Cristal, INRIA Rocquencourt           */
 /*                                                                     */
@@ -286,7 +286,7 @@ value jpegh, offset, buf;
 }
 
 /* no boundary checks */
-value read_jpeg_scanlines( value jpegh, value buf, value offset, value lines )
+void read_jpeg_scanlines( value jpegh, value buf, value offset, value lines )
 {
   CAMLparam4(jpegh,offset,buf,lines);
   struct jpeg_decompress_struct *cinfop;
