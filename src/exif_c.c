@@ -23,14 +23,14 @@
 #include <caml/callback.h>
 #include <caml/fail.h>
 
-#include <exif-byte-order.h>
-#include <exif-data-type.h>
-#include <exif-ifd.h>
-#include <exif-log.h>
-#include <exif-tag.h>
-#include <exif-content.h>
-#include <exif-mnote-data.h>
-#include <exif-mem.h>
+#include <libexif/exif-byte-order.h>
+#include <libexif/exif-data-type.h>
+#include <libexif/exif-ifd.h>
+#include <libexif/exif-log.h>
+#include <libexif/exif-tag.h>
+#include <libexif/exif-content.h>
+#include <libexif/exif-mnote-data.h>
+#include <libexif/exif-mem.h>
 
 value Val_ExifBytes(unsigned char *p, value vsize)
 {
