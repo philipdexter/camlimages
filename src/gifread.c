@@ -140,7 +140,13 @@ value dGifOpenFileName( value name )
   GifFileType *GifFile;
   int i;
 
-  if((GifFile = DGifOpenFileName( String_val(name) )) == NULL){
+  #if (GIF_MAJOR == 4)
+    GifFile = DGifOpenFileName( String_val(name) );
+  #else
+    GifFile = DGifOpenFileName( String_val(name), NULL);
+  #endif
+
+  if(GifFile == NULL){
     failwith("DGifOpenFileName");
   }
 
@@ -161,7 +167,7 @@ void dGifCloseFile( value hdl )
      segmentation faults */
   ((GifFileType *)hdl)->Image.ColorMap = NULL; 
 
-  DGifCloseFile( (GifFileType *) hdl );
+  DGifCloseFile( (GifFileType *) hdl, NULL );
   CAMLreturn0;
 }
 
