@@ -25,6 +25,11 @@
 
 #include <gif_lib.h>
 
+// GIFLIB_MAJOR is only defined in libgif >= 4.2.0
+#if !defined(GIFLIB_MAJOR)
+#  define GIFLIB_MAJOR 4
+#endif
+
 int list_length( value list )
 {
   CAMLparam1(list);
@@ -51,11 +56,11 @@ ColorMapObject *ColorMapObject_val( value cmap )
 fprintf(stderr, "Creating map with length = %d ...\n", len);
 fflush(stderr);
 */
-  #if (GIFLIB_MAJOR == 4)
+#if (GIFLIB_MAJOR == 4)
     cmapobj = MakeMapObject( len, NULL );
-  #else
+#else
     cmapobj = GifMakeMapObject( len, NULL );
-  #endif
+#endif
 
   for(i=0; i< len; i++){
     cmapobj->Colors[i].Red   = Int_val(Field(Field(cmap,i),0));
@@ -72,11 +77,11 @@ value eGifOpenFileName( name )
 
   GifFileType *GifFileOut;
 
-  #if (GIFLIB_MAJOR == 4)
+#if (GIFLIB_MAJOR <= 4)
     GifFileOut = EGifOpenFileName( String_val( name ), 0 );
-  #else
+#else
     GifFileOut = EGifOpenFileName( String_val( name ), 0, NULL );
-  #endif
+#endif
 
   if (GifFileOut == NULL) {
     failwith("EGifOpenFileName");
@@ -98,7 +103,11 @@ void eGifCloseFile( value hdl )
      segmentation faults */
   ((GifFileType *)hdl)->Image.ColorMap = NULL; 
 
+#if (GIFLIB_MAJOR <= 4)
+  EGifCloseFile( (GifFileType *) hdl );
+#else
   EGifCloseFile( (GifFileType *) hdl, NULL );
+#endif
   CAMLreturn0;
 }
 

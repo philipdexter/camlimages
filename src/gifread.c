@@ -27,6 +27,11 @@
 
 #include <gif_lib.h>
 
+// GIFLIB_MAJOR is only defined in libgif >= 4.2.0
+#if !defined(GIFLIB_MAJOR)
+#  define GIFLIB_MAJOR 4
+#endif
+
 value Val_GifColorType( GifColorType *color )
 {
   CAMLparam0();
@@ -140,11 +145,11 @@ value dGifOpenFileName( value name )
   GifFileType *GifFile;
   int i;
 
-  #if (GIF_MAJOR == 4)
+#if (GIFLIB_MAJOR <= 4)
     GifFile = DGifOpenFileName( String_val(name) );
-  #else
+#else
     GifFile = DGifOpenFileName( String_val(name), NULL);
-  #endif
+#endif
 
   if(GifFile == NULL){
     failwith("DGifOpenFileName");
@@ -167,7 +172,11 @@ void dGifCloseFile( value hdl )
      segmentation faults */
   ((GifFileType *)hdl)->Image.ColorMap = NULL; 
 
+#if (GIFLIB_MAJOR <= 4)
+  DGifCloseFile( (GifFileType *) hdl);
+#else
   DGifCloseFile( (GifFileType *) hdl, NULL );
+#endif
   CAMLreturn0;
 }
 
