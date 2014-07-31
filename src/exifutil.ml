@@ -1,5 +1,3 @@
-open Format
-
 module Format = struct
   include Format
 

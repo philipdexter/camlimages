@@ -55,7 +55,7 @@ let string_of_magic_number = function
   | P6 -> "P6";;
 
 (* Auxiliaries: skipping comments and reading numbers into strings. *)
-let rec skip_comment ic =
+let skip_comment ic =
  let rec r0 () =
   match input_char ic with
   | '#' -> r1 ()
@@ -209,7 +209,7 @@ let rec read_ascii_bit ic =
 
 let read_ascii_pbm_ic ic l c = read_raw_gen_ic read_ascii_bit ic l c max_byte;;
 
-let rec read_ppm_ic ic =
+let read_ppm_ic ic =
  let mn, l, c = read_ppm_header ic in
  let img =
    match mn with

@@ -223,7 +223,7 @@ let save_cmyk_sample name opts =
   done;
   close_out oc;;
 
-let rec find_jpeg_size ic =
+let find_jpeg_size ic =
   (* jump to the next 0xff *)
   let rec loop () =
     let rec jump_to_0xff () =

@@ -7,8 +7,6 @@ module Numbers : sig
   val string_of_srational : int32 -> int32 -> string
 end
 
-open Numbers
-
 module Endian : sig
   type t = Big | Little 
   val to_string : t -> string 

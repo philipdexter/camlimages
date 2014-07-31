@@ -18,15 +18,6 @@
 
 open Color;;
 
-module type COLORMAP = sig
-  type t
-  val size : t map -> int
-  val find_exact : t map -> t -> int
-  val add_color : t map -> t -> int
-  val add_colors : t map -> t list -> int list
-  val find_nearest : t map -> t -> int
-end;;
-
 class virtual ['a] map (cmap : 'a Color.map) = object
   val mapobj = cmap
   method colormap = mapobj

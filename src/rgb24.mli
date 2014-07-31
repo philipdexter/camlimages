@@ -65,3 +65,4 @@ val copy : t -> t;;
 val sub : t -> int -> int -> int -> int -> t;;
 val dump : t -> string;;
 val unsafe_access : t -> int -> int -> string * int;;
+val rawimage : t -> rawimage

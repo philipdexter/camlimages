@@ -45,7 +45,7 @@ let done_face face = Ftlow.done_face face.cont;;
 let new_face t font idx =
   let face = {cont = Ftlow.new_face t.cont font idx; ref = ref t} in
   let info = Ftlow.face_info face.cont in
-  Gc.finalise (fun v -> Ftlow.done_face v.cont) face;
+  Gc.finalise done_face face;
   face, info;;
 
 let get_num_glyphs face = Ftlow.get_num_glyphs face.cont;;

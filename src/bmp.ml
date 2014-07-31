@@ -276,7 +276,7 @@ let load_image8data bih ic =
                (* Absolute mode:
                   c represents the number of bytes which follow,
                   each of which contains the color index of a single pixel. *)
-               for i = 0 to c - 1 do
+               for _i = 0 to c - 1 do
                  let c1 = read_byte ic in
                  bitmap.[!bitmapindex] <- Char.chr c1;
                  incr x;
@@ -288,7 +288,7 @@ let load_image8data bih ic =
        | c ->
            (* Encoded mode *)
            let c1 = read_byte ic in
-           for i = 0 to c - 1 do
+           for _i = 0 to c - 1 do
              bitmap.[!bitmapindex] <- Char.chr c1;
              incr x;
              incr bitmapindex
@@ -417,13 +417,13 @@ let load_image24data bih ic =
   let pp = ref 0 in
   for i = bih.biHeight - 1 downto 0 do
     pp := (i * bih.biWidth * 3);
-    for j = 0 to bih.biWidth - 1 do
+    for _j = 0 to bih.biWidth - 1 do
       bitmap.[!pp + 2] <- Char.chr (read_byte ic);   (* Blue *)
       bitmap.[!pp + 1] <- Char.chr (read_byte ic);   (* Green *)
       bitmap.[!pp] <- Char.chr (read_byte ic);     (* Red *)
       pp := !pp + 3
     done;
-    for j = 0 to pad - 1 do skip_byte ic done;
+    for _j = 0 to pad - 1 do skip_byte ic done;
   done;
   bitmap
 ;;
@@ -438,7 +438,7 @@ let load_image32data bih ic =
   let pp = ref 0 in
   for i = bih.biHeight - 1 downto 0 do
     pp := (i * bih.biWidth * 4);
-    for j = 0 to bih.biWidth - 1 do
+    for _j = 0 to bih.biWidth - 1 do
       bitmap.[!pp + 2] <- Char.chr (read_byte ic);   (* Blue *)
       bitmap.[!pp + 1] <- Char.chr (read_byte ic);   (* Green *)
       bitmap.[!pp + 0] <- Char.chr (read_byte ic);   (* Red *)
@@ -646,7 +646,7 @@ let write_end_of_scan_line oc = write_byte oc 0; write_byte oc 0;;
 let write_end_of_bitmap oc = write_byte oc 0; write_byte oc 1;;
 
 (* Writing padding bytes. *)
-let write_pad oc n = for i = 0 to n - 1 do write_byte oc 0 done;;
+let write_pad oc n = for _i = 0 to n - 1 do write_byte oc 0 done;;
 
 (* Run length encoding: write the number n of pixels encoded *)
 (* the color number given by color index c *)

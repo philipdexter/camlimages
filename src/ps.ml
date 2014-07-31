@@ -311,7 +311,7 @@ let super_save file conf comments showpage images =
                    (Char.code buf.[adrs])
                    (Char.code buf.[adrs + 1])
                    (Char.code buf.[adrs + 2]) in
-                for i = 0 to 2 do
+                for _i = 0 to 2 do
                   p_ (sprintf "%02x" m)
                 done in
           if not conf.mirror then

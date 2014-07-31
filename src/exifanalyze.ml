@@ -9,7 +9,6 @@ open Exifutil
 
 open Exif
 open Exif.Numbers
-open Exif.IFD
 open Exif.Entry.Pack
 
 (* I have some photos from my old Android with non Ascii datetime.
