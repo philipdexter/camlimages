@@ -7,7 +7,7 @@ Requirements
 
 To install CamlImages library, you need the following softwares:
 
-* OCaml 4.00.1 or higher (OCaml 3.11 and above might work with small trivial fixes, but never tested)
+* OCaml 4.01.0 or higher
 * Findlib (aka ocamlfind, http://www.camlcity.org/archive/programming/findlib.html )
 * OMake ( http://omake.metaprl.org/index.html )
 

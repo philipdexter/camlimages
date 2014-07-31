@@ -2,7 +2,7 @@
 CamlImages - Objective Caml image processing library
 ========================================================
 
-The latest released version is 4.1.0.
+The latest released version is 4.1.2.
 ========================================================
 
 Note: This library is currently under development.
@@ -130,20 +130,20 @@ Due to the library complexity, we recommend using OCamlFind.
 You can get the list of related packages by::
 
     $ ocamlfind list | grep camlimages
-    camlimages          (version: 4.1.1)
-    camlimages.all      (version: 4.1.1)
-    camlimages.all_formats (version: 4.1.1)
-    camlimages.core     (version: 4.1.1)
-    camlimages.exif     (version: 4.1.1)
-    camlimages.freetype (version: 4.1.1)
-    camlimages.gif      (version: 4.1.1)
-    camlimages.graphics (version: 4.1.1)
-    camlimages.jpeg     (version: 4.1.1)
-    camlimages.lablgtk2 (version: 4.1.1)
-    camlimages.png      (version: 4.1.1)
-    camlimages.ps       (version: 4.1.1)
-    camlimages.tiff     (version: 4.1.1)
-    camlimages.xpm      (version: 4.1.1)
+    camlimages          (version: 4.1.2)
+    camlimages.all      (version: 4.1.2)
+    camlimages.all_formats (version: 4.1.2)
+    camlimages.core     (version: 4.1.2)
+    camlimages.exif     (version: 4.1.2)
+    camlimages.freetype (version: 4.1.2)
+    camlimages.gif      (version: 4.1.2)
+    camlimages.graphics (version: 4.1.2)
+    camlimages.jpeg     (version: 4.1.2)
+    camlimages.lablgtk2 (version: 4.1.2)
+    camlimages.png      (version: 4.1.2)
+    camlimages.ps       (version: 4.1.2)
+    camlimages.tiff     (version: 4.1.2)
+    camlimages.xpm      (version: 4.1.2)
  
 After successful installation of CamlImages, you should see something similar above.
 At compilation of your program, you should list the packages of image formats and GUI of you needs.
