@@ -18,6 +18,7 @@
 #include "config.h"
 #endif
 
+#include "string.h"
 #include "oversized.h"
 #include <png.h>
 
