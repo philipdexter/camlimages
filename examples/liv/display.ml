@@ -264,7 +264,7 @@ let resize w h cond old =
 let create_pixbuf (_id : int) image filters =
   let pixbuf = Imagegdk.to_pixbuf image in
   let filters = sort_filters filters in
-  let rec filter_pixbuf pixbuf = function
+  let filter_pixbuf pixbuf = function
     | [] -> pixbuf
     | `SIZE (w, h, cond) :: _fs -> 
 	(* original pixbuf will be GC'ed automatically *)
