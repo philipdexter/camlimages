@@ -82,7 +82,7 @@ end
 
 let status_bar ?packing ?show () = new status_bar ?packing ?show ()
 
-class img_button ?label ?frames ?border_width ?width ?height ?packing ?show () =
+class img_button ?label ?frames ?packing ?show () =
   let button = GButton.button (*?border_width ?width ?height*) ?packing ?show () in
   let vbox = GPack.vbox ~packing: button#add () in
   let pix = 

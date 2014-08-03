@@ -103,12 +103,12 @@ module DateTime = struct
       let converter sec =
         let open Unix in
         let tm = Unix.gmtime sec in
-        { year  = tm.Unix.tm_year;
-          month = tm.Unix.tm_mon + 1;
-          day   = tm.Unix.tm_mday;
-          hour  = tm.Unix.tm_hour;
-          min   = tm.Unix.tm_min;
-          sec   = tm.Unix.tm_sec }
+        { year  = tm.tm_year;
+          month = tm.tm_mon + 1;
+          day   = tm.tm_mday;
+          hour  = tm.tm_hour;
+          min   = tm.tm_min;
+          sec   = tm.tm_sec }
         in
       if s.[4] = '\000' then
         let sec = 
@@ -397,7 +397,6 @@ module Analyze = struct
   *)
   
   open Numbers
-  open IFD
   open Entry.Pack
   
   type datetime = 
@@ -456,6 +455,7 @@ module Analyze = struct
   
     | _ -> `Unknown (tag, pack)
   
+(* CR jfuruse: unused
   module GPS = struct
     type latitude = [ `North | `South ] * rational
     type longitude = [ `East | `West ] * rational
@@ -478,6 +478,7 @@ module Analyze = struct
       map_datum      : map_datum option
     }
   end
+*)
         
   let analyze_gps (tag, v) = match tag, v with
       

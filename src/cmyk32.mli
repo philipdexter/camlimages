@@ -54,3 +54,4 @@ val make : int -> int -> elt -> t;;
 val copy : t -> t;;
 val sub : t -> int -> int -> int -> int -> t;;
 val resize : (float -> unit) option -> t -> int -> int -> t;;
+val rawimage : t -> rawimage

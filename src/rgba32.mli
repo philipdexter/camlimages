@@ -58,3 +58,4 @@ val create : int -> int -> t;;
 val make : int -> int -> elt -> t;;
 val copy : t -> t;;
 val sub : t -> int -> int -> int -> int -> t;;
+val rawimage : t -> rawimage

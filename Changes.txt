@@ -1,3 +1,7 @@
+4.1.2
+        * GIF lib version 5 support
+        * clang related compilation fixes
+
 4.1.1
         * omake --config clean up
         * pkg-config is now used if exists in order to seek external libraries

@@ -228,7 +228,7 @@ end;;
 
 class index8_wrapper img = object (self)
   inherit oimage_impl
-  inherit OColor.rgbmap img.colormap as colormap
+  inherit OColor.rgbmap img.colormap
 
   method image_class = ClassIndex8
   method image = Index8 img
@@ -298,7 +298,7 @@ end;;
 
 class index16_wrapper img = object (self)
   inherit oimage_impl
-  inherit OColor.rgbmap img.colormap as colormap
+  inherit OColor.rgbmap img.colormap
 
   method image_class = ClassIndex16
   method image = Index16 img

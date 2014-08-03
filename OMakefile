@@ -20,7 +20,7 @@ include OMyMakeroot
 
 # OCaml 4.01.0
 # OCAMLFLAGS= -w A-4-9-40-42-44-45
-OCAMLFLAGS=
+OCAMLFLAGS= -w A-4-9-40-42-44-45-37-41-35
 
 # For the development, -warn-error A is turned on
 if $(file-exists DEV)
@@ -36,7 +36,7 @@ PATH_RGB_TXT[]=
 
 ########################################################################
 
-VERSION=4.1.1
+VERSION=4.1.2
 
 # for src/META
 PACKAGE_NAME=camlimages

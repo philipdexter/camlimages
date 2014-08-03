@@ -15,7 +15,6 @@
 (* $Id: index8.ml,v 1.4 2009/07/04 03:39:28 furuse Exp $*)
 
 module E = struct
-  open Color
   type t = int
   let bytes_per_pixel = 1
   let get str pos =
