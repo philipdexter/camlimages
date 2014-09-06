@@ -26,11 +26,7 @@ let func_darken_only org level =
 let func_red_only _org _level = { r = 255; g = 0; b = 0 };;
 
 let unicode_of_latin s =
-  let ary = Array.create (String.length s) 0 in
-  for i = 0 to String.length s - 1 do
-    ary.(i) <- Char.code s.[i]
-  done;
-  ary;;
+  Array.init (String.length s) @@ fun i -> Char.code s.[i]
 
 let unicode_of_euc_japan s = Jis_unicode.encode s;;
 

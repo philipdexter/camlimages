@@ -1,3 +1,6 @@
+4.2.0
+        * OCaml 4.02.0 string/bytes fix
+
 4.1.2
         * GIF lib version 5 support
         * clang related compilation fixes

@@ -39,12 +39,12 @@ val to_rgba32 : ?failsafe: Color.rgba -> t -> Rgba32.t;;
 (** Generic functions. *)
 (** Please read the comments of IMAGEINDEXED in genimage.mli *)
 
-val dump : t -> string;;
-val unsafe_access : t -> int -> int -> string * int;;
-val get_strip : t -> int -> int -> int -> string;;
-val set_strip : t -> int -> int -> int -> string -> unit;;
-val get_scanline : t -> int -> string;;
-val set_scanline : t -> int -> string -> unit;;
+val dump : t -> bytes;;
+val unsafe_access : t -> int -> int -> bytes * int;;
+val get_strip : t -> int -> int -> int -> bytes;;
+val set_strip : t -> int -> int -> int -> bytes -> unit;;
+val get_scanline : t -> int -> bytes;;
+val set_scanline : t -> int -> bytes -> unit;;
 val unsafe_get : t -> int -> int -> elt;;
 val unsafe_set : t -> int -> int -> elt -> unit;;
 val get : t -> int -> int -> elt;;
@@ -60,9 +60,9 @@ val map : (elt -> elt -> elt) ->
 val blocks : t -> int * int
 val dump_block : t -> int -> int -> Bitmap.Block.t
 val create_with : int -> int ->
-  Info.info list -> Color.rgb Color.map -> int -> string -> t;;
+  Info.info list -> Color.rgb Color.map -> int -> bytes -> t;;
 val create_with_scanlines : int -> int ->
-  Info.info list -> Color.rgb Color.map -> int -> string array -> t;;
+  Info.info list -> Color.rgb Color.map -> int -> bytes array -> t;;
 val create : int -> int -> t;;
 val make : int -> int -> elt -> t;;
 val copy : t -> t;;

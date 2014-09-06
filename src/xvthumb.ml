@@ -19,7 +19,7 @@ open Images;;
 (********************************************************************** load *)
 
 let read_id ic =
-  let buf = String.create 7 in
+  let buf = Bytes.create 7 in
   try
     really_input ic buf 0 7;
     if buf = "P7 332\n" then ()
@@ -79,7 +79,7 @@ let cmap_332 () =
 
 let load_body ic w h =
   let length = w * h in
-  let str = String.create length in
+  let str = Bytes.create length in
   try
     really_input ic str 0 length;
     Index8.create_with w h [] (cmap_332 ()) (-1) str
@@ -162,7 +162,7 @@ let create img =
     | Rgba32 _ | Cmyk32 _ -> failwith "RGBA and CMYK not supported"
   in
   let thumb = Index8.create_with nw nh [] (cmap_332 ()) (-1)
-      (String.create (nw * nh))
+      (Bytes.create (nw * nh))
   in
   for y = 0 to nh - 1 do
     for x = 0 to nw - 1 do

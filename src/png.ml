@@ -14,6 +14,7 @@
 
 (* $Id: png.ml,v 1.7 2009/07/04 03:39:28 furuse Exp $ *)
 
+open Util
 open Images;;
 
 (* do not change the ordering, since the tags are used in png*.c *)
@@ -53,10 +54,11 @@ let load name _opts =
   | PNG_INDEX16 (buf,cmap) ->
       Index16 (Index16.create_with_scanlines w h [] { max = 65535; map = cmap } (-1) buf)
   | PNG_INDEX4 (buf,cmap) ->
-      let buf' = Array.init h (fun _ -> String.create w) in
+      let buf' = Array.init h (fun _ -> Bytes.create w) in
       for y = 0 to h - 1 do
+        let b = buf' >@! y in
         for x = 0 to w - 1 do
-          buf'.(y).[x] <-
+          b << x &
             char_of_int
               (let c = int_of_char buf.(y).[x / 2] in
                if x mod 2 = 0 then c lsr 4 else c mod 16)
@@ -87,7 +89,7 @@ let check_header filename =
   let len = 24 in
   let ic = open_in_bin filename in
   try
-    let str = String.create len in
+    let str = Bytes.create len in
     really_input ic str 0 len;
     close_in ic;
     if String.sub str 1 3 = "PNG" then begin
