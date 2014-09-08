@@ -179,7 +179,7 @@ let display_pixbuf pixbuf =
             (x, y), overwrap x y in
 
           let min = ref (random_x_y ()) in
-          for i = 0 to 5 do
+          for _i = 0 to 5 do
             let (x, y), over = random_x_y () in
               if snd !min > over then min := (x, y), over
           done;
@@ -264,7 +264,7 @@ let resize w h cond old =
 let create_pixbuf (_id : int) image filters =
   let pixbuf = Imagegdk.to_pixbuf image in
   let filters = sort_filters filters in
-  let rec filter_pixbuf pixbuf = function
+  let filter_pixbuf pixbuf = function
     | [] -> pixbuf
     | `SIZE (w, h, cond) :: _fs -> 
 	(* original pixbuf will be GC'ed automatically *)
