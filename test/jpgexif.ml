@@ -10,11 +10,6 @@
 
 (* $Id: test.ml,v 1.32.2.1 2010/05/13 13:14:47 furuse Exp $ *)
 
-open Images;;
-open Format;;
-
-open Jpeg;;
-
 (* CR jfuruse: move to Spotlib *)
 let _dump_hex s = 
   for i = 0 to String.length s - 1 do

@@ -10,11 +10,6 @@
 
 (* $Id: test.ml,v 1.32.2.1 2010/05/13 13:14:47 furuse Exp $ *)
 
-open Images;;
-open Format;;
-
-open Jpeg;;
-
 let dump path = 
   Format.eprintf "File: %s@." path;
   let markers = Jpeg.read_markers path in

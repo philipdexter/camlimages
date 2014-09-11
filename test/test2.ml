@@ -51,8 +51,6 @@ let images = [
   "xpm.xpm"; "eps.eps"; "gif.gif"; "mmm.anim.gif";
 ];;
 
-open Gif;;
-
 let treat_image name0 =
   let name = "images/" ^ name0 in
   prerr_endline (name ^ "...");
