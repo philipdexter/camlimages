@@ -34,7 +34,7 @@ PATH_RGB_TXT[]=
 
 ########################################################################
 
-VERSION=4.1.2
+VERSION=4.1.3
 
 # for src/META
 PACKAGE_NAME=camlimages
