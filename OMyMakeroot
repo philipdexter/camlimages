@@ -199,9 +199,10 @@ BuildExample(namex, modules, packages) =
     OCAMLPACKS[]+=unix # exif requires unix
     export
     .DEFAULT: $(OCamlProgram $(namex), $(modules))
-  else
-    println(Warning: $(namex) is not built: it requires $(string $(packages)))
-    println(Warning: Supported: $(string all_formats supported $(SUPPORTED_SUBPACKAGES)))
+# too verbose
+#  else
+#    println(Warning: $(namex) is not built: it requires $(string $(packages)))
+#    println(Warning: Supported: $(string all_formats supported $(SUPPORTED_SUBPACKAGES)))
 
   clean:
     rm -f $(filter-proper-targets $(ls R, .)) *.cmt* *.sp*t
