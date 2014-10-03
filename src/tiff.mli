@@ -31,13 +31,13 @@ type colormodel = RGB | CMYK | WHITEBLACK | BLACKWHITE;;
 type in_handle;;
 
 val open_in : string -> int * int * float * colormodel * in_handle;;
-val read_scanline : in_handle -> string -> int -> unit;;
+val read_scanline : in_handle -> bytes -> int -> unit;;
 val close_in : in_handle -> unit;;
 
 type out_handle;;
 
 val open_out : string -> int -> int -> float -> out_handle;;
-val write_scanline : out_handle -> string -> int -> unit;;
+val write_scanline : out_handle -> bytes -> int -> unit;;
 val close_out : out_handle -> unit;;
 
 

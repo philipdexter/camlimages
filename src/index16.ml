@@ -14,6 +14,8 @@
 
 (* $Id: index16.ml,v 1.4 2009/07/04 03:39:28 furuse Exp $*)
 
+open Util
+
 module E = struct
   type t = int
   let bytes_per_pixel = 2
@@ -21,10 +23,10 @@ module E = struct
     int_of_char str.[pos    ] * 256 +
     int_of_char str.[pos + 1]
   let set str pos t =
-    str.[pos    ] <- char_of_int (t / 256);
-    str.[pos + 1] <- char_of_int (t mod 256)
+    str << pos     & char_of_int (t / 256);
+    str << pos + 1 & char_of_int (t mod 256)
   let make t =
-    let str = String.create bytes_per_pixel in
+    let str = Bytes.create bytes_per_pixel in
     set str 0 t;
     str
 end;;

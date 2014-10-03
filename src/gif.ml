@@ -16,6 +16,7 @@
 
 open Images;;
 open Index8;;
+open Util
 
 let debug =
   try ignore (Sys.getenv "CAMLIMAGES_DEBUG_GIF"); true with
@@ -132,8 +133,10 @@ let load filename opts =
   let transparent = ref (-1) in
   let loops = ref 0 in
   let delay = ref 0 in
+  let only_the_first_frame = List.mem Load_only_the_first_frame opts in
   try
     while true do
+      if only_the_first_frame && !frames <> [] then raise Exit;
       match dGifGetRecordType ic with
       | Terminate -> raise Exit
       | Image_desc ->
@@ -308,8 +311,7 @@ let seq_of_gifseq gifseq = {
 let load_sequence filename opts = seq_of_gifseq (load filename opts);;
 
 let load_first filename opts =
-  (* inefficient... *)
-  let sequence = load filename opts in
+  let sequence = load filename (Load_only_the_first_frame :: opts) in
   let bitmap = (List.hd sequence.frames).frame_bitmap in
   Index8 bitmap;;
 
@@ -345,10 +347,10 @@ let save filename opts sequence =
     (* write loops *)
     let loop_written = ref false in
     if sequence.loops <> 0 then begin
-      let str = String.create 3 in
-      str.[0] <- '\001';
-      str.[1] <- char_of_int (sequence.loops mod 256);
-      str.[2] <- char_of_int (sequence.loops / 256);
+      let str = Bytes.create 3 in
+      Bytes.unsafe_set str 0 @@ '\001';
+      Bytes.unsafe_set str 1 @@ char_of_int (sequence.loops mod 256);
+      Bytes.unsafe_set str 2 @@ char_of_int (sequence.loops / 256);
       eGifPutExtension oc
         (gif_make_extension (GifApplication ["NETSCAPE2.0"; str]));
       loop_written := true
@@ -385,14 +387,14 @@ let save filename opts sequence =
           | Some str -> str
           | None -> String.make 4 '\000' in
         if frame.frame_bitmap.transparent <> -1 then begin
-          str.[0] <- char_of_int (int_of_char str.[0] lor 0x01);
-          str.[3] <- char_of_int frame.frame_bitmap.transparent
+          str << 0 & char_of_int (int_of_char str.[0] lor 0x01);
+          str << 3 & char_of_int frame.frame_bitmap.transparent
         end else begin
-          str.[0] <- char_of_int (int_of_char str.[0] land 0xfe);
-          str.[3] <- '\000'
+          str << 0 & char_of_int (int_of_char str.[0] land 0xfe);
+          str << 3 & '\000'
         end;
-        str.[1] <- char_of_int (frame.frame_delay mod 256);
-        str.[2] <- char_of_int (frame.frame_delay / 256);
+        str << 1 & char_of_int (frame.frame_delay mod 256);
+        str << 2 & char_of_int (frame.frame_delay / 256);
         eGifPutExtension oc (gif_make_extension (GifGraphics [str]))
       end;
 
@@ -456,7 +458,7 @@ let check_header filename =
   let len = 10 in
   let ic = open_in_bin filename in
   try
-    let str = String.create len in
+    let str = Bytes.create len in
     really_input ic str 0 len;
     close_in ic;
     match String.sub str 0 6 with

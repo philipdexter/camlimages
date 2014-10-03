@@ -14,6 +14,8 @@
 
 (* $Id: rgba32.ml,v 1.5 2009/07/04 03:39:28 furuse Exp $ *)
 
+open Util
+
 module E = struct
   open Color
   type t = Color.rgba
@@ -25,12 +27,12 @@ module E = struct
           b = int_of_char str.[pos + 2] };
       alpha = int_of_char str.[pos + 3] }
   let set str pos t =
-    str.[pos    ] <- char_of_int t.color.r;
-    str.[pos + 1] <- char_of_int t.color.g;
-    str.[pos + 2] <- char_of_int t.color.b;
-    str.[pos + 3] <- char_of_int t.alpha
+    str << pos     & char_of_int t.color.r;
+    str << pos + 1 & char_of_int t.color.g;
+    str << pos + 2 & char_of_int t.color.b;
+    str << pos + 3 & char_of_int t.alpha
   let make t =
-    let str = String.create bytes_per_pixel in
+    let str = Bytes.create bytes_per_pixel in
     set str 0 t;
     str
 end;;

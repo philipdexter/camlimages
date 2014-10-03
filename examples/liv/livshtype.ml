@@ -123,7 +123,6 @@ let guess link_as_link f =
     end;;
 
 let guess = guess false
-and _lguess = guess true;;
 
 (* prerr_endline "reading suffix"; *)
-read_suffix_file default_mime_types;;
+let () = read_suffix_file default_mime_types

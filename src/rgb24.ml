@@ -14,6 +14,8 @@
 
 (* $Id: rgb24.ml,v 1.7 2009/07/04 03:39:28 furuse Exp $ *)
 
+open Util
+
 module E = struct
   open Color
   type t = Color.rgb
@@ -23,11 +25,11 @@ module E = struct
       g = int_of_char str.[pos + 1];
       b = int_of_char str.[pos + 2] }
   let set str pos t =
-    str.[pos    ] <- char_of_int t.r;
-    str.[pos + 1] <- char_of_int t.g;
-    str.[pos + 2] <- char_of_int t.b
+    str << pos     & char_of_int t.r;
+    str << pos + 1 & char_of_int t.g;
+    str << pos + 2 & char_of_int t.b
   let make t =
-    let str = String.create bytes_per_pixel in
+    let str = Bytes.create bytes_per_pixel in
     set str 0 t;
     str
 end

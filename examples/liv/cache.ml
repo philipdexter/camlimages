@@ -21,7 +21,7 @@ type ('a, 'b) elt = {
 
 type ('a, 'b) t = ('a, 'b) elt option array;;
 
-let create size = Array.create size None;;
+let create size = Array.make size None;;
 
 let find_pos t key =
   let found = ref 0 in

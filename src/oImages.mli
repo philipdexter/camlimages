@@ -39,7 +39,7 @@ class type ['a] map = object
   method unsafe_set : int -> int -> 'a -> unit
   method get : int -> int -> 'a
   method set : int -> int -> 'a -> unit
-  method unsafe_access : int -> int -> string * int
+  method unsafe_access : int -> int -> bytes * int
 end
 
 class type oimage = object
@@ -52,7 +52,7 @@ class type oimage = object
   method image : Images.t
 
   method destroy : unit
-  method dump : string
+  method dump : bytes
       
   method save : string -> format option -> save_option list -> unit
 
@@ -87,13 +87,13 @@ class rgba32_wrapper : Rgba32.t -> rgba32_class
 
 class rgba32        : int -> int -> rgba32_class
 class rgba32_filled : int -> int -> Color.rgba -> rgba32_class
-class rgba32_with   : int -> int -> Info.info list -> string -> rgba32_class
+class rgba32_with   : int -> int -> Info.info list -> bytes -> rgba32_class
 
 class rgb24_wrapper : Rgb24.t -> rgb24_class
 
 class rgb24        : int -> int -> rgb24_class
 class rgb24_filled : int -> int -> Color.rgb -> rgb24_class
-class rgb24_with   : int -> int -> Info.info list -> string -> rgb24_class
+class rgb24_with   : int -> int -> Info.info list -> bytes -> rgb24_class
 
 class type index8_class = object
   inherit oimage
@@ -114,7 +114,7 @@ class index8_wrapper : Index8.t -> index8_class
 
 class index8        : int -> int -> index8_class
 class index8_filled : int -> int -> int -> index8_class
-class index8_with   : int -> int -> Info.info list -> Color.rgb Color.map -> int -> string -> index8_class
+class index8_with   : int -> int -> Info.info list -> Color.rgb Color.map -> int -> bytes -> index8_class
 
 class type index16_class = object
   inherit oimage
@@ -135,7 +135,7 @@ class index16_wrapper : Index16.t -> index16_class
 
 class index16        : int -> int -> index16_class
 class index16_filled : int -> int -> int -> index16_class
-class index16_with   : int -> int -> Info.info list -> Color.rgb Color.map -> int -> string -> index16_class
+class index16_with   : int -> int -> Info.info list -> Color.rgb Color.map -> int -> bytes -> index16_class
 
 class type cmyk32_class = object
   inherit oimage
@@ -150,7 +150,7 @@ class cmyk32_wrapper : Cmyk32.t -> cmyk32_class
 
 class cmyk32        : int -> int -> cmyk32_class
 class cmyk32_filled : int -> int -> Color.cmyk -> cmyk32_class
-class cmyk32_with   : int -> int -> Info.info list -> string -> cmyk32_class
+class cmyk32_with   : int -> int -> Info.info list -> bytes -> cmyk32_class
 
 val rgb24   : oimage -> rgb24_class
 val index8  : oimage -> index8_class

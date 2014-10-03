@@ -51,14 +51,14 @@ type in_handle;;
 val open_in : string -> int * int * in_handle * Marker.t list;;
 val open_in_thumbnail :
   string -> Geometry.spec -> int * int * (int * int * in_handle) * Marker.t list;;
-val read_scanline : in_handle -> string -> int -> unit;;
+val read_scanline : in_handle -> bytes -> int -> unit;;
 val close_in : in_handle -> unit;;
   
 type out_handle;;
 
 val open_out : string -> int -> int -> int -> out_handle;;
 val write_marker : out_handle -> Marker.t -> unit;;
-val write_scanline : out_handle -> string -> unit;;
+val write_scanline : out_handle -> bytes -> unit;;
 val close_out : out_handle -> unit;;
 
 val check_header : string -> Images.header;;

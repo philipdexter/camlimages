@@ -179,7 +179,7 @@ let display_pixbuf pixbuf =
             (x, y), overwrap x y in
 
           let min = ref (random_x_y ()) in
-          for i = 0 to 5 do
+          for _i = 0 to 5 do
             let (x, y), over = random_x_y () in
               if snd !min > over then min := (x, y), over
           done;

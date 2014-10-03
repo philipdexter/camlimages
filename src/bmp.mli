@@ -14,11 +14,11 @@
 
 (* $Id: bmp.mli,v 1.2 2009/02/08 14:27:00 weis Exp $ *)
 
-val check_header : string -> Images.header;;
+val check_header : bytes -> Images.header;;
   (** Checks the file header *)
-val load : string -> Images.load_option list -> Images.t;;
+val load : bytes -> Images.load_option list -> Images.t;;
   (** Loads a bmp image. *)
-val save : string -> Images.save_option list -> Images.t -> unit;;
+val save : bytes -> Images.save_option list -> Images.t -> unit;;
   (** Save an image in bmp format file. *)
 
 (*** Below, they are all lower interfaces *)
@@ -39,7 +39,7 @@ type bmp = {
    bmpFileHeader : bitmapfileheader;           (** Bytes <0  14< *)
    bmpInfoHeader : bitmapinfoheader;           (** Bytes <14 54< *)
    bmpRgbQuad : Images.rgb array;              (** Bytes <54 ... *)
-   bmpBytes : string;                          (** Bytes <bfOffBits ... *)
+   bmpBytes : bytes;                          (** Bytes <bfOffBits ... *)
 }
 
 and bitmapfileheader = {
@@ -108,6 +108,6 @@ and bibitcount =
     (** 32 The bitmap *)
 ;;
 
-val load_bmp : string -> bmp;;
-val save_bmp : string -> bmp -> unit;;
+val load_bmp : bytes -> bmp;;
+val save_bmp : bytes -> bmp -> unit;;
  (** Load and save functions for BMP images. *)

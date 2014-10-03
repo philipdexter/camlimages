@@ -1,22 +1,25 @@
 (***********************************************************************)
 (*                                                                     *)
-(*                           Objective Caml                            *)
+(*                             CamlImages                              *)
 (*                                                                     *)
+(*            Fran輟is Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
-(*  Copyright 1999-2004,                                               *)
+(*  Copyright 1999-2014,                                               *)
 (*  Institut National de Recherche en Informatique et en Automatique.  *)
 (*  Distributed only by permission.                                    *)
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: jis_unicode.ml,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
+external ( & ) : ('a -> 'b) -> 'a -> 'b = "%apply"
 
-open Jis_table;;
+let (<<) = Bytes.set
+let (<<!) = Bytes.unsafe_set
 
-let encode s = (* they must be pure EUC string! *)
-  Array.init (String.length s / 2) @@ fun i ->
-    let h = (Char.code s.[i * 2] - 0x80)
-    and l = (Char.code s.[i * 2 + 1] - 0x80) in
-    let pos = ((h - 0x21) * 94 + (l - 0x21)) * 2 in
-    int_of_char table.[pos] * 256 + int_of_char table.[pos+1]
+let range_check s from to_ =
+  let len = Bytes.length s in
+  if not (0 <= from && from <= to_ && to_ < len) then
+    invalid_arg "index out of bounds"
+
+let (>@!) = Array.unsafe_get

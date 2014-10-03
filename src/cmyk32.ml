@@ -16,6 +16,8 @@
 
 (* CMYK 32 bit depth image format *)
 
+open Util
+
 module E = struct
   open Color
   type t = Color.cmyk
@@ -26,12 +28,12 @@ module E = struct
       y = int_of_char str.[pos + 2];
       k = int_of_char str.[pos + 3]; }
   let set str pos t =
-    str.[pos    ] <- char_of_int t.c;
-    str.[pos + 1] <- char_of_int t.m;
-    str.[pos + 2] <- char_of_int t.y;
-    str.[pos + 3] <- char_of_int t.k
+    str << pos     & char_of_int t.c;
+    str << pos + 1 & char_of_int t.m;
+    str << pos + 2 & char_of_int t.y;
+    str << pos + 3 & char_of_int t.k
   let make t =
-    let str = String.create bytes_per_pixel in
+    let str = Bytes.create bytes_per_pixel in
     set str 0 t;
     str
 end;;

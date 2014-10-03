@@ -395,8 +395,8 @@ let main () =
       p "{ currentfile scanline readhexstring pop } false 3";
       p "colorimage";
 
-      let buf = String.create (imgw * 3) in
-      for y = 0 to y1 - 1 do th.read_next_line buf done;
+      let buf = Bytes.create (imgw * 3) in
+      for _y = 0 to y1 - 1 do th.read_next_line buf done;
       let prevperdec = ref (-1) in
       for y = y1 to y1 + h - 1 do
         let perdec = (y - y1) * 10 / h in
@@ -421,7 +421,7 @@ let main () =
                 mono (Char.code buf.[adrs])
                      (Char.code buf.[adrs + 1])
                      (Char.code buf.[adrs + 2]) in
-              for i = 0 to 2 do print_string (sprintf "%02x" m) done in
+              for _i = 0 to 2 do print_string (sprintf "%02x" m) done in
         if not conf.mirror
         then for x = x1 to x1 + w - 1 do print_pixel x done
         else for x = x1 + w - 1 downto x1 do print_pixel x done;

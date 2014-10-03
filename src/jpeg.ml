@@ -14,6 +14,7 @@
 
 (* $Id: jpeg.ml,v 1.4 2009/07/04 03:39:28 furuse Exp $ *)
 
+open Util
 open Images;;
 open Rgb24;;
 
@@ -119,7 +120,7 @@ let load_aux prog ic w h =
       load_scanlines 0
   | None -> 
       (* CR jfuruse: check overflow *)
-      let scanline = String.create (w * 3) in
+      let scanline = Bytes.create (w * 3) in
       for y = 0 to h - 1 do
 	read_scanline ic scanline 0;
 	Rgb24.set_scanline img y scanline;
@@ -169,16 +170,16 @@ let save_as_cmyk name opts trans image =
     | None -> 80 in
   let prog = Images.save_progress opts in
   let get_cmyk_scanline width scanline =
-    let buf = String.create (width * 4) in
+    let buf = Bytes.create (width * 4) in
     for x = 0 to width - 1 do
       let r = int_of_char scanline.[x * 3 + 0] in
       let g = int_of_char scanline.[x * 3 + 1] in
       let b = int_of_char scanline.[x * 3 + 2] in
       let c, m, y, k = trans {r = r; g = g; b = b} in
-      buf.[x * 4 + 0] <- char_of_int (255 - c);
-      buf.[x * 4 + 1] <- char_of_int (255 - m);
-      buf.[x * 4 + 2] <- char_of_int (255 - y);
-      buf.[x * 4 + 3] <- char_of_int (255 - k)
+      buf << x * 4 + 0 & char_of_int (255 - c);
+      buf << x * 4 + 1 & char_of_int (255 - m);
+      buf << x * 4 + 2 & char_of_int (255 - y);
+      buf << x * 4 + 3 & char_of_int (255 - k)
     done;
     buf in
   match image with
@@ -207,13 +208,13 @@ let save_cmyk_sample name opts =
     and k = (y mod 16) * 17 in
     c, m, y, k in
   let sample_scan y =
-    let s = String.create (256 * 4) in
+    let s = Bytes.create (256 * 4) in
     for x = 0 to 255 do
       let c, m, y, k = sample_point x y in
-      s.[x * 4 + 0] <- char_of_int c;
-      s.[x * 4 + 1] <- char_of_int m;
-      s.[x * 4 + 2] <- char_of_int y;
-      s.[x * 4 + 3] <- char_of_int k;
+      s << x * 4 + 0 & char_of_int c;
+      s << x * 4 + 1 & char_of_int m;
+      s << x * 4 + 2 & char_of_int y;
+      s << x * 4 + 3 & char_of_int k;
     done;
     s in
   let oc = open_out_cmyk name 256 256 quality in
@@ -235,7 +236,7 @@ let find_jpeg_size ic =
       else ch in
     jump_to_0xff ();
     let ch = jump_to_non_0xff () in
-    let str = String.create 4 in
+    let str = Bytes.create 4 in
     match ch with
     | 0xda -> raise Not_found
     | _ when ch >= 0xc0 && ch <= 0xc3 ->
@@ -248,7 +249,7 @@ let find_jpeg_size ic =
       let blocklen =
         really_input ic str 0 2;
         int_of_char str.[0] lsl 8 + int_of_char str.[1] in
-      let s = String.create (blocklen - 2) in
+      let s = Bytes.create (blocklen - 2) in
       really_input ic s 0 (blocklen - 2);
       loop () in
   try loop () with
@@ -258,7 +259,7 @@ let check_header filename =
   let len = 2 in
   let ic = open_in_bin filename in
   try
-    let str = String.create len in
+    let str = Bytes.create len in
     really_input ic str 0 len;
     if
       (* I had some jpeg started with 7f58, the 7th bits were missing... *)

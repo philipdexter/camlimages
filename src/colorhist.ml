@@ -18,7 +18,7 @@ open Color;;
 
 type t = int array;;
 
-let create () = Array.create 256 0;;
+let create () = Array.make 256 0;;
 
 let total_samples t = Array.fold_left (fun st x -> st + x) 0 t;;
 

@@ -86,6 +86,7 @@ CFILES_all_formats=
 ###################################################################### ML FILES
 
 FILES_core[]=
+  util
   bitmap
   blend
   camlimages

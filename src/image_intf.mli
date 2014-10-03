@@ -14,14 +14,14 @@
 
 (* $Id: image_intf.mli,v 1.2 2009/07/04 03:39:28 furuse Exp $ *)
 
-(** Color to string encoder/decoder module type *)
+(** Color to bytes encoder/decoder module type *)
 module type ENCODE =
   sig
     type t
     val bytes_per_pixel : int
-    val get : string -> int -> t
-    val set : string -> int -> t -> unit
-    val make : t -> string
+    val get : bytes -> int -> t
+    val set : bytes -> int -> t -> unit
+    val make : t -> bytes
   end;;
 
 (** Low level image module type *)
@@ -32,17 +32,17 @@ module type RAWIMAGE = sig
   and t = { width : int; height : int; bitmap : bitmap; }
   val width : t -> int
   val height : t -> int
-  val dump : t -> string
-  val create_with : int -> int -> string -> t
-  val create_with_scanlines : int -> int -> string array -> t
+  val dump : t -> bytes
+  val create_with : int -> int -> bytes -> t
+  val create_with_scanlines : int -> int -> bytes array -> t
   val create : int -> int -> t
   val make : int -> int -> elt -> t
-  val unsafe_access : t -> int -> int -> string * int
-  val get_strip : t -> int -> int -> int -> string
-  val set_strip : t -> int -> int -> int -> string -> unit
-  val get_scanline : t -> int -> string
-  val get_scanline_ptr : t -> (int -> (string * int) * int) option
-  val set_scanline : t -> int -> string -> unit
+  val unsafe_access : t -> int -> int -> bytes * int
+  val get_strip : t -> int -> int -> int -> bytes
+  val set_strip : t -> int -> int -> int -> bytes -> unit
+  val get_scanline : t -> int -> bytes
+  val get_scanline_ptr : t -> (int -> (bytes * int) * int) option
+  val set_scanline : t -> int -> bytes -> unit
   val unsafe_get : t -> int -> int -> elt
   val unsafe_set : t -> int -> int -> elt -> unit
   val get : t -> int -> int -> elt
@@ -125,13 +125,13 @@ module type IMAGE = sig
      comes at [x'],[y'] of [dst]. *)
 
   (** functions for internal use *)
-  val dump : t -> string
-  val unsafe_access : t -> int -> int -> string * int
-  val get_strip : t -> int -> int -> int -> string
-  val set_strip : t -> int -> int -> int -> string -> unit
-  val get_scanline : t -> int -> string
-  val get_scanline_ptr : t -> (int -> (string * int) * int) option
-  val set_scanline : t -> int -> string -> unit
+  val dump : t -> bytes
+  val unsafe_access : t -> int -> int -> bytes * int
+  val get_strip : t -> int -> int -> int -> bytes
+  val set_strip : t -> int -> int -> int -> bytes -> unit
+  val get_scanline : t -> int -> bytes
+  val get_scanline_ptr : t -> (int -> (bytes * int) * int) option
+  val set_scanline : t -> int -> bytes -> unit
   val blocks : t -> int * int
   val dump_block : t -> int -> int -> Bitmap.Block.t
 end;;

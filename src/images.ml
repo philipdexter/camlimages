@@ -148,6 +148,7 @@ type header = {
 type load_option =
    | Load_Progress of (float -> unit) (* For progress meters *)
    | Load_Resolution of float * float (* Pixel/Inch for rasterization of PS *)
+   | Load_only_the_first_frame
 ;;
 
 (* Save options *)

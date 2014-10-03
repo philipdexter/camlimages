@@ -31,7 +31,7 @@ let scan_dir f fn =
         | e -> prerr_endline ("readdir: " ^ Printexc.to_string e)
       end;
       closedir dh;
-      let files = Sort.list (>) !files in
+      let files = List.sort (fun x y -> compare y x) !files in
       let subdirs = ref [] in
       let treat fn' =
         if not (fn' = ".." || fn' = ".") then begin

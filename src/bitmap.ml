@@ -12,6 +12,8 @@
 
 (* $Id: bitmap.ml,v 1.7 2009/07/04 03:39:28 furuse Exp $*)
 
+open Util
+
 let debug = ref true;;
 let debugs s = if !debug then prerr_endline s;;
 
@@ -35,9 +37,9 @@ type block = {
 
 let swappable_blocks = ref [];;
 
-(* wrapped String.create *)
+(* wrapped Bytes.create *)
 let string_create s =
-  try String.create s with Invalid_argument _ -> raise Out_of_memory;;
+  try Bytes.create s with Invalid_argument _ -> raise Out_of_memory;;
 
 module Block = struct
   type t = {
@@ -186,7 +188,7 @@ module Make(B:Bitdepth) = struct
 
   let swap_out_eldest words =
     let sorted =
-      Sort.list (fun b1 b2 -> b1.last_used < b2.last_used) !swappable_blocks in
+      List.sort (fun b1 b2 -> compare b1.last_used b2.last_used) !swappable_blocks in
     let rec swapper sorted i =
      match sorted with
       | [] -> ()
@@ -277,7 +279,7 @@ module Make(B:Bitdepth) = struct
         | Out_of_memory -> alloc_test_block (p + 1) in
       let blocks, test_block = alloc_test_block (get_block_size 1) in
       (* use the block so that it is not GCed too early *)
-      test_block.[0] <- '0';
+      test_block << 0 & '0';
 
       (* Create bitmap *)
       let blocks_x = blocks

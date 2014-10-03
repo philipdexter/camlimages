@@ -16,6 +16,8 @@
 
 (** String utilities *)
 
+open Util
+
 (** split a string according to char_sep predicate *)
 let split_str char_sep str =
   let len = String.length str in
@@ -91,12 +93,9 @@ let dec_to_hex i =
 (* Converting a hex stored string *)
 let hex_to_string s =
   let len = String.length s / 2 in
-  let res = String.create len in
-    for i = 0 to len - 1 do
-      res.[i] <-
-        char_of_int ( 16 * (hex_to_dec s.[i + i]) + hex_to_dec s.[i + i + 1])
-      done;
-    res;;
+  Bytes.init len @@ fun i -> 
+    char_of_int ( 16 * (hex_to_dec s.[i + i]) + hex_to_dec s.[i + i + 1])
+;;
 
 let gensym =
   let cnter = ref 0 in
@@ -125,37 +124,38 @@ let catenate_sep = String.concat;;
 let norm_crlf lastwascr buf offs len =
   let rpos = ref offs
   and wpos = ref 0
-  and dest = String.create (len + 1) (* we need one more char *)
+  and dest = Bytes.create (len + 1) (* we need one more char *)
   and limit = offs + len - 1
   and lastiscr = ref false in
   if lastwascr then
     if buf.[!rpos] = '\n' then begin
-      dest.[!wpos] <- '\n';
+      dest << !wpos & '\n';
       incr rpos; incr wpos
     end else begin
-      dest.[!wpos] <- '\n'; incr wpos
+      dest << !wpos & '\n'; incr wpos
     end;
 
   while !rpos < limit do
     match buf.[!rpos] with
-    | '\n' -> dest.[!wpos] <- '\n'; incr rpos; incr wpos
+    | '\n' -> dest << !wpos & '\n'; incr rpos; incr wpos
     | '\r' ->
       if buf.[!rpos + 1] = '\n' then begin
-        dest.[!wpos] <- '\n'; rpos := !rpos + 2; incr wpos
+        dest << !wpos & '\n'; rpos := !rpos + 2; incr wpos
       end else begin
-        dest.[!wpos] <- '\n'; incr rpos; incr wpos end
-    | c -> dest.[!wpos] <- c; incr rpos; incr wpos
+        dest << !wpos & '\n'; incr rpos; incr wpos end
+    | c -> dest << !wpos & c; incr rpos; incr wpos
   done;
   begin match buf.[offs+len-1] with
-  | '\n' -> dest.[!wpos] <- '\n'; incr wpos
+  | '\n' -> dest << !wpos & '\n'; incr wpos
   | '\r' -> lastiscr := true
-  | c -> dest.[!wpos] <- c; incr wpos
+  | c -> dest << !wpos & c; incr wpos
   end;
   String.sub dest 0 !wpos, !lastiscr;;
 
 let hexchar c =
-  let s = String.make 3 '%'
-  and i = int_of_char c in
-  s.[1] <- dec_to_hex (i / 16);
-  s.[2] <- dec_to_hex (i mod 16);
-  s;;
+  let i = int_of_char c in
+  String.init 3 @@ function
+    | 0 -> '%'
+    | 1 -> dec_to_hex (i / 16)
+    | 2 -> dec_to_hex (i mod 16)
+    | _ -> assert false

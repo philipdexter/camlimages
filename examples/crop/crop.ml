@@ -46,9 +46,9 @@ let edge edgename img24 =
     match edgename with
     | Some _ ->
         Some (new rgb24_with img24#width img24#height
-                [] (String.copy img24#dump))
+                [] (Bytes.copy img24#dump))
     | None -> None in
-  let edge = Array.init img24#width (fun _ -> Array.create img24#height 0) in
+  let edge = Array.init img24#width (fun _ -> Array.make img24#height 0) in
 
   (* inner kills outer *)
   let s = if img24#width < img24#height then img24#width else img24#height in
@@ -103,7 +103,7 @@ let edge edgename img24 =
     done;
   done;
 
-  let edge2 = Array.init img24#width (fun _ -> Array.create img24#height 0) in
+  let edge2 = Array.init img24#width (fun _ -> Array.make img24#height 0) in
   (* sole points are dead *)
   for x = 0 to img24#width -1 do
     for y =0 to img24#height -1 do

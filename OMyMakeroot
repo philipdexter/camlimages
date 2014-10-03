@@ -101,8 +101,10 @@ Word_size() =
 Check_ocamlfind_package_compilation(package, module) =
     ConfMsgChecking($(package) compilability: open $(module))
     tmp_ml = $(file $(tmpfile omake, .ml))
+    ConfMsgChecking($(tmp_ml))
     tmp = $(file $(replacesuffixes .ml, $"$(EMPTY)", $(tmp_ml)))
-    command[] = $(OCamlC) -c -package $(package) $(tmp_ml)
+    command[] = $(OCamlC) -warn-error -a -c -package $(package) $(tmp_ml)
+    println($(string $(command)))
 
     # The program
     program = $"""(* Configuration file; you can remove this. *)
