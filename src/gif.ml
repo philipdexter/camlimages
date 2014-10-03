@@ -133,8 +133,10 @@ let load filename opts =
   let transparent = ref (-1) in
   let loops = ref 0 in
   let delay = ref 0 in
+  let only_the_first_frame = List.mem Load_only_the_first_frame opts in
   try
     while true do
+      if only_the_first_frame && !frames <> [] then raise Exit;
       match dGifGetRecordType ic with
       | Terminate -> raise Exit
       | Image_desc ->
@@ -309,8 +311,7 @@ let seq_of_gifseq gifseq = {
 let load_sequence filename opts = seq_of_gifseq (load filename opts);;
 
 let load_first filename opts =
-  (* inefficient... *)
-  let sequence = load filename opts in
+  let sequence = load filename (Load_only_the_first_frame :: opts) in
   let bitmap = (List.hd sequence.frames).frame_bitmap in
   Index8 bitmap;;
 
