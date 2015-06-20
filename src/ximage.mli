@@ -22,12 +22,12 @@ type t = {
   data : Gdk.image;
 };;
 
-val destroy : t -> unit;;
+val destroy : t -> unit
 (** You need manual destroy *)
 
 val create :
   kind:Gdk.Image.image_type -> visual:Gdk.visual ->
-    width: int -> height: int -> t;;
+    width: int -> height: int -> t
 (** Same as Gdk.Image.create, but with size info *)
 
 val unsafe_get : t -> int -> int -> elt;;
