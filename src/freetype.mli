@@ -12,13 +12,13 @@
 
 (* $Id: freetype.mli,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-type t;; (** type for Freetype library *)
+type t (** type for Freetype library *)
 
-val init : unit -> t;;
+val init : unit -> t
     (** [init ()] initializes the Freetype library.
        The returned library is required to load fonts. *)
 
-type face;; (** Type for face *)
+type face (** Type for face *)
 
 type face_info = {
     num_faces : int;
@@ -37,22 +37,22 @@ type face_info = {
     has_multiple_masters : bool;
   };;
 
-val new_face : t -> string -> int -> face * face_info;;
+val new_face : t -> string -> int -> face * face_info
     (** [new_face library fontfile n] loads [n]-th font stored
        in the font file [fontfile], and returns its face and
        face information. *)
 
-val get_num_glyphs : face -> int;;
+val get_num_glyphs : face -> int
     (** Returns number of glyphs stored in the face.
        Equivalent to face_info.num_glyphs *)
 
-val set_char_size : face -> float -> float -> int -> int -> unit;;
+val set_char_size : face -> float -> float -> int -> int -> unit
     (** [set_char_size face charw charh resh resv] sets the character
        size of [face]. [charw] and [charh] are the points of the characters
        in width and height. [resh] and [resv] are the horizontal and
        vertical resolution (in dpi) *)
 
-val set_pixel_sizes : face -> int -> int -> unit;;
+val set_pixel_sizes : face -> int -> int -> unit
     (** [set_pixel_sizes face pixw pixh] also sets the character size
        of [face]. [pixw] and [pixh] are standard width and height of
        characters in pixels. *)
@@ -69,7 +69,7 @@ val set_charmap : face -> charmap -> unit;;
 val get_char_index : face -> int -> char_index;;
 
 type render_mode = Render_Normal | Render_Mono;;
-type load_flag = Load_no_scale | Load_no_hinting;;
+type load_flag = Load_no_scale | Load_no_hinting
 (** if you give [], freetype loads glyphs with scaling and hinting *)
 
 val load_glyph : face -> char_index -> load_flag list -> float * float;;

@@ -17,7 +17,7 @@
 (** Interface of images from this library to images of the Caml
    [Graphics] library. *)
 
-val draw_image : Images.t -> int -> int -> unit;;
+val draw_image : Images.t -> int -> int -> unit
  (** Draw an [Images.t] value into the graphic window. *)
 
 val get_image : int -> int -> int -> int -> Rgb24.t
@@ -26,11 +26,11 @@ val get_image : int -> int -> int -> int -> Rgb24.t
  
 (** lower interface *)
 
-val array_of_image : Images.t -> Graphics.color array array;;
+val array_of_image : Images.t -> Graphics.color array array
  (** Convert an [Images.t] value to an array of colors. *)
 
-val of_image : Images.t -> Graphics.image;;
+val of_image : Images.t -> Graphics.image
  (** Convert an [Images.t] value to a graphic image. *)
 
-val image_of : Graphics.image -> Rgb24.t;;
+val image_of : Graphics.image -> Rgb24.t
  (** Convert an [Graphics.image] value to *our* image *)

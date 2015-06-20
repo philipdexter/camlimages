@@ -20,9 +20,11 @@
 
 exception Too_many_colors;;
 
-type 'a map = { mutable max : int; mutable map : 'a array };;
+type 'a map = { mutable max : int; mutable map : 'a array }
 (** This is copied in Images also *)
+
 (** Colormap manipulation functions *)
+
 val size : 'a map -> int;;
     (** Returns the size of a colormap. *)
 val find_exact : 'a map -> 'a -> int;;
@@ -36,7 +38,7 @@ val add_colors : 'a map -> 'a list -> int list;;
     (** Add the list of new colors into the given colormap and return 
        their indices. If a color is already in the colormap, it is not
        added again, and the corresponding color index is returned. *)
-val copy : 'a map -> 'a map;;
+val copy : 'a map -> 'a map
     (** Copy a colormap *)
 (*
 val find_nearest : 'a map -> 'a -> int;;
@@ -76,7 +78,7 @@ module Rgba : sig
   val find_nearest : t map -> t -> int
 end;;
 
-type rgba = Rgba.t = { color: rgb; mutable alpha : int; };;
+type rgba = Rgba.t = { color: rgb; mutable alpha : int; }
  (** RGB with alpha (transparent) information *)
 
 module Cmyk :
@@ -94,7 +96,7 @@ module Cmyk :
   end;;
 
 type cmyk = Cmyk.t =
-  { mutable c : int; mutable m : int; mutable y : int; mutable k : int; };;
+  { mutable c : int; mutable m : int; mutable y : int; mutable k : int; }
  (** Cyan Magenta Yellow blacK color model *)
 
 (** Rgb specialized functions (for backward compatibility) *)

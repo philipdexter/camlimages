@@ -35,7 +35,7 @@ val resize : (float -> unit) option -> t -> int -> int -> t;;
    a float from 0 to 1.0. *)
 
 val to_rgba32 : t -> Rgba32.t;;
-val of_rgba32 : Rgba32.t -> t;;
+val of_rgba32 : Rgba32.t -> t
 (** Image format conversion functions between Rgba32.t images *)
 
 (** Generic functions *)

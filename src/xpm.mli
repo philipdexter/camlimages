@@ -14,10 +14,10 @@
 
 (* $Id: xpm.mli,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-val check_header : string -> Images.header;;
+val check_header : string -> Images.header
   (** Checks the file header *)
 
-val load : string -> Images.load_option list -> Images.t;;
+val load : string -> Images.load_option list -> Images.t
   (** Loads an xpm image. *)
 
 (* NO SAVE 

@@ -28,7 +28,7 @@ type t = {
   mutable infos : Info.info list;
  };;
 
-val resize : (float -> unit) option -> t -> int -> int -> t;;
+val resize : (float -> unit) option -> t -> int -> int -> t
 (** [resize progress t w h] creates a resized image of [t] with size [w]x[h].
    You can specify a progress meter function [progress], which takes
    a float from 0 to 1.0. *)

@@ -18,11 +18,13 @@
 
 (**************************************************************** Exceptions *)
 
-exception Out_of_image;;
+exception Out_of_image
   (** Exception for illegal point access *)
-exception Wrong_image_type;;
+
+exception Wrong_image_type
   (** Exception for illegal internal image type *)
-exception Wrong_file_type;;
+
+exception Wrong_file_type
   (** Exception for unsupported image FILE format *)
 
 (************************************************************* Generic image *)
@@ -32,7 +34,7 @@ type t =
    | Rgb24 of Rgb24.t
    | Index16 of Index16.t
    | Rgba32 of Rgba32.t
-   | Cmyk32 of Cmyk32.t;;
+   | Cmyk32 of Cmyk32.t
   (** Generic image type *)
 
 type sequence = {
@@ -160,14 +162,14 @@ val add_methods : format -> format_methods -> unit
   (** If you write new drivers for some image format, use this function
      to register their loading/saving functions into the libaray *)
 
-val load : string -> load_option list -> t;;
+val load : string -> load_option list -> t
   (** [load filename options] read the header of an image file [filename],
      loads the image by calling corresponding loading method, and
      returns it. If the file format is not supported by the library,
      a Wrong_file_type exception will be raised. You can specify loading
      options in [options] such as progressive meter function. *)
 
-val save : string -> format option -> save_option list -> t -> unit;;
+val save : string -> format option -> save_option list -> t -> unit
   (** [save filename formatopt options image] saves [image] into a file
      [filename]. The image format can be specified by [formatopt].
      If [formatopt] is [Some format], then [format] is used. If it is
@@ -180,19 +182,19 @@ val save_sequence :
   string -> format option -> save_option list -> sequence -> unit;;
 val unoptimize_sequence : sequence -> sequence;;
 
-val size : t -> int * int;;
+val size : t -> int * int
   (** Returns size (width and height) of image *)
 
-val destroy : t -> unit;;
+val destroy : t -> unit
   (** Free the image. If you turn on image swapping (see bitmap.mli),
      you can call this function explicitly to tell the library that this image
      is no longer used. (This is not required, though.) *)
 
-val sub : t -> int -> int -> int -> int -> t;;
+val sub : t -> int -> int -> int -> int -> t
     (** [sub dst x y width height] returns sub-bitmap of [dst],
        at (x, y) - (x + width - 1, y + height - 1). *)
 
-val blit : t -> int -> int -> t -> int -> int -> int -> int -> unit;;
+val blit : t -> int -> int -> t -> int -> int -> int -> int -> unit
 (** [blit src sx sy dst dx dy width height] copies the rectangle
    region of [src] at (sx, sy) - (sx + width - 1, sy + height - 1) to [dst], at
    (dx, dy) - (dx + width - 1, dy + height - 1). *)

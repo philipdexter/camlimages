@@ -14,13 +14,13 @@
 
 (* $Id: tiff.mli,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-val check_header : string -> Images.header;;
+val check_header : string -> Images.header
   (** Checks the file header *)
 
-val load : string -> Images.load_option list -> Images.t;;
+val load : string -> Images.load_option list -> Images.t
   (** Loads a tiff image. *)
 
-val save : string -> Images.save_option list -> Images.t -> unit;;
+val save : string -> Images.save_option list -> Images.t -> unit
   (** Save a full-color image in tiff format file.
      Raises [Invalid_argument] if the image is not a full-color image. *)
 

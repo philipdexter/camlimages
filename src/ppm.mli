@@ -24,7 +24,7 @@ PBM: portable bitmap (binary digit map).
      This is represented as an Index8.t image.
 *)
 
-val load : string -> Images.load_option list -> Images.t;;
+val load : string -> Images.load_option list -> Images.t
  (** [Ppm.load filename] reads the image contained in the file [filename],
     and returns an image.
     Assumes that the image is stored in PPM (Portable Pixmap) or PGM
@@ -37,16 +37,15 @@ val load : string -> Images.load_option list -> Images.t;;
     are suppoorted.
  *)
 
-val save : string -> Images.save_option list -> Images.t -> unit;;
+val save : string -> Images.save_option list -> Images.t -> unit
  (** [Ppm.save : filename img] stores image [img], on file [filename].
     The image is saved as a portable pixmap, in raw encoding mode.
  *)
 
 val save_bitmap : string -> Index8.t -> unit;;
-val load_bitmap : string -> Index8.t;;
+val load_bitmap : string -> Index8.t
  (** Same as above for portable bitmaps. *)
 
 val load_ppm : string -> Rgb24.t;;
-val save_ppm : string -> Rgb24.t -> unit;;
+val save_ppm : string -> Rgb24.t -> unit
  (** Specialized version for portable bitmaps. *)
-
