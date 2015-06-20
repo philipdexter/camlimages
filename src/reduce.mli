@@ -13,10 +13,10 @@
 (***********************************************************************)
 module type REDUCER = sig 
   val find_nearest : Color.rgb Color.map -> Color.rgb -> int 
-end;;
+end
 
 module ErrorDiffuse : functor(R : REDUCER) -> sig 
   val f : Rgb24.t -> Color.rgb Color.map -> Index8.t 
-end;;
+end
 
-val error_diffuse : Rgb24.t -> Color.rgb Color.map -> Index8.t;;
+val error_diffuse : Rgb24.t -> Color.rgb Color.map -> Index8.t

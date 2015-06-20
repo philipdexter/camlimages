@@ -14,28 +14,28 @@
 
 (* $Id: tiff.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
-open Images;;
-open Rgb24;;
+open Images
+open Rgb24
 
-type colormodel = RGB | CMYK | WHITEBLACK | BLACKWHITE;;
+type colormodel = RGB | CMYK | WHITEBLACK | BLACKWHITE
 
-type in_handle;;
+type in_handle
 
 external open_in : string -> int * int * float * colormodel * in_handle
-    = "open_tiff_file_for_read";;
+    = "open_tiff_file_for_read"
 external read_scanline : in_handle -> string -> int -> unit
-    = "read_tiff_scanline";;
+    = "read_tiff_scanline"
 external close_in : in_handle -> unit
-    = "close_tiff_file";;
+    = "close_tiff_file"
 
-type out_handle;;
+type out_handle
 
 external open_out : string -> int -> int -> float -> out_handle
-    = "open_tiff_file_for_write";;
+    = "open_tiff_file_for_write"
 external write_scanline : out_handle -> string -> int -> unit
-    = "write_tiff_scanline";;
+    = "write_tiff_scanline"
 external close_out : out_handle -> unit
-    = "close_tiff_file";;
+    = "close_tiff_file"
 
 let load name opts =
   let prog = Images.load_progress opts in
@@ -87,7 +87,7 @@ let load name opts =
     | None -> ()
   done;
   close_in tif;
-  img;;
+  img
 
 let save name _opts image =
   match image with
@@ -101,7 +101,7 @@ let save name _opts image =
 	write_scanline oc (Rgb24.get_scanline bmp y) y
       done;
       close_out oc
-  | _ -> raise Wrong_image_type;;
+  | _ -> raise Wrong_image_type
 
 let check_header filename =
   let len = 4 in
@@ -123,13 +123,13 @@ let check_header filename =
   with
   | _ ->
       Pervasives.close_in ic;
-      raise Wrong_file_type;;
+      raise Wrong_file_type
 
-add_methods Tiff
+let () = add_methods Tiff
   { check_header = check_header;
     load = Some load;
     save = Some save;
     load_sequence = None;
     save_sequence = None;
-};;
+}
 

@@ -13,9 +13,9 @@
 (***********************************************************************)
 
 (* temporary directory *)
-let tmp_dir = ref (try Sys.getenv "CAMLIMAGESTMPDIR" with Not_found -> "/tmp");;
+let tmp_dir = ref (try Sys.getenv "CAMLIMAGESTMPDIR" with Not_found -> "/tmp")
 
-let cnter = ref 0;;
+let cnter = ref 0
 
 let rec new_tmp_name prefx =
   incr cnter;
@@ -25,14 +25,14 @@ let rec new_tmp_name prefx =
   if not (Sys.file_exists name) then name else begin
     prerr_endline ("Warning: tmp file " ^ name ^ " already exists");
     new_tmp_name prefx
-  end;;
+  end
 
-let remove_tmp_file tmpfile = try Sys.remove tmpfile with _ -> ();;
+let remove_tmp_file tmpfile = try Sys.remove tmpfile with _ -> ()
 
 let new_tmp_file_name prefx =
   if not (Sys.file_exists !tmp_dir) then 
     failwith ("Temporary directory " ^ !tmp_dir ^ " does not exist") else
   let f = new_tmp_name prefx in
   at_exit (fun () -> remove_tmp_file f);
-  f;;
+  f
 

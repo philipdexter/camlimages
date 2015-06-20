@@ -12,8 +12,8 @@
 
 (* $Id: tiffps.ml,v 1.11 2008/05/17 19:55:50 furuse Exp $ *)
 
-open Images;;
-open Printf;;
+open Images
+open Printf
 
 (* String utilities *)
 
@@ -34,15 +34,15 @@ let split_str char_sep str =
         String.sub str beg (cur - beg) :: split nextw nextw else
       split beg (succ cur) in
     let wstart = skip_sep 0 in
-    split wstart wstart;;
+    split wstart wstart
 
-let inch_cm = 2.53012048193;;
-let inch_pt = 72.0;;
+let inch_cm = 2.53012048193
+let inch_pt = 72.0
 
 let units = [ "mm", 0.1 /. inch_cm *. inch_pt;
               "cm", 1.0 /. inch_cm *. inch_pt;
               "pt", 1.0;
-              "in", inch_pt ];;
+              "in", inch_pt ]
 
 let parse_length s = (* return in pt *)
   let v =
@@ -54,13 +54,13 @@ let parse_length s = (* return in pt *)
     with
     | Not_found -> (* think it is in "pt" *) float_of_string s in
   prerr_endline (Printf.sprintf "%s -> %fpt" s v);
-  v;;
+  v
 
 (* Scanlined loader *)
 type scanlined_loader = {
     read_next_line: (string -> unit);
     close: (unit -> unit)
-  };;
+  }
 
 let scanline_open name =
   match Images.file_format name with
@@ -76,9 +76,9 @@ let scanline_open name =
       w, h, dpi,
       { read_next_line = (fun buf -> Tiff.read_scanline ic buf !y; incr y);
         close = (fun () -> Tiff.close_in ic) }
-  | _ -> assert false;;
+  | _ -> assert false
 
-type rot = Rot0 | Rot90 | Rot180 | Rot270 | RotMax;;
+type rot = Rot0 | Rot90 | Rot180 | Rot270 | RotMax
 
 type at =
    | TopLeft of float * float
@@ -86,20 +86,20 @@ type at =
    | BottomLeft of float * float
    | BottomRight of float * float
    | Center of float * float
-   | A4Center;;
+   | A4Center
 
 type crop = {
    mutable cx : int;
    mutable cy : int;
    mutable cw : int;
    mutable ch : int;
-};;
+}
 
 type size =
    | A4MaxSize
    | DPI of float
    | MaxBox of float * float
-   | MinBox of float * float;;
+   | MinBox of float * float
 
 type conf = {
    mutable name : string;
@@ -109,7 +109,7 @@ type conf = {
    mutable pos : at;
    mutable mirror : bool;
    mutable mono : bool;
-};;
+}
 
 let main () =
   (* global options *)
@@ -455,6 +455,6 @@ let main () =
   if !showpage then p "showpage";
   if !comments then p "%%Trailer";
   p "end";
-  if !comments then p "%%EOF";;
+  if !comments then p "%%EOF"
 
-main ();;
+let () = main ()

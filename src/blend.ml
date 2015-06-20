@@ -2,7 +2,7 @@ type mode =
    | Normal | Multiply | Screen | Overlay (* | SoftLight | HardLight *)
    | ColorDodge | ColorBurn | Darken | Lighten | Difference
    | Exclusion (* | Luminosity | Color | Saturation | Hue *)
-;;
+
 
 (* look at gxblend.c of ghostscript *)
 let blend = function
@@ -60,7 +60,7 @@ let blend = function
         let t = (0xff - dst) * src + dst * (0xff - src) in
         let t = t + 0x80 in
         let t = t + t lsr 8 in
-        t lsr 8;;
+        t lsr 8
 
 open Color
 
@@ -80,4 +80,4 @@ let f blendmode srcalpha =
         {r = (blender src.r dst.r * srcalpha + dst.r * a') / 255;
          g = (blender src.g dst.g * srcalpha + dst.g * a') / 255;
          b = (blender src.b dst.b * srcalpha + dst.b * a') / 255}
-;;
+

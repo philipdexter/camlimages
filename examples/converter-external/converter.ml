@@ -12,9 +12,9 @@
 
 (* $Id: converter.ml,v 1.1.2.1 2010/05/13 13:14:47 furuse Exp $ *)
 
-open Images;;
-open OImages;;
-open Info;;
+open Images
+open OImages
+open Info
 
 let files = ref [] in
 Arg.parse [] (fun s -> files := s :: !files) "converter src dst";
@@ -35,4 +35,4 @@ try saver src with
     | Index8 img -> img#to_rgb24#coerce
     | Index16 img -> img#to_rgb24#coerce
     | _ -> invalid_arg "not supported" in
-  saver src';;
+  saver src'

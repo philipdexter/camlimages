@@ -17,11 +17,11 @@ type ('a, 'b) elt = {
     data : 'b;
     at_remove : 'b -> unit;
     time : float;
-  };;
+  }
 
-type ('a, 'b) t = ('a, 'b) elt option array;;
+type ('a, 'b) t = ('a, 'b) elt option array
 
-let create size = Array.make size None;;
+let create size = Array.make size None
 
 let find_pos t key =
   let found = ref 0 in
@@ -34,12 +34,12 @@ let find_pos t key =
     done;
     raise Not_found
   with
-  | Exit -> !found;;
+  | Exit -> !found
 
 let find t key =
   match t.(find_pos t key) with
   | Some elt -> elt.data
-  | _ -> assert false;;
+  | _ -> assert false
 
 let rename t key newkey =
   try
@@ -47,7 +47,7 @@ let rename t key newkey =
     let data = match t.(pos) with Some d -> d | _ -> assert false in
     t.(pos) <- Some {data with key = newkey}
   with
-  | Not_found -> ();;
+  | Not_found -> ()
 
 let find_empty_or_eldest t =
   let found = ref None in
@@ -65,7 +65,7 @@ let find_empty_or_eldest t =
   with Exit -> () end;
   match !found with
   | Some (i, _) -> i
-  | None -> raise Not_found;;
+  | None -> raise Not_found
 
 let add t key data at_remove =
   let slot =
@@ -76,4 +76,4 @@ let add t key data at_remove =
   | Some elt -> elt.at_remove elt.data
   | None -> ()
   end;
-  t.(slot) <- Some {key = key; data = data; at_remove= at_remove; time = Unix.time ()};;
+  t.(slot) <- Some {key = key; data = data; at_remove= at_remove; time = Unix.time ()}

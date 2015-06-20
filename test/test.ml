@@ -14,8 +14,8 @@
 
 (* $Id: test.ml,v 1.32.2.1 2010/05/13 13:14:47 furuse Exp $ *)
 
-open Images;;
-open Format;;
+open Images
+open Format
 
 let capabilities () =
   let supported b = if b then "supported" else "not supported" in
@@ -31,7 +31,7 @@ let capabilities () =
   printf "xv thumbnails\t: %s@." (supported Camlimages.lib_xvthumb);
   printf "postscript\t: %s@." (supported Camlimages.lib_ps);
   printf "freetype\t: %s@." (supported Camlimages.lib_freetype);
-  printf "*******************************************************@.";;
+  printf "*******************************************************@."
 
 let show_image img x y =
   let img = 
@@ -40,9 +40,9 @@ let show_image img x y =
     | _ -> img
   in
   let gr_img = Graphics.make_image (Graphic_image.array_of_image img) in
-  Graphics.draw_image gr_img x y;;
+  Graphics.draw_image gr_img x y
 
-module FtDraw = Fttext.Make(Rgb24);;
+module FtDraw = Fttext.Make(Rgb24)
 
 let draw_string =
   if Camlimages.lib_freetype then begin
@@ -67,7 +67,7 @@ let draw_string =
       FtDraw.draw_text face Fttext.func_darken_only tmpbitmap
           (- (truncate x1)) (truncate y2) str;
       show_image (Rgb24 tmpbitmap) x (y - h)
-  end else fun _ _ _ -> ();;
+  end else fun _ _ _ -> ()
 
 let go_on () =
  prerr_endline "Press return to proceed, s: save a screenshot, q: quit";
@@ -80,14 +80,14 @@ let go_on () =
    Images.save "screen.bmp" (Some Bmp) [] (Rgb24 gr_img);
    prerr_endline "done"
  end;
- s <> 'q';;
+ s <> 'q'
 
 let images_default = [
   "apbm.pbm"; "apgm.pgm"; "appm.ppm";
   "pbm.pbm"; "pgm.pgm"; "ppm.ppm";
   "jpg.jpg"; "png.png"; "png-alpha.png"; "bmp.bmp"; "tif.tif";
   "xpm.xpm"; "eps.eps"; "gif.gif"; "mmm.anim.gif";
-];;
+]
 
 let images =
   let images = ref [] in
@@ -97,9 +97,9 @@ let images =
   else 
     let src_dir = (try Sys.getenv "srcdir" with Not_found -> ".") in
     let images_src_dir = Filename.concat src_dir "images" in
-    List.map (fun x -> Filename.concat images_src_dir x) images_default;;
+    List.map (fun x -> Filename.concat images_src_dir x) images_default
 
-open Gif;;
+open Gif
 
 let treat_image name =
   prerr_endline name;
@@ -156,7 +156,7 @@ let treat_image name =
         if not (go_on ()) then raise Exit
   with
   | Wrong_file_type -> prerr_endline "file format detection failed"
-  | Failure s -> prerr_endline s;;
+  | Failure s -> prerr_endline s
 
 let main () =
   capabilities ();
@@ -165,6 +165,6 @@ let main () =
   with
   | Exit -> exit 0
   | End_of_file -> exit 0
-  | Sys.Break -> exit 2;;
+  | Sys.Break -> exit 2
 
-main ();;
+let () = main ()

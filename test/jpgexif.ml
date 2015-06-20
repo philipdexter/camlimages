@@ -41,6 +41,6 @@ let main () =
   with
   | Exit -> exit 0
   | End_of_file -> exit 0
-  | Sys.Break -> exit 2;;
+  | Sys.Break -> exit 2
 
-main ();;
+let () = main ()

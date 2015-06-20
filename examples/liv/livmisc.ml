@@ -14,12 +14,12 @@
 
 let may f = function
   | Some v -> f v
-  | None -> ();;
+  | None -> ()
 
 let color_merge (r1, g1, b1) (r2, g2, b2) max cntr =
   (r1 * (max - cntr) + r2 * cntr) / max,
   (g1 * (max - cntr) + g2 * cntr) / max,
-  (b1 * (max - cntr) + b2 * cntr) / max;;
+  (b1 * (max - cntr) + b2 * cntr) / max
 
 let remove_space s =
   let s =
@@ -31,7 +31,7 @@ let remove_space s =
   let l = String.length s in
   let pos = ref (l - 1) in
   while !pos >= 0 && List.mem s.[!pos] [' '; '\t'] do decr pos done;
-  if !pos = l - 1 then s else String.sub s 0 (succ !pos);;
+  if !pos = l - 1 then s else String.sub s 0 (succ !pos)
 
 let get_extension s =
   try
@@ -39,7 +39,7 @@ let get_extension s =
     String.sub s 0 dotpos,
     String.sub s (dotpos + 1)  (String.length s - dotpos - 1)
   with
-  | _ -> s, "";;
+  | _ -> s, ""
 
 let normalize_filename file =
   let is_absolute = not (Filename.is_relative file) in
@@ -54,11 +54,11 @@ let normalize_filename file =
        | tkn -> tkn :: acc)
       [] tkns in
   (if is_absolute then "/" else "") ^
-  Mstring.catenate_sep "/" (List.rev tkns);;
+  Mstring.catenate_sep "/" (List.rev tkns)
 
 type 'a result =
    | Ok of 'a
-   | Exn of exn;;
+   | Exn of exn
 
 let after f g =
   match
@@ -67,8 +67,8 @@ let after f g =
     r
   with
   | Ok r -> r
-  | Exn e -> raise e;;
+  | Exn e -> raise e
 
-let (!!) = Lazy.force;;
+let (!!) = Lazy.force
 
-let string_tail str len = String.sub str (String.length str - len) len;;
+let string_tail str len = String.sub str (String.length str - len) len

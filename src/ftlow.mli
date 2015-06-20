@@ -17,7 +17,7 @@
   the freetype library. See the documents of the freetype library.
 *)
 
-type library;;
+type library
 
 val init : unit -> library
 val close : library -> unit

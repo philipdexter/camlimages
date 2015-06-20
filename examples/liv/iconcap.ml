@@ -12,11 +12,11 @@
 
 (* $Id: iconcap.ml,v 1.16 2005/02/27 05:48:26 furuse Exp $ *)
 
-open Livmisc;;
+open Livmisc
 
 (* iconcap file parser *)
 
-let table = Hashtbl.create 107;;
+let table = Hashtbl.create 107
 
 let load f =
   let ic = open_in f in
@@ -42,12 +42,12 @@ let load f =
     done;
     raise Exit
   with
-  | End_of_file -> close_in ic;;
+  | End_of_file -> close_in ic
 
-try
+let () = try
  load
    (Pathfind.find
       [ "."; "~/.liv"; "/usr/lib/liv"; "/usr/local/lib/liv"; ]
       "iconcap")
 with
-| _ -> prerr_endline "no iconcap...";;
+| _ -> prerr_endline "no iconcap..."

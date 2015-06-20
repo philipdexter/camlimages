@@ -12,10 +12,10 @@
 
 (* $Id: oFreetype.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
-open Images;;
-open Freetype;;
+open Images
+open Freetype
 
-let library = ref None;; (* We do not want more than 1 engine, don't we ? *)
+let library = ref None (* We do not want more than 1 engine, don't we ? *)
 
 let get_library () =
   match !library with
@@ -23,7 +23,7 @@ let get_library () =
       let e = init () in
       library := Some e;
       e
-  | Some e -> e;;
+  | Some e -> e
 
 class face file id =
   let library = get_library () in
@@ -59,7 +59,7 @@ class face file id =
 
   method size string = Fttext.size face string
   method size_of_glyphs string = Fttext.size_of_glyphs face string
-end;;
+end
 
 let draw_gen render_mode renderf rot func face px py string =
   let face = face#face in
@@ -86,7 +86,7 @@ let draw_gen render_mode renderf rot func face px py string =
     done;
     curx := !curx +. advx;
     cury := !cury +. advy
-  done;;
+  done
 
 let draw_rotated_gen render_mode face (func : 'a -> int -> 'a)
     (image : 'a OImages.map) px py rot renderf string =
@@ -127,37 +127,37 @@ let draw_rotated_gen render_mode face (func : 'a -> int -> 'a)
     done;
     curx := !curx +. advx;
     cury := !cury +. advy
-  done;;
+  done
 
 let draw_rotated_text face func image x y rot string =
-  draw_rotated_gen Render_Normal face func image x y rot render_char string;;
+  draw_rotated_gen Render_Normal face func image x y rot render_char string
 
 let draw_rotated_glyphs face func image x y rot string =
-  draw_rotated_gen Render_Normal face func image x y rot render_glyph string;;
+  draw_rotated_gen Render_Normal face func image x y rot render_glyph string
 
 let draw_text face func image x y string =
-  draw_rotated_text face func image x y 0.0 string;;
+  draw_rotated_text face func image x y 0.0 string
 
 let draw_glyphs face func image x y string =
-  draw_rotated_glyphs face func image x y 0.0 string;;
+  draw_rotated_glyphs face func image x y 0.0 string
 
 (* mono *)
 let draw_mono_rotated_text face func image x y rot string =
-  draw_rotated_gen Render_Mono face func image x y rot render_char string;;
+  draw_rotated_gen Render_Mono face func image x y rot render_char string
 
 let draw_mono_rotated_glyphs face func image x y rot string =
-  draw_rotated_gen Render_Mono face func image x y rot render_glyph string;;
+  draw_rotated_gen Render_Mono face func image x y rot render_glyph string
 
 let draw_mono_text face func image x y string =
-  draw_mono_rotated_text face func image x y 0.0 string;;
+  draw_mono_rotated_text face func image x y 0.0 string
 
 let draw_mono_glyphs face func image x y string =
-  draw_mono_rotated_glyphs face func image x y 0.0 string;;
+  draw_mono_rotated_glyphs face func image x y 0.0 string
 
 (* Vector based *)
 
 let vector_text turn_y func face px py rot string =
-  Fttext.vector_gen load_char turn_y rot func face#face px py string;;
+  Fttext.vector_gen load_char turn_y rot func face#face px py string
 
 let vector_glyphs turn_y func face px py rot string =
-  Fttext.vector_gen load_glyph turn_y rot func face#face px py string;;
+  Fttext.vector_gen load_glyph turn_y rot func face#face px py string

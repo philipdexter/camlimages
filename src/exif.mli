@@ -1,6 +1,8 @@
 module Numbers : sig
   type rational  = int64 * int64 (** unsigned 32bits int rational *)
+
   type srational = int32 * int32 (** signed 32bits int rational *)
+
   val float_of_rational   : int64 * int64 -> float
   val float_of_srational  : int32 * int32 -> float
   val string_of_rational  : int64 -> int64 -> string

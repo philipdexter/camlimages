@@ -12,10 +12,10 @@
 
 (* $Id: jpf.ml,v 1.4 2004/09/24 10:55:07 weis Exp $ *)
 
-type quality = int;;
-type enhance = bool;;
+type quality = int
+type enhance = bool
 
-type flags = quality * enhance;;
+type flags = quality * enhance
 
 let string_of_flags (q, e, c) =
   let qs =
@@ -28,7 +28,7 @@ let string_of_flags (q, e, c) =
 
   let es = if e then "e" else "" in
   let cs = if c then "c" else "" in
-  qs ^ es ^ cs;;
+  qs ^ es ^ cs
 
 let parse_flags str =
   let enhanced = String.contains str 'e' in
@@ -40,7 +40,7 @@ let parse_flags str =
     if prefix "X" then 1 else
     if prefix "_" then -1 else
     0 in
-  q, enhanced, checked;;
+  q, enhanced, checked
 
 let get_flags file =
   let body, _ext = Images.get_extension file in
@@ -49,7 +49,7 @@ let get_flags file =
     let flag_str = String.sub body (pos+1) (String.length body - (pos+1)) in
     parse_flags flag_str
   with
-  | _ -> 0, false, false;;
+  | _ -> 0, false, false
 
 let set_flags file flags =
   let body, ext = Images.get_extension file in
@@ -60,4 +60,4 @@ let set_flags file flags =
     with
     | _ -> body in
   let flags = string_of_flags flags in
-  realbody ^ (if flags = "" then "" else "~" ^ flags) ^ "." ^ ext;;
+  realbody ^ (if flags = "" then "" else "~" ^ flags) ^ "." ^ ext

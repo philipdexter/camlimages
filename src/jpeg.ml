@@ -15,10 +15,10 @@
 (* $Id: jpeg.ml,v 1.4 2009/07/04 03:39:28 furuse Exp $ *)
 
 open Util
-open Images;;
-open Rgb24;;
+open Images
+open Rgb24
 
-type in_handle;;
+type in_handle
 
 module Marker = struct
   type raw = {
@@ -46,30 +46,30 @@ module Marker = struct
 end
 
 external open_in_header : string -> int * int * in_handle * Marker.raw list
-    = "open_jpeg_file_for_read";;
+    = "open_jpeg_file_for_read"
 external set_scale_denom : in_handle -> int -> unit
-    = "jpeg_set_scale_denom";;
+    = "jpeg_set_scale_denom"
 external open_in_start : in_handle -> int * int * in_handle
-    = "open_jpeg_file_for_read_start";;
+    = "open_jpeg_file_for_read_start"
 external read_scanline : in_handle -> string -> int -> unit
-    = "read_jpeg_scanline";;
+    = "read_jpeg_scanline"
 external read_scanlines : in_handle -> string -> int -> int -> unit
-    = "read_jpeg_scanlines";;
+    = "read_jpeg_scanlines"
 external close_in : in_handle -> unit
-    = "close_jpeg_file_for_read";;
+    = "close_jpeg_file_for_read"
 
-type out_handle;;
+type out_handle
 
 external open_out : string -> int -> int -> int -> out_handle
-    = "open_jpeg_file_for_write";;
+    = "open_jpeg_file_for_write"
 external open_out_cmyk : string -> int -> int -> int -> out_handle
-    = "open_jpeg_file_for_write_cmyk";;
+    = "open_jpeg_file_for_write_cmyk"
 external write_marker : out_handle -> Marker.raw -> unit 
   = "caml_jpeg_write_marker"
 external write_scanline : out_handle -> string -> unit
-    = "write_jpeg_scanline";;
+    = "write_jpeg_scanline"
 external close_out : out_handle -> unit
-    = "close_jpeg_file_for_write";;
+    = "close_jpeg_file_for_write"
 
 let open_in name =
   let _, _, ic, rev_markers = open_in_header name in
@@ -95,7 +95,7 @@ let open_in_thumbnail name geom_spec =
     if scale < 8 then 4 else 8 in
   set_scale_denom ic denom;
   image_width, image_height, open_in_start ic, 
-  List.rev_map Marker.t_of_raw rev_markers;;
+  List.rev_map Marker.t_of_raw rev_markers
 
 let load_aux prog ic w h = 
   let prog y = 
@@ -128,7 +128,7 @@ let load_aux prog ic w h =
       done
   end;
   close_in ic;
-  Rgb24 img;;
+  Rgb24 img
 
 let load name load_opts =
   let w, h, ic, _markers = open_in name in
@@ -159,7 +159,7 @@ let save_with_markers name opts image markers =
         | None -> ()
       done;
       close_out oc
-  | _ -> raise Wrong_image_type;;
+  | _ -> raise Wrong_image_type
 
 let save name opts image = save_with_markers name opts image []
 
@@ -193,7 +193,7 @@ let save_as_cmyk name opts trans image =
         | None -> ()
       done;
       close_out oc
-  | _ -> raise Wrong_image_type;;
+  | _ -> raise Wrong_image_type
 
 let save_cmyk_sample name opts =
   let quality =
@@ -222,7 +222,7 @@ let save_cmyk_sample name opts =
     let buf = sample_scan y in
     write_scanline oc buf
   done;
-  close_out oc;;
+  close_out oc
 
 let find_jpeg_size ic =
   (* jump to the next 0xff *)
@@ -253,7 +253,7 @@ let find_jpeg_size ic =
       really_input ic s 0 (blocklen - 2);
       loop () in
   try loop () with
-  | _ -> raise Not_found (* any error returns Not_found *);;
+  | _ -> raise Not_found (* any error returns Not_found *)
 
 let check_header filename =
   let len = 2 in
@@ -279,7 +279,7 @@ let check_header filename =
   with
   | _ ->
       Pervasives.close_in ic;
-      raise Wrong_file_type;;
+      raise Wrong_file_type
 
 let read_markers filename = 
   let _, _, ic, rev_markers = open_in_header filename in
@@ -293,5 +293,5 @@ let () = add_methods Jpeg
     load = Some load;
     save = Some save;
     load_sequence = None;
-    save_sequence = None};;
+    save_sequence = None}
 

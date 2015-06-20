@@ -14,11 +14,11 @@
 
 (* $Id: oGraphic.ml,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-open Images;;
-open OImages;;
+open Images
+open OImages
 
 let draw image x y =
   try Graphic_image.draw_image image#image x y with
-  | Wrong_image_type -> raise Wrong_image_class;;
+  | Wrong_image_type -> raise Wrong_image_class
 
-let get x y w h = new rgb24_wrapper (Graphic_image.get_image x y w h);;
+let get x y w h = new rgb24_wrapper (Graphic_image.get_image x y w h)

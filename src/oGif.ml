@@ -14,13 +14,13 @@
 
 (* $Id: oGif.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
-open OImages;;
+open OImages
 
-let load_first name opts = OImages.make (Gif.load_first name opts);;
+let load_first name opts = OImages.make (Gif.load_first name opts)
 
 let save_image name opts image =
   let img = image#image in
   match img with
   | Images.Index8 _bmp ->
       Gif.save_image name opts img
-  | _ -> raise Wrong_image_class;;
+  | _ -> raise Wrong_image_class

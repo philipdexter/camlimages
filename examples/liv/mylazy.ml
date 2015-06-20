@@ -19,14 +19,14 @@ type 'a status =
   | Delayed of (unit -> 'a)
   | Value of 'a
   | Exception of exn
-;;
 
-type 'a t = 'a status ref;;
 
-exception Undefined;;
+type 'a t = 'a status ref
 
-let make f = ref (Delayed f);;
-let make_val v = ref (Value v);;
+exception Undefined
+
+let make f = ref (Delayed f)
+let make_val v = ref (Value v)
 
 let force l =
   match !l with
@@ -36,4 +36,4 @@ let force l =
       l := Exception Undefined;
       try let v = f () in l := Value v; v
       with e -> l := Exception e; raise e
-;;
+

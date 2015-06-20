@@ -12,16 +12,16 @@
 
 (* $Id: ximage.ml,v 1.1.2.1 2010/05/13 13:14:47 furuse Exp $*)
 
-open Images;;
-type elt = int;; (* must be int32, but lablgtk uses int *)
+open Images
+type elt = int (* must be int32, but lablgtk uses int *)
 
 type t = {
     width: int;
     height: int;
     data : Gdk.image;
-  };;
+  }
 
-let destroy t = Gdk.Image.destroy t.data;;
+let destroy t = Gdk.Image.destroy t.data
 
 module Truecolor = struct
   (* Truecolor quick color query *)
@@ -36,26 +36,26 @@ module Truecolor = struct
     fun pixel ->
       let r, g, b = f pixel in
       { r = r lsr 8; g = g lsr 8; b = b lsr 8 }
-end;;
+end
 
 let capsulate width height data = {
   width = width;
   height = height;
   data = data;
-};;
+}
 
 let create ~kind ~visual ~width ~height =
   let ximage = Gdk.Image.create ~kind ~visual ~width ~height in
-  capsulate width height ximage;;
+  capsulate width height ximage
 
-let unsafe_get t x y = Gdk.Image.get_pixel t.data ~x ~y;;
-let unsafe_set t x y c = Gdk.Image.put_pixel t.data ~x ~y ~pixel:c;;
-let get t x y = Region.check t.width t.height x y; unsafe_get t x y;;
-let set t x y c = Region.check t.width t.height x y; unsafe_set t x y c;;
+let unsafe_get t x y = Gdk.Image.get_pixel t.data ~x ~y
+let unsafe_set t x y c = Gdk.Image.put_pixel t.data ~x ~y ~pixel:c
+let get t x y = Region.check t.width t.height x y; unsafe_get t x y
+let set t x y c = Region.check t.width t.height x y; unsafe_set t x y c
 
 let get_image drawable ~x ~y ~width ~height =
   let ximage = Gdk.Image.get drawable ~x ~y ~width ~height in
-  capsulate width height ximage;;
+  capsulate width height ximage
 
 (*
 external init_color_conversion : Gdk.visual -> unit
@@ -129,9 +129,9 @@ let of_image visual progress img =
     done;
     ximg
 
-  | _ -> failwith "not supported";;
+  | _ -> failwith "not supported"
 
-open GDraw;;
+open GDraw
 
 let get_mono_gc win =
   let colormap = Gdk.Color.get_system_colormap () in
@@ -139,7 +139,7 @@ let get_mono_gc win =
   let gc = Gdk.GC.create bmp in
   (* GC.set_foreground gc (Color.color_parse "black"); *)
   Gdk.GC.set_foreground gc (Gdk.Color.alloc ~colormap: colormap `WHITE);
-  gc;;
+  gc
 
 let plain_mask win w h =
   let colormap = Gdk.Color.get_system_colormap () in
@@ -147,7 +147,7 @@ let plain_mask win w h =
   let bmp = Gdk.Bitmap.create ~window:win ~width:w ~height:h () in
   Gdk.GC.set_foreground mono_gc (Gdk.Color.alloc ~colormap: colormap `WHITE);
   Gdk.Draw.rectangle bmp mono_gc ~x:0 ~y:0 ~width:w ~height:h ~filled: true ();
-  bmp;;
+  bmp
 
 let mask_of_image win img = (* It is really inefficient *)
   let mono_gc = get_mono_gc win in
@@ -180,7 +180,7 @@ let mask_of_image win img = (* It is really inefficient *)
     else Some (plain_mask win width height)
   | _ ->
     Some (plain_mask win width height)
-  end;;
+  end
 
 let pixmap_of win ximage =
   let visual = Gdk.Window.get_visual win in
@@ -193,12 +193,12 @@ let pixmap_of win ximage =
     ~width: ximage.width ~height: ximage.height
     ~xsrc:0 ~ysrc:0
     ximage.data;
-  pix;;
+  pix
 
 let pixmap_of_image win progress img =
   let visual = Gdk.Window.get_visual win in
   let ximage = of_image visual progress img in
   let msk = mask_of_image win img in
   let pixmap = new GDraw.pixmap ?mask: msk (pixmap_of win ximage) in
-  pixmap;;
+  pixmap
 

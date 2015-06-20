@@ -14,14 +14,14 @@
 
 (* $Id: png.mli,v 1.2 2008/10/31 08:51:46 weis Exp $ *)
 
-val check_header : string -> Images.header;;
+val check_header : string -> Images.header
   (** Checks the file header of a png image. *)
 
-val load : string -> Images.load_option list -> Images.t;;
+val load : string -> Images.load_option list -> Images.t
   (** Loads a png image. *)
 
-val load_as_rgb24 : string -> Images.load_option list -> Images.t;;
+val load_as_rgb24 : string -> Images.load_option list -> Images.t
   (** Loads a png image, and coerce it to Rgb24. *)
 
-val save : string -> Images.save_option list -> Images.t -> unit;;
+val save : string -> Images.save_option list -> Images.t -> unit
   (** Saves an image into a png file format. *)

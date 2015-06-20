@@ -12,37 +12,38 @@
 
 (* $Id: gui.ml,v 1.27 2008/02/19 12:44:04 furuse Exp $ *)
 
-open Gdk;;
-open GDraw;;
-open GMain;;
+open Gdk
+open GDraw
+open GMain
 
-GMain.Main.init ();;
+let () = ignore @@ GMain.Main.init ()
 
-let active = ref true;;
+let active = ref true
 
-let sync () = while Glib.Main.iteration false do () done;;
+let sync () = while Glib.Main.iteration false do () done
 
-(* let window = GWindow.window ~title: "liv" ~allow_shrink: true ~allow_grow: true ();; *)
-let window = GWindow.window ~title: "liv" ();;
+(* let window = GWindow.window ~title: "liv" ~allow_shrink: true ~allow_grow: true () *)
+let window = GWindow.window ~title: "liv" ()
 (* We should not set allow_shrink and allow_grow here. *)
 
-window#connect#destroy ~callback:Main.quit;;
-window#misc#set_size_request ~width: 1 ~height: 1 ();;
-window#resize ~width: 1 ~height: 1;;
-window#misc#set_app_paintable true;;
+let () =
+  ignore @@ window#connect#destroy ~callback:Main.quit;
+  window#misc#set_size_request ~width: 1 ~height: 1 ();
+  window#resize ~width: 1 ~height: 1;
+  window#misc#set_app_paintable true
 
 let drawing = window
 
-let fixed = GPack.fixed ~packing: window#add ~show: true ();;
+let fixed = GPack.fixed ~packing: window#add ~show: true ()
 
 (*
 let drawing = 
   GMisc.drawing_area 
     ~width:150 ~height:150
-    ~packing: window#add ~show:true ();;
+    ~packing: window#add ~show:true ()
 *)
 
-(* let fixed = GPack.fixed ~packing: box#add ();; *)
+(* let fixed = GPack.fixed ~packing: box#add () *)
 
 (*
 window#event#connect#configure (fun ev ->
@@ -62,14 +63,14 @@ class new_progress_bar obj = object
     if x <> previous then begin 
       super#set_fraction x; sync (); previous <- x 
     end
-end;;
+end
 
 let new_progress_bar =
   GtkRange.ProgressBar.make_params []
     ~cont:(fun pl ?packing ?show () ->
              GObj.pack_return
                (new new_progress_bar (GtkRange.ProgressBar.create pl))
-               ~packing ~show);;
+               ~packing ~show)
 
 let prog_on_image = true
  
@@ -94,43 +95,45 @@ let prog1 =
     in
     new prog p
   else (new prog_nop :> prog)
-;;
 
-let visual = window#misc#visual;;
-let screen_width = Screen.width ();;
-let screen_height = Screen.height ();;
-let colormap = Gdk.Color.get_system_colormap ();;
 
-let quick_color_create = Truecolor.color_creator visual;;
-let quick_color_parser = Truecolor.color_parser visual;;
+let visual = window#misc#visual
+let screen_width = Screen.width ()
+let screen_height = Screen.height ()
+let colormap = Gdk.Color.get_system_colormap ()
 
-let root_win = Window.root_parent ();;
+let quick_color_create = Truecolor.color_creator visual
+let quick_color_parser = Truecolor.color_parser visual
 
-let root_size = Drawable.get_size root_win;;
+let root_win = Window.root_parent ()
 
-let drawing_root = new drawable root_win;;
+let root_size = Drawable.get_size root_win
 
-let infowindow = GWindow.window ~title:"liv info" ~width:300 ~height:150 ();;
+let drawing_root = new drawable root_win
 
-infowindow#misc#set_size_request ~width: 300 ~height: 150;;
-infowindow#resize ~width: 300 ~height: 150;;
-infowindow#connect#destroy ~callback:Main.quit;;
+let infowindow = GWindow.window ~title:"liv info" ~width:300 ~height:150 ()
 
-let imglbox0 = GPack.vbox ~packing:infowindow#add ();;
+let () = 
+  infowindow#misc#set_size_request ~width: 300 ~height: 150 (); 
+  infowindow#resize ~width: 300 ~height: 150;
+  ignore @@ infowindow#connect#destroy ~callback:Main.quit;
+  ()
 
-let imglbox = GPack.hbox ~packing:imglbox0#add ();;
+let imglbox0 = GPack.vbox ~packing:infowindow#add ()
+
+let imglbox = GPack.hbox ~packing:imglbox0#add ()
 
 let sb = GRange.scrollbar `VERTICAL
-    ~packing:(imglbox#pack ~from:`END ~expand:false) ();;
+    ~packing:(imglbox#pack ~from:`END ~expand:false) ()
 
 let imglist =
   ((GList.clist ~shadow_type:`OUT
      ~columns: 1 ~packing: imglbox#add ~vadjustment:sb#adjustment ())
-   : string GList.clist);;
+   : string GList.clist)
 
-imglist#misc#set_size_request ~width:300 ~height: 150;;
+let () = imglist#misc#set_size_request ~width:300 ~height: 150 ()
 
-let prog2 = GRange.progress_bar ~packing: (imglbox0#pack ~expand: false) ();;
+let prog2 = GRange.progress_bar ~packing: (imglbox0#pack ~expand: false) ()
 
 class progs = object
   method map = prog1#map
@@ -141,8 +144,8 @@ class progs = object
   method set_fraction s =
     prog1#set_fraction s;
     prog2#set_fraction s
-end;;
+end
 
-let prog = new progs;;
+let prog = new progs
 
-sync();;
+let () = sync()

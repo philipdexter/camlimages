@@ -16,7 +16,7 @@
 
 (** Class interface for Color *)
 
-open Color;;
+open Color
 
 class virtual ['a] map (cmap : 'a Color.map) = object
   val mapobj = cmap
@@ -35,19 +35,19 @@ class virtual ['a] map (cmap : 'a Color.map) = object
   method add_color = add_color mapobj
   method add_colors = add_colors mapobj
   method virtual find_nearest : 'a -> int
-end;;
+end
 
 class rgbmap (cmap : rgb Color.map) = object
   inherit [rgb] map cmap
   method find_nearest = Rgb.find_nearest mapobj
-end;;
+end
 
 class rgbamap (cmap : rgba Color.map) = object
   inherit [rgba] map cmap
   method find_nearest = Rgba.find_nearest mapobj
-end;;
+end
 
 class cmykmap (cmap : cmyk Color.map) = object
   inherit [cmyk] map cmap
   method find_nearest = Cmyk.find_nearest mapobj
-end;;
+end

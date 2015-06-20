@@ -24,4 +24,4 @@ val save : string -> string -> Index8.t -> unit
     (** Save xv thumbnail.
     The [Index8.t] value must be 80x80 at most. *)
 
-val create : Images.t -> Index8.t;;
+val create : Images.t -> Index8.t

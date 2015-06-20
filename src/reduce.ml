@@ -14,12 +14,12 @@
 
 (* $Id: reduce.ml,v 1.1 2006/11/28 15:43:28 rousse Exp $*)
 
-open Color;;
-open Rgb24;;
+open Color
+open Rgb24
 
 module type REDUCER = sig
   val find_nearest : Color.rgb Color.map -> Color.rgb -> int
-end;;
+end
 
 
 (* Error diffusion weight table *)
@@ -27,7 +27,7 @@ let diffusion_table =
   let sum = 1.0 +. 1.0 +. 1.0 /. sqrt 2.0 in
   let base = 1.0 /. sum in
   [| [| 0.0 ; base |];
-     [| base; base /. (sqrt 2.0) |] |];;
+     [| base; base /. (sqrt 2.0) |] |]
 
 (* Reduce colors to the given colormap (<= 256 colors) using error diffusion *)
 module ErrorDiffuse( R : REDUCER ) = struct
@@ -72,8 +72,8 @@ module ErrorDiffuse( R : REDUCER ) = struct
       next_line y
     done;
     id8
-end;;
+end
 
-module ErrorDiffuseIndex8 = ErrorDiffuse(Color.Rgb);;
+module ErrorDiffuseIndex8 = ErrorDiffuse(Color.Rgb)
 
-let error_diffuse = ErrorDiffuseIndex8.f;;
+let error_diffuse = ErrorDiffuseIndex8.f

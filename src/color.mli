@@ -18,28 +18,34 @@
  integers. The integer corresponding to a color [c] is an index [i]
  into a vector of colors whose [i]th element is [c]. *)
 
-exception Too_many_colors;;
+exception Too_many_colors
 
-type 'a map = { mutable max : int; mutable map : 'a array };;
+type 'a map = { mutable max : int; mutable map : 'a array }
 (** This is copied in Images also *)
+
 (** Colormap manipulation functions *)
-val size : 'a map -> int;;
+
+val size : 'a map -> int
     (** Returns the size of a colormap. *)
-val find_exact : 'a map -> 'a -> int;;
+
+val find_exact : 'a map -> 'a -> int
     (** Finds a color in the colormap and returns its color index.
        Raises exception [Not_found] if the color is not in the colormap. *)
-val add_color : 'a map -> 'a -> int;;
+
+val add_color : 'a map -> 'a -> int
     (** Add a new color into the given colormap and return its index.
        If the color is already in the colormap, it is not
        added again, and the corresponding color index is returned. *)
-val add_colors : 'a map -> 'a list -> int list;;
+
+val add_colors : 'a map -> 'a list -> int list
     (** Add the list of new colors into the given colormap and return 
        their indices. If a color is already in the colormap, it is not
        added again, and the corresponding color index is returned. *)
-val copy : 'a map -> 'a map;;
+
+val copy : 'a map -> 'a map
     (** Copy a colormap *)
 (*
-val find_nearest : 'a map -> 'a -> int;;
+val find_nearest : 'a map -> 'a -> int
     (* [find_nearest m c] finds the color [co] that is the nearest to
     [c] color into the colormap [m].
     Returns the color index of [co] and the distance between [c]
@@ -57,9 +63,9 @@ module Rgb : sig
   val add_color : t map -> t -> int
   val add_colors : t map -> t list -> int list
   val find_nearest : t map -> t -> int
-end;;
+end
 
-type rgb = Rgb.t = { mutable r : int; mutable g : int; mutable b : int };;
+type rgb = Rgb.t = { mutable r : int; mutable g : int; mutable b : int }
 (* This is copied in Images also *)
  (* R(ed), G(reen), B(lue) representation of colors. *)
 
@@ -74,9 +80,9 @@ module Rgba : sig
   val add_color : t map -> t -> int
   val add_colors : t map -> t list -> int list
   val find_nearest : t map -> t -> int
-end;;
+end
 
-type rgba = Rgba.t = { color: rgb; mutable alpha : int; };;
+type rgba = Rgba.t = { color: rgb; mutable alpha : int; }
  (** RGB with alpha (transparent) information *)
 
 module Cmyk :
@@ -91,21 +97,23 @@ module Cmyk :
     val add_color : t map -> t -> int
     val add_colors : t map -> t list -> int list
     val find_nearest : t map -> t -> int
-  end;;
+  end
 
 type cmyk = Cmyk.t =
-  { mutable c : int; mutable m : int; mutable y : int; mutable k : int; };;
+  { mutable c : int; mutable m : int; mutable y : int; mutable k : int; }
  (** Cyan Magenta Yellow blacK color model *)
 
 (** Rgb specialized functions (for backward compatibility) *)
-val rgb_square_distance : rgb -> rgb -> int;;
-    (** Compute the distance between two colours. *)
-val plus : rgb -> rgb -> rgb;;
-val minus : rgb -> rgb -> rgb;;
 
-val brightness : rgb -> int;;
+val rgb_square_distance : rgb -> rgb -> int
+(** Compute the distance between two colours. *)
+
+val plus : rgb -> rgb -> rgb
+val minus : rgb -> rgb -> rgb
+
+val brightness : rgb -> int
 
 (********************************************************* Color name parser *)
 
-val color_parse : string -> rgb;;
-val colormap_parse : string array -> rgb array * int;;
+val color_parse : string -> rgb
+val colormap_parse : string array -> rgb array * int

@@ -14,15 +14,15 @@
 
 (* $Id: units.ml,v 1.1 2006/11/28 15:43:28 rousse Exp $ *)
 
-let inch_cm = 2.54;;
-let inch_pt = 72.0;;
+let inch_cm = 2.54
+let inch_pt = 72.0
 
 let units = [
    "mm", 0.1 /. inch_cm *. inch_pt;
    "cm", 1.0 /. inch_cm *. inch_pt;
    "pt", 1.0;
    "in", inch_pt;
- ];;
+ ]
 
 let parse_length s = (* return in pt *)
   let v =
@@ -35,4 +35,4 @@ let parse_length s = (* return in pt *)
     | Not_found -> (* think it is in "pt" *)
       float_of_string s in
   prerr_endline (Printf.sprintf "%s -> %fpt" s v);
-  v;;
+  v

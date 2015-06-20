@@ -18,12 +18,12 @@
    Bitmaps are partitioned into blocks. Usually only one block is 
    allocated for one image, but for huge images, they needs more... *)
 
-val debug : bool ref;;
+val debug : bool ref
 
 (* see Swap to set swap file directory *)
 
-val maximum_live : int ref;;
-val maximum_block_size : int ref;;
+val maximum_live : int ref
+val maximum_block_size : int ref
   (* Configuration parameters for image swapping.
 
      You can specify the maximum size of live data by setting [maximum_live]
@@ -59,10 +59,10 @@ end
 
 module type Bitdepth = sig
   val bytes_per_pixel : int
-end;;
+end
 
 module Make(B:Bitdepth) : sig
-  type t;;
+  type t
   (* Bitmap type *)
 
   val create : int -> int -> bytes option -> t
@@ -123,4 +123,4 @@ module Make(B:Bitdepth) : sig
     (* returns number of blocks in row and column *)  
 
   val dump_block : t -> int -> int -> Block.t
-end;;
+end

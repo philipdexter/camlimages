@@ -22,7 +22,7 @@ module type ENCODE =
     val get : bytes -> int -> t
     val set : bytes -> int -> t -> unit
     val make : t -> bytes
-  end;;
+  end
 
 (** Low level image module type *)
 module type RAWIMAGE = sig
@@ -55,7 +55,7 @@ module type RAWIMAGE = sig
     t -> int -> int -> t -> int -> int -> int -> int -> unit
   val blocks : t -> int * int
   val dump_block : t -> int -> int -> Bitmap.Block.t
-end;;
+end
 
 (** low image container module type *)
 module type CONTAINER = sig
@@ -64,7 +64,7 @@ module type CONTAINER = sig
   val rawimage : container -> rawimage
   val create_default : int -> int -> rawimage -> container
   val create_duplicate : container -> int -> int -> rawimage -> container
-end;;
+end
 
 module type IMAGE = sig
   type t
@@ -134,7 +134,7 @@ module type IMAGE = sig
   val set_scanline : t -> int -> bytes -> unit
   val blocks : t -> int * int
   val dump_block : t -> int -> int -> Bitmap.Block.t
-end;;
+end
 
 module type CONTAINER_INDEXED = sig
   type container
@@ -144,7 +144,7 @@ module type CONTAINER_INDEXED = sig
   val create_default : int -> int -> rawimage -> container
   val create_duplicate : container -> int -> int -> rawimage -> container
   val colormap : container -> mapelt Color.map
-end;;
+end
 
 module type IMAGEINDEXED = sig
   include IMAGE
@@ -159,5 +159,5 @@ module type IMAGEINDEXED = sig
      is raised. *)
 
   val unsafe_get_color : t -> int -> int -> mapelt
-end;;
+end
 

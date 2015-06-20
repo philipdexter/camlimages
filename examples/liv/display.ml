@@ -12,15 +12,15 @@
 
 (* $Id: display.ml,v 1.36.2.1 2010/05/13 13:36:09 furuse Exp $ *)
 
-open Livmisc;;
-open Gui;;
-open Tout;;
+open Livmisc
+open Gui
+open Tout
 
-open Gdk;;
+open Gdk
 
-type filter = [ `SIZE of int * int * [ `ATMOST | `ATLEAST | `NOASPECT ] ];;
+type filter = [ `SIZE of int * int * [ `ATMOST | `ATLEAST | `NOASPECT ] ]
 
-let current_filters = (ref [] : filter list ref);;
+let current_filters = (ref [] : filter list ref)
 
 let add_size w h =
   List.fold_right
@@ -28,9 +28,9 @@ let add_size w h =
        match x with
        | `SIZE _ -> st
        (* | _ -> x :: st *))
-    !current_filters [`SIZE (w,h,`NOASPECT)];;
+    !current_filters [`SIZE (w,h,`NOASPECT)]
 
-let forward_redisplay = ref (fun _ -> ());;
+let forward_redisplay = ref (fun _ -> ())
 
 module WINDOW = struct
 
@@ -96,7 +96,7 @@ module ROOT = struct
       ysrc : int;
       put_width : int;
       put_height : int;
-    };;
+    }
 
   let root_geom width height x y =
     let width0 = width in
@@ -139,18 +139,18 @@ module ROOT = struct
     Window.clear root_win;
     set_timeout ()
 
-end;;
+end
 
-let working = ref (None : (int * OImages.rgb24 * filter list) option);;
-let waiting = ref None;;
-let check_waiting () = if !waiting <> None then raise Exit;;
+let working = ref (None : (int * OImages.rgb24 * filter list) option)
+let waiting = ref None
+let check_waiting () = if !waiting <> None then raise Exit
 
-type root_mode = [ `NONE | `CENTER | `RANDOM ];;
-type transition = [ `NONE | `MYST | `TRANSPARENT ];;
-let root_mode = ref (`NONE : root_mode);;
-let transition = ref (`NONE : transition);;
+type root_mode = [ `NONE | `CENTER | `RANDOM ]
+type transition = [ `NONE | `MYST | `TRANSPARENT ]
+let root_mode = ref (`NONE : root_mode)
+let transition = ref (`NONE : transition)
 
-let root_prev_pos = ref None;;
+let root_prev_pos = ref None
 
 let display_pixbuf pixbuf =
   match !root_mode with
@@ -188,7 +188,7 @@ let display_pixbuf pixbuf =
           x, y
         | _ -> w/2, h/2 in
       ROOT.display_at pixbuf x y
-  | _ -> WINDOW.display pixbuf;;
+  | _ -> WINDOW.display pixbuf
 
 let sort_filters (filters : filter list) =
   let rec get_size = function
@@ -205,7 +205,7 @@ let sort_filters (filters : filter list) =
     | `ENHANCE :: _ -> [`ENHANCE]
     | _ :: xs -> get_enhance xs in
 *)
-  List.flatten [(*get_enhance filters; get_normalize filters; *)get_size filters];;
+  List.flatten [(*get_enhance filters; get_normalize filters; *)get_size filters]
 
 let resize w h cond old =
   let old_width = GdkPixbuf.get_width old in
@@ -271,9 +271,9 @@ let create_pixbuf (_id : int) image filters =
 	resize w h cond pixbuf
   in
   filter_pixbuf pixbuf filters
-;;
 
-let current = ref None;;
+
+let current = ref None
 
 let rec display id image filters =
   let start_waiting () =
@@ -304,11 +304,11 @@ let rec display id image filters =
     | Exit -> (* abort! *)
         working := None;
         start_waiting ()
-  end;;
+  end
 
 let redisplay new_filters =
   match !current with
   | Some (id, image) -> display id image new_filters
-  | None -> ();;
+  | None -> ()
 
-forward_redisplay := redisplay;;
+let () = forward_redisplay := redisplay

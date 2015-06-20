@@ -15,7 +15,7 @@
 (* $Id: png.ml,v 1.7 2009/07/04 03:39:28 furuse Exp $ *)
 
 open Util
-open Images;;
+open Images
 
 (* do not change the ordering, since the tags are used in png*.c *)
 type png_read_result =
@@ -24,25 +24,25 @@ type png_read_result =
     | PNG_INDEX8 of string array * rgb array
     | PNG_INDEX16 of string array * rgb array
     | PNG_INDEX4 of string array * rgb array
-;;
+
 
 external read_as_rgb24 : string -> int * int * string array  =
    "read_png_file_as_rgb24" 
-;;
+
 
 external read : string -> int * int * png_read_result  = "read_png_file"
-;;
+
 external write_rgb : string -> string -> int -> int -> bool -> unit
     = "write_png_file_rgb"
-;;
+
 external write_index : string -> string -> rgb array -> int -> int -> unit
     = "write_png_file_index"
-;;
+
 
 let load_as_rgb24 name _opts =
   let w, h, buf = read_as_rgb24 name in
   Rgb24 (Rgb24.create_with_scanlines w h [] buf)
-;;
+
 
 let load name _opts =
   let w, h, res = read name in
@@ -65,7 +65,7 @@ let load name _opts =
         done
       done;
       Index8 (Index8.create_with_scanlines w h [] { max = 16; map = cmap } (-1) buf')
-;;
+
 
 let save name _opts image =
   match image with
@@ -83,7 +83,7 @@ let save name _opts image =
         bmp.Index16.colormap.map
         bmp.Index16.width bmp.Index16.height
   | Cmyk32 _ -> failwith "Saving of CMYK not supported yet"
-;;
+
 
 let check_header filename =
   let len = 24 in
@@ -126,13 +126,13 @@ let check_header filename =
     end else raise Wrong_file_type
   with
   | _ -> close_in ic; raise Wrong_file_type
-;;
 
-add_methods Png {
+
+let () = add_methods Png {
   check_header = check_header;
   load = Some load;
   save = Some save;
   load_sequence = None;
   save_sequence = None;
 }
-;;
+

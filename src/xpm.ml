@@ -19,7 +19,7 @@ open Color
 open Util
 
 external read : string -> int * int * string array * int array
-    = "read_xpm_file";;
+    = "read_xpm_file"
 
 let load file _opts =
   let w, h, cmap, imap = read file in
@@ -43,7 +43,7 @@ let load file _opts =
     Index16 (Index16.create_with w h []
                { map = cmap; max = 256 * 256 - 1; }
                transparent buf)
-  end;;
+  end
 
 let check_header filename =
   let len = 9 in
@@ -58,12 +58,12 @@ let check_header filename =
     	header_infos = []; }
     else raise Wrong_file_type
   with
-  | _ -> raise Wrong_file_type;;
+  | _ -> raise Wrong_file_type
 
-add_methods Xpm {
+let () = add_methods Xpm {
   check_header = check_header;
   load = Some load;
   save = None;
   load_sequence = None;
   save_sequence = None;
-};;
+}

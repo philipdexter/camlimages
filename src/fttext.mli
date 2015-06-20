@@ -12,16 +12,16 @@
 
 (* $Id: fttext.mli,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-open Color;;
-open Freetype;;
+open Color
+open Freetype
 
 (* the type for actual drawing functions and some samples *)
-type 'a drawer = 'a -> int -> 'a;;
-val func_darken_only : rgb drawer;;
-val func_red_only : rgb drawer;;
+type 'a drawer = 'a -> int -> 'a
+val func_darken_only : rgb drawer
+val func_red_only : rgb drawer
 
-val unicode_of_latin : string -> int array;;
-val unicode_of_euc_japan : string -> int array;;
+val unicode_of_latin : string -> int array
+val unicode_of_euc_japan : string -> int array
 
 (* general drawing function *)
 val draw_rotated_text :
@@ -30,7 +30,7 @@ val draw_rotated_text :
     face ->
     int -> int ->
     int array ->
-    unit;;
+    unit
 
 val draw_rotated_glyphs :
     float ->
@@ -38,21 +38,21 @@ val draw_rotated_glyphs :
     face ->
     int -> int ->
     char_index array ->
-    unit;;
+    unit
 
 val draw_text :
     (int -> int -> int -> unit) ->
     face ->
     int -> int ->
     int array ->
-    unit;;
+    unit
 
 val draw_glyphs :
     (int -> int -> int -> unit) ->
     face ->
     int -> int ->
     char_index array ->
-    unit;;
+    unit
 
 val draw_mono_rotated_text :
     float ->
@@ -60,7 +60,7 @@ val draw_mono_rotated_text :
     face ->
     int -> int ->
     int array ->
-    unit;;
+    unit
 
 val draw_mono_rotated_glyphs :
     float ->
@@ -68,21 +68,21 @@ val draw_mono_rotated_glyphs :
     face ->
     int -> int ->
     char_index array ->
-    unit;;
+    unit
 
 val draw_mono_text :
     (int -> int -> int -> unit) ->
     face ->
     int -> int ->
     int array ->
-    unit;;
+    unit
 
 val draw_mono_glyphs :
     (int -> int -> int -> unit) ->
     face ->
     int -> int ->
     char_index array ->
-    unit;;
+    unit
 
 module type T = sig
   type t
@@ -94,7 +94,7 @@ module type T = sig
   val set : t -> int -> int -> elt -> unit
   val unsafe_get : t -> int -> int -> elt
   val unsafe_set : t -> int -> int -> elt -> unit
-end;;
+end
 
 module Make(T : T) : sig
   (* Draw texts *)
@@ -132,14 +132,14 @@ module Make(T : T) : sig
   val draw_mono_rotated_glyphs : Freetype.face -> T.elt drawer -> T.t->
     int -> int -> float -> char_index array -> unit
 
-end;;
+end
 
 (* Get the size information of text *)
 val size :
-  Freetype.face -> int array -> float * float * float * float;;
+  Freetype.face -> int array -> float * float * float * float
 
 val size_of_glyphs :
-  Freetype.face -> char_index array -> float * float * float * float;;
+  Freetype.face -> char_index array -> float * float * float * float
 
 (* Vector based *)
 val vector_gen :
@@ -147,13 +147,13 @@ val vector_gen :
   bool ->
   float ->
   (Freetype.outline_contents -> 'c) ->
-  Freetype.face -> float -> float -> 'a array -> unit;;
+  Freetype.face -> float -> float -> 'a array -> unit
 
 val vector_text :
   bool -> (Freetype.outline_contents -> 'a) ->
-  Freetype.face -> float -> float -> float -> int array -> unit;;
+  Freetype.face -> float -> float -> float -> int array -> unit
 
 val vector_glyphs :
   bool -> (Freetype.outline_contents -> 'a) ->
   Freetype.face ->
-  float -> float -> float -> Freetype.char_index array -> unit;;
+  float -> float -> float -> Freetype.char_index array -> unit

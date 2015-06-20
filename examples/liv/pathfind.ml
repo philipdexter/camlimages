@@ -12,7 +12,7 @@
 
 (* $Id: pathfind.ml,v 1.11 2004/09/23 07:20:20 weis Exp $ *)
 
-open Unix;;
+open Unix
 
 (* Tilde substitution *)
 
@@ -21,7 +21,7 @@ open Unix;;
 let rec next_slash s n =
   if n >= String.length s || s.[n] = '/'
   then n
-  else next_slash s (succ n);;
+  else next_slash s (succ n)
 
 let tilde_subst s =
   try
@@ -40,7 +40,7 @@ let tilde_subst s =
   with
   | Unix_error (_, _, _) -> s
   | Sys_error _ -> s
-  | Not_found -> s;;
+  | Not_found -> s
 
 let find pathlist s =
   if s.[0] = '/' then
@@ -57,5 +57,5 @@ let find pathlist s =
       raise Not_found
     with
     | Exit -> !f
-  end;;
+  end
 

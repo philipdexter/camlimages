@@ -12,20 +12,20 @@
 
 (* $Id: livsh.ml,v 1.10 2008/02/19 12:44:04 furuse Exp $ *)
 
-open GPack;;
-open Gui;;
-open Livshtype;;
-open Livmisc;;
+open GPack
+open Gui
+open Livshtype
+open Livmisc
 
 let font =
-  Gdk.Font.load "-*-helvetica-medium-r-normal-*-12-*-*-*-*-*-iso8859-1";;
+  Gdk.Font.load "-*-helvetica-medium-r-normal-*-12-*-*-*-*-*-iso8859-1"
 
 let dummy_pixmap =
   try
     GDraw.pixmap_from_xpm_d (* ~window: window (may hang...) *)
       ~colormap: colormap ~data: Deficon.data ()
   with
-  | _ -> failwith "default icon does not exist...";;
+  | _ -> failwith "default icon does not exist..."
 
 let joe_anim =
   lazy
@@ -35,14 +35,14 @@ let joe_anim =
                   ["~/.liv"; "/usr/lib/liv"; "/usr/local/lib/liv"; "."]
                   "faceanm.gif"))
      with
-     | _ -> prerr_endline "There is no Joe's face!"; None);;
+     | _ -> prerr_endline "There is no Joe's face!"; None)
 
-let icon_width = 80;;
-let icon_height = 60;;
-let button_width = 100;;
-let button_height = 80;;
-let label_height = 16;;
-let max_text = button_width * 9 / 10;;
+let icon_width = 80
+let icon_height = 60
+let button_width = 100
+let button_height = 80
+let label_height = 16
+let max_text = button_width * 9 / 10
 
 class virtual icon_creator = object (self)
   val mutable icons = []
@@ -174,7 +174,7 @@ and icon ~dir ~name (req : icon_creator) =
              if ebox#misc#visible then begin
              (* prerr_endline (Printf.sprintf "expose(%s)" name); *)
                callback true () end else true))
-end;;
+end
 
 class livsh init_dir func =
   (* widgets *)
@@ -387,4 +387,4 @@ class livsh init_dir func =
     win#set_default_size ~width: (button_width * 13 / 2)
       ~height: ((button_height + label_height) * 9 / 2);
     win#show ();
-end;;
+end

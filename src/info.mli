@@ -19,7 +19,7 @@
 (* File header informations *)
 
 type colormodel =
-   | Gray | RGB | Index | GrayA | RGBA;;
+   | Gray | RGB | Index | GrayA | RGBA
 
 (* Infos attached to bitmaps *)
 type info =
@@ -27,4 +27,4 @@ type info =
    | Info_BigEndian | Info_LittleEndian (* endianness of image file *)
    | Info_ColorModel of colormodel (* color model of image file *)
    | Info_Depth of int (* Image bit depth *)
-   | Info_Corrupted (* For corrupted PNG files *);;
+   | Info_Corrupted (* For corrupted PNG files *)

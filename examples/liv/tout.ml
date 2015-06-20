@@ -12,15 +12,15 @@
 
 (* $Id: tout.ml,v 1.14 2004/09/21 18:15:46 weis Exp $ *)
 
-open Livmisc;;
-(* open Gdk;; *)
-(* open GDraw;; *)
-open GMain;;
+open Livmisc
+(* open Gdk *)
+(* open GDraw *)
+open GMain
 
-let wait = ref 0.0;;
+let wait = ref 0.0
 
-let hook_next = ref (fun _ -> () : [ `FORCE | `DIR ] option -> unit);;
-let nexttimeout = ref None;;
+let hook_next = ref (fun _ -> () : [ `FORCE | `DIR ] option -> unit)
+let nexttimeout = ref None
 
 let set_timeout () =
   (* prerr_endline "set timeout"; *)
@@ -29,8 +29,8 @@ let set_timeout () =
       Some
         (Timeout.add
            ~ms: (truncate (!wait *. 1000.0))
-           ~callback: (fun () -> !hook_next None; false));;
+           ~callback: (fun () -> !hook_next None; false))
 
 let remove_timeout () =
   (* prerr_endline "remove timeout"; *)
-  may Timeout.remove !nexttimeout;;
+  may Timeout.remove !nexttimeout

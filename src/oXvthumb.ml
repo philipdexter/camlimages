@@ -12,15 +12,15 @@
 
 (* $Id: oXvthumb.ml,v 1.1 2007/01/18 10:29:57 rousse Exp $ *)
 
-open OImages;;
+open OImages
 
 let load name =
   let info, img = Xvthumb.load name in
-  info, new index8_wrapper img;;
+  info, new index8_wrapper img
 
 let save name info img =
   match img#image with
   | Images.Index8 bmp -> Xvthumb.save name info bmp
-  | _ -> raise Wrong_image_class;;
+  | _ -> raise Wrong_image_class
 
-let create img = new index8_wrapper (Xvthumb.create img#image);;
+let create img = new index8_wrapper (Xvthumb.create img#image)

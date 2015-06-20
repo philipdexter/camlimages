@@ -14,11 +14,13 @@
 
 (* $Id: bmp.mli,v 1.2 2009/02/08 14:27:00 weis Exp $ *)
 
-val check_header : bytes -> Images.header;;
+val check_header : bytes -> Images.header
   (** Checks the file header *)
-val load : bytes -> Images.load_option list -> Images.t;;
+
+val load : bytes -> Images.load_option list -> Images.t
   (** Loads a bmp image. *)
-val save : bytes -> Images.save_option list -> Images.t -> unit;;
+
+val save : bytes -> Images.save_option list -> Images.t -> unit
   (** Save an image in bmp format file. *)
 
 (*** Below, they are all lower interfaces *)
@@ -106,8 +108,8 @@ and bibitcount =
           respectively, of a pixel. *)
   | ColorRGBA
     (** 32 The bitmap *)
-;;
 
-val load_bmp : bytes -> bmp;;
-val save_bmp : bytes -> bmp -> unit;;
+
+val load_bmp : bytes -> bmp
+val save_bmp : bytes -> bmp -> unit
  (** Load and save functions for BMP images. *)

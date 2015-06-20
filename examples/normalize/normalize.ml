@@ -13,21 +13,21 @@
 (* $Id: normalize.ml,v 1.7 2004/09/24 10:55:10 weis Exp $ *)
 
 let files = ref []
-;;
 
-Arg.parse []
+
+let () = Arg.parse []
   (fun s -> files := s :: !files)
   "normalize src dst"
-;;
+
 
 let src, dst =
   match List.rev !files with
   | [src; dst] -> src, dst
   | _ -> assert false
-;;
+
 
 let src = OImages.rgb24 (OImages.load src [])
-;;
+
 
 let _ =
   (* Make monochrome *)
@@ -47,6 +47,6 @@ let _ =
       src#set x y new_rgb;
     done
   done
-;;
 
-src#save dst None [];;
+
+let () = src#save dst None []

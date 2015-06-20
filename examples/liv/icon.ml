@@ -12,14 +12,14 @@
 
 (* $Id: icon.ml,v 1.22 2004/09/24 10:55:07 weis Exp $ *)
 
-open Images;;
-open OImages;;
-open Geometry;;
-open OXimage;;
+open Images
+open OImages
+open Geometry
+open OXimage
 
-let xvmode = ref false;;
+let xvmode = ref false
 
-let mime_icons = Hashtbl.create 107;;
+let mime_icons = Hashtbl.create 107
 
 let string_of_format = function
   | Gif -> "GIF8x"
@@ -29,14 +29,14 @@ let string_of_format = function
   | Png -> "PNG"
   | Xpm -> "XPM"
   | Ppm -> "PPM"
-  | _ -> "???";;
+  | _ -> "???"
 
 let thumb_path name =
   Filename.concat
     (Filename.concat
        (Filename.dirname name)
        (if !xvmode then ".xvpics" else ".livpics"))
-    (Filename.basename name);;
+    (Filename.basename name)
 
 let create_xvthumb name =
   let thumbpath = thumb_path name in
@@ -64,7 +64,7 @@ let create_xvthumb name =
        (Unix.lstat name).Unix.st_size)
     thumb;
   img#destroy;
-  thumb#destroy;;
+  thumb#destroy
 
 let create_livthumb name =
   let thumbpath = thumb_path name in
@@ -99,7 +99,7 @@ let create_livthumb name =
       (Pervasives.truncate (float w *. ratio))
       (Pervasives.truncate (float h *. ratio)) in
   img#save thumbpath (Some Jpeg) [Save_Quality 75];
-  img#destroy;;
+  img#destroy
 
 let load_icon name typ =
   let thumb = thumb_path name in
@@ -147,4 +147,4 @@ let load_icon name typ =
               Hashtbl.add mime_icons iconpath pixmap;
               pixmap
         end in
-  inf, pixmap;;
+  inf, pixmap

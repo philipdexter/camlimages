@@ -12,5 +12,5 @@
 
 (* $Id: usleep.ml,v 1.4 2004/09/23 06:56:23 weis Exp $ *)
 
-let usleep sec = ignore (Unix.select [] [] [] sec);;
+let usleep sec = ignore (Unix.select [] [] [] sec)
 

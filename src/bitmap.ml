@@ -14,17 +14,17 @@
 
 open Util
 
-let debug = ref true;;
-let debugs s = if !debug then prerr_endline s;;
+let debug = ref true
+let debugs s = if !debug then prerr_endline s
 
-let maximum_live = ref 0;; (* around 3M words for example *)
-let maximum_block_size = ref (!maximum_live / 10);; (* default 300K words *)
+let maximum_live = ref 0 (* around 3M words for example *)
+let maximum_block_size = ref (!maximum_live / 10) (* default 300K words *)
 (* see Temp to set temp file directory *)
 
 type block_data =
    | InMemory of string
    | Swapped
-   | Destroyed;;
+   | Destroyed
 
 type block = {
     block_width: int;
@@ -33,13 +33,13 @@ type block = {
     mutable block_data: block_data;
     mutable last_used: float;
     swap: string option
-  };;
+  }
 
-let swappable_blocks = ref [];;
+let swappable_blocks = ref []
 
 (* wrapped Bytes.create *)
 let string_create s =
-  try Bytes.create s with Invalid_argument _ -> raise Out_of_memory;;
+  try Bytes.create s with Invalid_argument _ -> raise Out_of_memory
 
 module Block = struct
   type t = {
@@ -53,10 +53,10 @@ end
 
 module type Bitdepth = sig
   val bytes_per_pixel : int
-end;;
+end
 
 module Make(B:Bitdepth) = struct
-  open B;;
+  open B
 
   type t = {
     (* The whole size *)
@@ -70,13 +70,13 @@ module Make(B:Bitdepth) = struct
     blocks_y : int;
     data : block array array;
     access : int -> int -> (string * int);
-    };;
+    }
 
   (****************************************************************************)
   (*                            Destruction                                   *)
   (****************************************************************************)
 
-  let destroy _t = ();; (* do nothing... *)
+  let destroy _t = () (* do nothing... *)
 
   let destroy_block blk =
     if blk.block_data = Destroyed then () else begin
@@ -92,7 +92,7 @@ module Make(B:Bitdepth) = struct
       List.fold_right
         (fun blk' st ->
            if blk == blk' then st else blk' :: st)
-        !swappable_blocks [];;
+        !swappable_blocks []
 
   let fill_string buf init =
     (* fill string with init quickly (hopefully) *)
@@ -108,14 +108,14 @@ module Make(B:Bitdepth) = struct
         sub (x * 2)
       | x (* when x > halflength *) ->
         String.unsafe_blit buf 0 buf x (fulllength - x) in
-    sub 0;;
+    sub 0
 
   let check_init init =
     match init with
     | Some v ->
         if String.length v <> bytes_per_pixel
         then failwith "bitmap fill value is incorrect"
-    | None -> ();;
+    | None -> ()
 
   let memory width height init =
     (* try to have it whole in memory *)
@@ -166,7 +166,7 @@ module Make(B:Bitdepth) = struct
 	  bufs.(0), (y * width + x) * bytes_per_pixel) 
 	else (fun x y -> 
 	  bufs.(y / hsize), ((y mod hsize) * width + x) * bytes_per_pixel)
-    };;
+    }
       
 
   let swap_out = function
@@ -182,9 +182,9 @@ module Make(B:Bitdepth) = struct
       with
       | e -> prerr_endline "Swap-out failed"; raise e
       end
-    | _ -> ();;
+    | _ -> ()
 
-  let touch_block blk = blk.last_used <- Sys.time ();;
+  let touch_block blk = blk.last_used <- Sys.time ()
 
   let swap_out_eldest words =
     let sorted =
@@ -197,13 +197,13 @@ module Make(B:Bitdepth) = struct
         swapper xs
           (i - (x.block_size + Camlimages.word_size - 1) /
                Camlimages.word_size) in
-    swapper sorted words;;
+    swapper sorted words
 
   let require bytes =
     let words = (bytes + Camlimages.word_size - 1) / Camlimages.word_size in
     let stat = Gc.stat () in
     let over = stat.Gc.live_words + words - !maximum_live in
-    if over > 0 then swap_out_eldest over;;
+    if over > 0 then swap_out_eldest over
 
   let swap_in = function
     | {block_data = Destroyed} -> raise (Failure "swap_in: Already destroyed")
@@ -227,7 +227,7 @@ module Make(B:Bitdepth) = struct
               (Printf.sprintf "Swap-in failed (%s)" (Printexc.to_string e));
             raise e
 	end
-    | _ -> assert false;;
+    | _ -> assert false
 
   let alloc_swappable_block width height init =
     (* CR jfuruse: check overflow *)
@@ -247,7 +247,7 @@ module Make(B:Bitdepth) = struct
         swap = Some (Tmpfile.new_tmp_file_name "swap") } in
     Gc.finalise destroy_block blk;
     swappable_blocks := blk :: !swappable_blocks;
-    blk;;
+    blk
 
   (****************************************************************************)
   (*                            Creation functions                            *)
@@ -335,7 +335,7 @@ module Make(B:Bitdepth) = struct
             end);
         } in
       t
-    end;;
+    end
 
   let create_with width height buf =
     { width = width;
@@ -354,7 +354,7 @@ module Make(B:Bitdepth) = struct
                 swap = None;
                } |] |];
       access = (fun x y -> buf, (y * width + x) * bytes_per_pixel);
-    };;
+    }
 
   let create_with_scanlines width height scanlines =
     (* CR jfuruse: check overflow *)
@@ -390,13 +390,13 @@ module Make(B:Bitdepth) = struct
             last_used = 0.0;
             swap = None }) scanlines |];
       access = (fun x y -> scanlines.(y), x * bytes_per_pixel);
-    };;
+    }
 
   (****************************************************************************)
   (*                            Tool functions                                *)
   (****************************************************************************)
 
-  let access t = t.access;;
+  let access t = t.access
 
   (* strip access *)
   (* Here, "strip" is a rectangle region with height 1 *)
@@ -437,7 +437,7 @@ module Make(B:Bitdepth) = struct
           else (t.block_size_width * blx - x) * bytes_per_pixel in
         String.unsafe_blit src adrs str offset size
       done;
-      str;;
+      str
 
   let set_strip t x y w str =
     (* No region checks for performance. You should wrap this to make safe
@@ -473,10 +473,10 @@ module Make(B:Bitdepth) = struct
           else (t.block_size_width * blx - x) * bytes_per_pixel
         in
         String.unsafe_blit str offset dst adrs size
-      done;;
+      done
 
   (* scanline access (special case of strip access) *)
-  let get_scanline t y = get_strip t 0 y t.width;;
+  let get_scanline t y = get_strip t 0 y t.width
 
   (* returns the scan line address and how many lines we can get *)
   let get_scanline_ptr t =
@@ -503,7 +503,7 @@ module Make(B:Bitdepth) = struct
       failwith
         (Printf.sprintf "scan=%d width=%d bbp=%d"
            (String.length str) t.width B.bytes_per_pixel);
-    set_strip t 0 y t.width str;;
+    set_strip t 0 y t.width str
 
   (* dump : of course this does not work for large images *)
 
@@ -535,7 +535,7 @@ module Make(B:Bitdepth) = struct
           done
         done
       done;
-      s;;
+      s
 
   (* sub-bitmap *)
   let sub t x y w h =
@@ -546,9 +546,9 @@ module Make(B:Bitdepth) = struct
       for i = 0 to h - 1 do set_scanline dst i (get_strip t x (y + i) w) done;
       dst
     with
-    | e -> destroy dst; raise e;;
+    | e -> destroy dst; raise e
 
-  let copy t = sub t 0 0 t.width t.height;;
+  let copy t = sub t 0 0 t.width t.height
 
   let blit src sx sy dst dx dy w h =
     Region.check src.width src.height sx sy;
@@ -557,7 +557,7 @@ module Make(B:Bitdepth) = struct
     Region.check dst.width dst.height (dx + w - 1) (dy + h - 1);
     for i = 0 to h - 1 do
       set_strip dst dx (dy + i) w (get_strip src sx (sy + i) w)
-    done;;
+    done
 
   let blocks bmp = bmp.blocks_x, bmp.blocks_y
 	
@@ -578,4 +578,4 @@ module Make(B:Bitdepth) = struct
       x = at_x;
       y = at_y;
       dump = swap_in blk }
-end;;
+end

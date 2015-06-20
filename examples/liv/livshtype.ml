@@ -12,21 +12,21 @@
 
 (* $Id: livshtype.ml,v 1.5 2004/09/24 10:55:08 weis Exp $ *)
 
-open Mstring;;
-open Unix;;
-open Images;;
-(* open Info;; *)
+open Mstring
+open Unix
+open Images
+(* open Info *)
 
 type typ =
    | ContentType of string
    | ContentEncoding of string
-   | Special of string;;
+   | Special of string
 
-let default_mime_types = "/etc/mime.types";;
+let default_mime_types = "/etc/mime.types"
 
-let suffixes = Hashtbl.create 107;;
+let suffixes = Hashtbl.create 107
 
-let add_suffix (s, t) = Hashtbl.add suffixes s t;;
+let add_suffix (s, t) = Hashtbl.add suffixes s t
 
 (* Even if we don't have a suffix file... *)
 (* If the suffix file says otherwise, it will have priority *)
@@ -59,9 +59,9 @@ let default_mime_suffixes = [
   "asc",  ContentEncoding "pgp";
   "pgp",  ContentEncoding "pgp";
   "cmo",  ContentType "application/x-caml-applet";
-];;
+]
 
-List.iter add_suffix default_mime_suffixes;;
+let () = List.iter add_suffix default_mime_suffixes
 
 (* mime_types *)
 let read_suffix_file f =
@@ -83,7 +83,7 @@ let read_suffix_file f =
             List.iter (function sufx -> add_suffix (sufx, ContentEncoding x)) l
     done
   with End_of_file -> close_in ic
- with Sys_error _ -> ();;
+ with Sys_error _ -> ()
 
 let guess link_as_link f =
   let from_header f =
@@ -120,7 +120,7 @@ let guess link_as_link f =
       with
       | _ ->
         Hashtbl.find suffixes (String.lowercase (snd (Livmisc.get_extension f)))
-    end;;
+    end
 
 let guess = guess false
 

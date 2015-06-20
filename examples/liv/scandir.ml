@@ -12,9 +12,9 @@
 
 (* $Id: scandir.ml,v 1.10 2008/06/16 22:35:42 furuse Exp $ *)
 
-open Unix;;
+open Unix
 
-let ignore_dirs = ref [".xvpics"; ".livpics"; "0000HEADER"; "0000HEADERS"];;
+let ignore_dirs = ref [".xvpics"; ".livpics"; "0000HEADER"; "0000HEADERS"]
 
 let scan_dir f fn =
   let scanned = ref [] in
@@ -52,4 +52,4 @@ let scan_dir f fn =
       List.iter sub (List.rev !subdirs)
     | S_DIR -> ()
     | _ -> f fn in
-  sub fn;;
+  sub fn

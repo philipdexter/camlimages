@@ -35,7 +35,7 @@ let split_str char_sep str =
         String.sub str beg (cur - beg) :: split nextw nextw
       else split beg (succ cur) in
     let wstart = skip_sep 0 in
-    split wstart wstart;;
+    split wstart wstart
 
 (* split a string according to char_sep predicate *)
 let split_str_quoted char_sep str =
@@ -69,7 +69,7 @@ let split_str_quoted char_sep str =
     end in
 
   let wstart = skip_sep 0 in
-  split wstart wstart;;
+  split wstart wstart
 
 (* extract the . suffix (dot excluded) of a string *)
 let get_suffix s =
@@ -77,40 +77,40 @@ let get_suffix s =
     let dotpos = succ (String.rindex s '.') in
     String.sub s dotpos (String.length s - dotpos)
   with
-  | Not_found -> "";;
+  | Not_found -> ""
 
 (* HEX/DEC conversions *)
 let hex_to_dec c = match c with
   | '0'..'9' -> int_of_char c - 48
   | 'a'..'f' -> int_of_char c - 87 (* 87 = int_of_char 'a' - 10 *)
   | 'A'..'F' -> int_of_char c - 55 (* 55 = int_of_char 'A' - 10 *)
-  | _ -> failwith "hex_to_dec";;
+  | _ -> failwith "hex_to_dec"
 
 let dec_to_hex i =
   if i < 10 then char_of_int (i + 48)  (* 48 = int_of_char '0' *)
-  else char_of_int (i + 55)            (* 55 = int_of_char 'A' - 10 *);;
+  else char_of_int (i + 55)            (* 55 = int_of_char 'A' - 10 *)
 
 (* Converting a hex stored string *)
 let hex_to_string s =
   let len = String.length s / 2 in
   Bytes.init len @@ fun i -> 
     char_of_int ( 16 * (hex_to_dec s.[i + i]) + hex_to_dec s.[i + i + 1])
-;;
+
 
 let gensym =
   let cnter = ref 0 in
   (fun n ->
     incr cnter;
-    n ^ string_of_int !cnter);;
+    n ^ string_of_int !cnter)
 
 let rem_trailing_sp s =
   let l = String.length s in
   let pos = ref (l - 1) in
   while !pos >= 0 && List.mem s.[!pos] [' '; '\t'] do decr pos done;
   if !pos = l - 1 then s
-  else String.sub s 0 (succ !pos);;
+  else String.sub s 0 (succ !pos)
 
-let catenate_sep = String.concat;;
+let catenate_sep = String.concat
 
 (** Filters CRLF:
  -  CR -> LF
@@ -150,7 +150,7 @@ let norm_crlf lastwascr buf offs len =
   | '\r' -> lastiscr := true
   | c -> dest << !wpos & c; incr wpos
   end;
-  String.sub dest 0 !wpos, !lastiscr;;
+  String.sub dest 0 !wpos, !lastiscr
 
 let hexchar c =
   let i = int_of_char c in

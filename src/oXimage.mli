@@ -23,17 +23,17 @@ class ximage : Ximage.t -> object
   method set : int -> int -> Ximage.elt -> unit
   method data : Gdk.image
   method destroy : unit
-end;;
+end
 
 val create :
   kind:Gdk.Image.image_type -> visual:Gdk.visual ->
-    width: int -> height: int -> ximage;;
+    width: int -> height: int -> ximage
 val get_image : [>`drawable] Gobject.obj ->
-  x:int -> y:int -> width:int -> height:int -> ximage;;
+  x:int -> y:int -> width:int -> height:int -> ximage
 val of_image :
-  Gdk.visual -> (float -> unit) option -> OImages.oimage -> ximage;;
+  Gdk.visual -> (float -> unit) option -> OImages.oimage -> ximage
 
-val mask_of_image : Gdk.window -> OImages.oimage -> Gdk.bitmap option;;
+val mask_of_image : Gdk.window -> OImages.oimage -> Gdk.bitmap option
 
 val pixmap_of_image :
-  Gdk.window -> (float -> unit) option -> OImages.oimage -> GDraw.pixmap;;
+  Gdk.window -> (float -> unit) option -> OImages.oimage -> GDraw.pixmap

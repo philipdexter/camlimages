@@ -14,12 +14,12 @@
 
 (* $Id: color.ml,v 1.1.2.1 2010/05/16 01:45:54 furuse Exp $*)
 
-exception Too_many_colors;;
+exception Too_many_colors
 
 module type COLORMODEL = sig
   type t
   val square_distance : t -> t -> int
-end;;
+end
 
 (***************************************************************** color map *)
 
@@ -27,9 +27,9 @@ type 'a map = {
     mutable max: int;
     (* maximum color index allowed in the color map (-1 = unlimited) *)
     mutable map: 'a array;
-  };;
+  }
 
-let size cmap = Array.length cmap.map;;
+let size cmap = Array.length cmap.map
 
 let find_exact cmap c =
   let found = ref 0 in
@@ -40,7 +40,7 @@ let find_exact cmap c =
       if c = c' then begin found := i; raise Exit end
     done;
     raise Not_found
-  with Exit -> !found;;
+  with Exit -> !found
 
 let add_color cmap c1 =
   try
@@ -50,7 +50,7 @@ let add_color cmap c1 =
     let len = size cmap in
     if cmap.max >= 0 && len = cmap.max then raise Too_many_colors;
     cmap.map <- Array.append cmap.map [|c1|];
-    len;;
+    len
 
 let add_colors cmap cs =
   let ret, not_exist =
@@ -71,12 +71,12 @@ let add_colors cmap cs =
     (function
      | Some x -> x
      | None -> let x = !cntr in incr cntr; x)
-    ret;;
+    ret
 
 let copy cmap = {
   max = cmap.max;
   map = Array.copy cmap.map;
-};;
+}
 
 module MakeMap(CM:COLORMODEL) = struct
   let size = (size : CM.t map -> int)
@@ -98,7 +98,7 @@ module MakeMap(CM:COLORMODEL) = struct
     done;
     if !found = -1 then raise Not_found else !found
 
-end;;
+end
 
 module RgbModel = struct
   type t = { mutable r : int; mutable g : int; mutable b : int; }
@@ -118,14 +118,14 @@ module RgbModel = struct
     { r = rgb.r - rgb'.r;
       g = rgb.g - rgb'.g;
       b = rgb.b - rgb'.b; }
-end;;
+end
 
 module Rgb = struct
   include RgbModel
   include MakeMap(RgbModel)
-end;;
+end
 
-type rgb = Rgb.t = { mutable r : int; mutable g : int; mutable b : int; };;
+type rgb = Rgb.t = { mutable r : int; mutable g : int; mutable b : int; }
 
 module RgbaModel = struct
   type t = { color : rgb; mutable alpha : int; }
@@ -158,14 +158,14 @@ module RgbaModel = struct
       } in
 
       { color = c; alpha = check (255 - alpha' * (255 - dst.alpha) / 255); }
-end;;
+end
 
 module Rgba = struct
   include RgbaModel
   include MakeMap(RgbaModel)
-end;;
+end
 
-type rgba = Rgba.t = { color : rgb; mutable alpha : int; };;
+type rgba = Rgba.t = { color : rgb; mutable alpha : int; }
 
 module CmykModel = struct
   type t = {
@@ -184,22 +184,22 @@ module CmykModel = struct
 
   let minus c c' =
     { c = c.c - c'.c; m = c.m - c'.m; y = c.y - c'.y; k = c.k - c'.k; }
-end;;
+end
 
 module Cmyk = struct
   include CmykModel
   include MakeMap(CmykModel)
-end;;
+end
 
 type cmyk = Cmyk.t =
     { mutable c : int; mutable m : int; mutable y : int;
-      mutable k : int; };;
+      mutable k : int; }
 
 (************************************************* RGB specialized functions *)
 
-let rgb_square_distance = Rgb.square_distance;;
-let plus = Rgb.plus;;
-let minus = Rgb.minus;;
+let rgb_square_distance = Rgb.square_distance
+let plus = Rgb.plus
+let minus = Rgb.minus
 
 (*
 let brightness c = (c.r * 88 + c.g * 127 + c.b * 40) / 255
@@ -207,7 +207,7 @@ let brightness c = (c.r * 88 + c.g * 127 + c.b * 40) / 255
 XV setting
 *)
 
-let brightness c = (c.r * 54 + c.g * 182 + c.b * 19) / 255;;
+let brightness c = (c.r * 54 + c.g * 182 + c.b * 19) / 255
 (*
   Y = 0.212671 * R + 0.715160 * G + 0.072169 * B;
 
@@ -218,7 +218,7 @@ Standard for the Studio and for International Programme Exchange (1990),
 
 (********************************************************* Color name parser *)
 
-let color_name_table = ref None;;
+let color_name_table = ref None
 
 (* CR jfuruse: path_rgb_txt may not exist *)
 let color_table_load () =
@@ -241,14 +241,14 @@ let color_table_load () =
   | End_of_file ->
     close_in ic;
     color_name_table := Some table;
-    table;;
+    table
 
 let color_name_query c =
   let table =
     match !color_name_table with
     | Some t -> t
     | None -> color_table_load () in
-  Hashtbl.find table c;;
+  Hashtbl.find table c
 
 let color_parse c =
   try
@@ -268,7 +268,7 @@ let color_parse c =
       | _ -> raise Exit
     else color_name_query c
   with
-  | _ -> failwith (Printf.sprintf "Color parse %s failed" c);;
+  | _ -> failwith (Printf.sprintf "Color parse %s failed" c)
 
 let colormap_parse cmap =
   let transparent = ref (-1) in
@@ -281,4 +281,4 @@ let colormap_parse cmap =
       prerr_endline (Printf.sprintf "transparent= %d" i);
     end
   done;
-  cmap, !transparent;;
+  cmap, !transparent

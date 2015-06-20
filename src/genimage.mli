@@ -17,16 +17,16 @@
 open Image_intf
 
 (** Low level image creator *)
-module MakeRawImage : functor (E : ENCODE) -> (RAWIMAGE with type elt = E.t);;
+module MakeRawImage : functor (E : ENCODE) -> (RAWIMAGE with type elt = E.t)
 
 module Make : functor (RI : RAWIMAGE) ->
               functor (CON : CONTAINER with type rawimage = RI.t) ->
   IMAGE with type t = CON.container
-	and  type elt = RI.elt;;
+	and  type elt = RI.elt
 
 module MakeIndexed(RI:RAWIMAGE with type elt = int)
     (CON:CONTAINER_INDEXED with type rawimage = RI.t) :
   IMAGEINDEXED with type t = CON.container
                and  type elt = int
-	       and  type mapelt = CON.mapelt;;
+	       and  type mapelt = CON.mapelt
 

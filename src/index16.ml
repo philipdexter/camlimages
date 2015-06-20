@@ -29,18 +29,18 @@ module E = struct
     let str = Bytes.create bytes_per_pixel in
     set str 0 t;
     str
-end;;
+end
 
-module RI = Genimage.MakeRawImage(E);;
+module RI = Genimage.MakeRawImage(E)
 
-type rawimage = RI.t;;
-type elt = int;;
+type rawimage = RI.t
+type elt = int
 type t = { width : int;
 	   height : int;
 	   rawimage : RI.t;
 	   mutable infos : Info.info list;
 	   mutable colormap : Color.rgb Color.map;
-	   mutable transparent : int };;
+	   mutable transparent : int }
 
 module C = struct
   open Color
@@ -64,9 +64,9 @@ module C = struct
       transparent = src.transparent;
       infos = src.infos; }
   let colormap t = t.colormap
-end;;
+end
 
-module IMAGE = Genimage.MakeIndexed(RI)(C);;
+module IMAGE = Genimage.MakeIndexed(RI)(C)
 
 let create_with width height infos colormap transparent data =
   { width = width;
@@ -74,7 +74,7 @@ let create_with width height infos colormap transparent data =
     rawimage = RI.create_with width height data;
     colormap = colormap;
     transparent = transparent;
-    infos = infos; };;
+    infos = infos; }
 
 let create_with_scanlines width height infos colormap transparent data =
   { width = width;
@@ -82,35 +82,35 @@ let create_with_scanlines width height infos colormap transparent data =
     rawimage = RI.create_with_scanlines width height data;
     colormap = colormap;
     transparent = transparent;
-    infos = infos; };;
+    infos = infos; }
 
-let rawimage = C.rawimage;;
-let create = IMAGE.create;;
-let make = IMAGE.make;;
-let dump = IMAGE.dump;;
-let unsafe_access = IMAGE.unsafe_access;;
-let get_strip = IMAGE.get_strip;;
-let set_strip = IMAGE.set_strip;;
-let get_scanline = IMAGE.get_scanline;;
-let set_scanline = IMAGE.set_scanline;;
-let unsafe_get = IMAGE.unsafe_get;;
-let unsafe_set = IMAGE.unsafe_set;;
-let get = IMAGE.get;;
-let set = IMAGE.set;;
-let unsafe_get_color = IMAGE.unsafe_get_color;;
-let get_color = IMAGE.get_color;;
-let destroy = IMAGE.destroy;;
-let copy = IMAGE.copy;;
-let sub = IMAGE.sub;;
-let blit = IMAGE.blit;;
-let map = IMAGE.map;;
-let blocks = IMAGE.blocks;;
-let dump_block = IMAGE.dump_block;;
+let rawimage = C.rawimage
+let create = IMAGE.create
+let make = IMAGE.make
+let dump = IMAGE.dump
+let unsafe_access = IMAGE.unsafe_access
+let get_strip = IMAGE.get_strip
+let set_strip = IMAGE.set_strip
+let get_scanline = IMAGE.get_scanline
+let set_scanline = IMAGE.set_scanline
+let unsafe_get = IMAGE.unsafe_get
+let unsafe_set = IMAGE.unsafe_set
+let get = IMAGE.get
+let set = IMAGE.set
+let unsafe_get_color = IMAGE.unsafe_get_color
+let get_color = IMAGE.get_color
+let destroy = IMAGE.destroy
+let copy = IMAGE.copy
+let sub = IMAGE.sub
+let blit = IMAGE.blit
+let map = IMAGE.map
+let blocks = IMAGE.blocks
+let dump_block = IMAGE.dump_block
 
-let unsafe_get_rgb = unsafe_get_color;;
-let get_rgb = get_color;;
+let unsafe_get_rgb = unsafe_get_color
+let get_rgb = get_color
 
-open Color;;
+open Color
 
 let to_rgb24 ?failsafe t =
   let rgb24 = Rgb24.create t.width t.height in
@@ -133,7 +133,7 @@ let to_rgb24 ?failsafe t =
       done
     done
   end;
-  rgb24;;
+  rgb24
 
 let to_rgba32 ?failsafe t =
   let rgba32 = Rgba32.create t.width t.height in
@@ -162,4 +162,4 @@ let to_rgba32 ?failsafe t =
       done
     done
   end;
-  rgba32;;
+  rgba32

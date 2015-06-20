@@ -12,9 +12,9 @@
 
 (* $Id: imgstat.ml,v 1.2 2004/09/21 18:15:42 weis Exp $ *)
 
-open Images;;
+open Images
 
-Arg.parse []
+let () = Arg.parse []
  (fun s ->
     try
       let f, h = file_format s in
@@ -22,4 +22,4 @@ Arg.parse []
         s (extension f) h.header_width h.header_height
     with
     | _ -> Printf.printf "%s ???\n" s)
- "imgstat files";;
+ "imgstat files"

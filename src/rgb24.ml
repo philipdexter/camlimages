@@ -33,17 +33,17 @@ module E = struct
     set str 0 t;
     str
 end
-;;
 
-module RI = Genimage.MakeRawImage(E);;
 
-type rawimage = RI.t;;
-type elt = Color.rgb;;
+module RI = Genimage.MakeRawImage(E)
+
+type rawimage = RI.t
+type elt = Color.rgb
 type t = { width : int;
            height : int;
            rawimage : RI.t;
            mutable infos : Info.info list }
-;;
+
 
 module C = struct
   type rawimage = RI.t
@@ -60,46 +60,46 @@ module C = struct
       rawimage = rawimage;
       infos = src.infos }
 end
-;;
 
-module IMAGE = Genimage.Make(RI)(C);;
+
+module IMAGE = Genimage.Make(RI)(C)
 
 let create_with width height infos data =
   { width = width;
     height = height;
     rawimage = RI.create_with width height data;
     infos = infos }
-;;
+
 
 let create_with_scanlines width height infos data =
   { width = width;
     height = height;
     rawimage = RI.create_with_scanlines width height data;
-    infos = infos; };;
+    infos = infos; }
 
-let rawimage = C.rawimage;;
-let create = IMAGE.create;;
-let make = IMAGE.make;;
-let dump = IMAGE.dump;;
-let unsafe_access = IMAGE.unsafe_access;;
-let get_strip = IMAGE.get_strip;;
-let set_strip = IMAGE.set_strip;;
-let get_scanline = IMAGE.get_scanline;;
-let get_scanline_ptr = IMAGE.get_scanline_ptr;;
-let set_scanline = IMAGE.set_scanline;;
-let unsafe_get = IMAGE.unsafe_get;;
-let unsafe_set = IMAGE.unsafe_set;;
-let get = IMAGE.get;;
-let set = IMAGE.set;;
-let destroy = IMAGE.destroy;;
-let copy = IMAGE.copy;;
-let sub = IMAGE.sub;;
-let blit = IMAGE.blit;;
-let map = IMAGE.map;;
-let blocks = IMAGE.blocks;;
-let dump_block = IMAGE.dump_block;;
+let rawimage = C.rawimage
+let create = IMAGE.create
+let make = IMAGE.make
+let dump = IMAGE.dump
+let unsafe_access = IMAGE.unsafe_access
+let get_strip = IMAGE.get_strip
+let set_strip = IMAGE.set_strip
+let get_scanline = IMAGE.get_scanline
+let get_scanline_ptr = IMAGE.get_scanline_ptr
+let set_scanline = IMAGE.set_scanline
+let unsafe_get = IMAGE.unsafe_get
+let unsafe_set = IMAGE.unsafe_set
+let get = IMAGE.get
+let set = IMAGE.set
+let destroy = IMAGE.destroy
+let copy = IMAGE.copy
+let sub = IMAGE.sub
+let blit = IMAGE.blit
+let map = IMAGE.map
+let blocks = IMAGE.blocks
+let dump_block = IMAGE.dump_block
 
-open Color;;
+open Color
 
 (* image resize with smoothing *)
 (* good result for reducing *)
@@ -150,7 +150,7 @@ let resize_reduce prog img nw nh =
     | None -> ()
   done;
   newimage
-;;
+
 
 let resize_enlarge prog img nw nh =
   let newimage = create nw nh in
@@ -270,7 +270,7 @@ let resize_enlarge prog img nw nh =
 
   done;
   newimage
-;;
+
 
 let resize prog img nw nh =
   let xscale = float nw /. float img.width in
@@ -349,7 +349,7 @@ let project prog img fill proj proj' smooth =
     done
   done;
   dst
-;;
+
 *)
 
 let to_rgba32 t =
@@ -363,7 +363,7 @@ let to_rgba32 t =
     done
   done;
   rgba32
-;;
+
 
 let of_rgba32 t =
   let rgb24 = create t.Rgba32.width t.Rgba32.height in
@@ -374,4 +374,4 @@ let of_rgba32 t =
     done
   done;
   rgb24
-;;
+

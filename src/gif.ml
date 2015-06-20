@@ -14,18 +14,18 @@
 
 (* $Id: gif.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
-open Images;;
-open Index8;;
+open Images
+open Index8
 open Util
 
 let debug =
   try ignore (Sys.getenv "CAMLIMAGES_DEBUG_GIF"); true with
-  | _ -> false;;
+  | _ -> false
 
-let debug_endline = if debug then prerr_endline else (fun _ -> ());;
+let debug_endline = if debug then prerr_endline else (fun _ -> ())
 
-type in_channel;;
-type out_channel;;
+type in_channel
+type out_channel
 
 type screen_info = {
     s_width : int;
@@ -33,14 +33,14 @@ type screen_info = {
     s_color_resolution : int;
     s_back_ground_color : int;
     s_colormap : rgb array;
-};;
+}
 
 type record_type =
   | Undefined
   | Screen_desc
   | Image_desc
   | Extension
-  | Terminate;;
+  | Terminate
 
 type gif_desc = {
     desc_left : int;
@@ -52,37 +52,37 @@ type gif_desc = {
 }
 
 external dGifOpenFileName : string -> screen_info * in_channel
-    = "dGifOpenFileName";;
+    = "dGifOpenFileName"
 external dGifCloseFile : in_channel -> unit
-    = "dGifCloseFile";;
+    = "dGifCloseFile"
 external dGifGetRecordType : in_channel -> record_type
-    = "dGifGetRecordType";;
+    = "dGifGetRecordType"
 external dGifGetImageDesc : in_channel -> gif_desc
-    = "dGifGetImageDesc";;
+    = "dGifGetImageDesc"
 external dGifGetLine : in_channel -> string
-    = "dGifGetLine";;
+    = "dGifGetLine"
 external dGifGetExtension : in_channel -> int * string list (* reversed!!! *)
-    = "dGifGetExtension";;
+    = "dGifGetExtension"
 
 external eGifOpenFileName : string -> out_channel
-    = "eGifOpenFileName";;
+    = "eGifOpenFileName"
 external eGifCloseFile : out_channel -> unit
-    = "eGifCloseFile";;
+    = "eGifCloseFile"
 external eGifPutScreenDesc : out_channel -> screen_info -> unit
-    = "eGifPutScreenDesc";;
+    = "eGifPutScreenDesc"
 external eGifPutImageDesc : out_channel -> gif_desc -> unit
-    = "eGifPutImageDesc";;
+    = "eGifPutImageDesc"
 external eGifPutLine : out_channel -> string -> unit
-    = "eGifPutLine";;
+    = "eGifPutLine"
 external eGifPutExtension : out_channel -> int * string list -> unit
-    = "eGifPutExtension";;
+    = "eGifPutExtension"
 
 type gif_extension =
    | GifComment of string list
    | GifGraphics of string list
    | GifPlaintext of string list
    | GifApplication of string list
-   | GifOtherExt of int * string list;;
+   | GifOtherExt of int * string list
 
 type gif_frame = {
     frame_left : int;
@@ -90,7 +90,7 @@ type gif_frame = {
     frame_bitmap : Index8.t;
     mutable frame_extensions : gif_extension list;
     frame_delay : int;
-};;
+}
 
 type gif_sequence = {
     screen_width : int;
@@ -98,7 +98,7 @@ type gif_sequence = {
     screen_colormap : Color.rgb Color.map;
     frames : gif_frame list;
     loops : int;
-};;
+}
 
 let gif_parse_extension func exts =
   let exts = List.rev exts in
@@ -107,7 +107,7 @@ let gif_parse_extension func exts =
   | 0xf9 -> GifGraphics exts
   | 0x01 -> GifPlaintext exts
   | 0xff -> GifApplication exts
-  | _ -> GifOtherExt (func, exts);;
+  | _ -> GifOtherExt (func, exts)
 
 let gif_make_extension ext =
   match ext with
@@ -115,9 +115,9 @@ let gif_make_extension ext =
   | GifGraphics exts -> 0xf9, exts
   | GifPlaintext exts -> 0x01, exts
   | GifApplication exts -> 0xff, exts
-  | GifOtherExt (func, exts) -> func, exts;;
+  | GifOtherExt (func, exts) -> func, exts
 
-open Printf;;
+open Printf
 
 let load filename opts =
   let prog = Images.load_progress opts in
@@ -291,7 +291,7 @@ let load filename opts =
       screen_height = sinfo.s_height;
       screen_colormap = {max = 256; map = sinfo.s_colormap; };
       frames = (List.rev !frames);
-      loops = !loops };;
+      loops = !loops }
 
 let seq_of_gifseq gifseq = {
   seq_width = gifseq.screen_width;
@@ -306,14 +306,14 @@ let seq_of_gifseq gifseq = {
         })
       gifseq.frames;
   seq_loops = gifseq.loops;
-};;
+}
 
-let load_sequence filename opts = seq_of_gifseq (load filename opts);;
+let load_sequence filename opts = seq_of_gifseq (load filename opts)
 
 let load_first filename opts =
   let sequence = load filename (Load_only_the_first_frame :: opts) in
   let bitmap = (List.hd sequence.frames).frame_bitmap in
-  Index8 bitmap;;
+  Index8 bitmap
 
 let save filename opts sequence =
   let interlace = Images.save_interlace opts in
@@ -434,7 +434,7 @@ let save filename opts sequence =
   | Failure s as e ->
       debug_endline ("ERROR " ^ s);
       eGifCloseFile oc;
-      raise e;;
+      raise e
 
 let save_image name opts image =
   match image with
@@ -452,7 +452,7 @@ let save_image name opts image =
             }; ];
          loops = 0;
         }
-  | _ -> raise Wrong_image_type;;
+  | _ -> raise Wrong_image_type
 
 let check_header filename =
   let len = 10 in
@@ -471,12 +471,12 @@ let check_header filename =
   with
   | _ ->
       close_in ic;
-      raise Wrong_file_type;;
+      raise Wrong_file_type
 
-add_methods Gif {
+let () = add_methods Gif {
   check_header = check_header;
   load = Some load_first;
   save = Some save_image;
   load_sequence = Some load_sequence;
   save_sequence = None;
-};;
+}

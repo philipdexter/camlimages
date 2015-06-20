@@ -12,22 +12,22 @@
 
 (* $Id: oImages.ml,v 1.5 2009/03/01 09:49:53 furuse Exp $ *)
 
-open Images;;
+open Images
 
-exception Non_supported_method;;
-exception Wrong_image_class;;
+exception Non_supported_method
+exception Wrong_image_class
 
 type image_class =
    | ClassRgb24
    | ClassIndex8
    | ClassIndex16
    | ClassRgba32
-   | ClassCmyk32;;
+   | ClassCmyk32
 
 class type imgsize = object
   method width : int
   method height : int
-end;;
+end
 
 class type ['a] map = object
   inherit imgsize
@@ -37,7 +37,7 @@ class type ['a] map = object
   method get : int -> int -> 'a
   method set : int -> int -> 'a -> unit
   method unsafe_access : int -> int -> string * int
-end;;
+end
 
 class type oimage = object
   inherit imgsize
@@ -58,7 +58,7 @@ class type oimage = object
   method blocks : int * int
 
   method dump_block : int -> int -> Bitmap.Block.t
-end;;
+end
 
 (* Implementation *)
 
@@ -92,9 +92,9 @@ class virtual oimage_impl = object (self)
 
   method virtual blocks : int * int
   method virtual dump_block : int -> int -> Bitmap.Block.t
-end;;
+end
 
-open Rgb24;;
+open Rgb24
 
 class type rgba32_class = object
   inherit oimage
@@ -114,7 +114,7 @@ and rgb24_class = object
   method blit : int -> int -> rgb24_class -> int -> int -> int -> int -> unit
   method resize : (float -> unit) option -> int -> int -> rgb24_class
   method to_rgba32 : rgba32_class
-end;;
+end
 
 class rgba32_wrapper img = object 
   inherit oimage_impl
@@ -182,33 +182,33 @@ and rgb24_wrapper img = object
 
   method blocks = Rgb24.blocks img
   method dump_block = Rgb24.dump_block img
-end;;
+end
 
 class rgba32 width height = object
   inherit rgba32_wrapper (Rgba32.create width height)
-end;;
+end
 
 class rgba32_filled width height init = object
   inherit rgba32_wrapper (Rgba32.make width height init)
-end;;
+end
 
 class rgba32_with width height data bitmap = object
   inherit rgba32_wrapper (Rgba32.create_with width height data bitmap)
-end;;
+end
 
 class rgb24 width height = object
   inherit rgb24_wrapper (create width height)
-end;;
+end
 
 class rgb24_filled width height init = object
   inherit rgb24_wrapper (make width height init)
-end;;
+end
 
 class rgb24_with width height data bitmap = object
   inherit rgb24_wrapper (create_with width height data bitmap)
-end;;
+end
 
-open Index8;;
+open Index8
 
 class type index8_class = object
   inherit oimage
@@ -224,7 +224,7 @@ class type index8_class = object
 
   method to_rgb24 : rgb24_class
   method to_rgba32 : rgba32_class
-end;;
+end
 
 class index8_wrapper img = object (self)
   inherit oimage_impl
@@ -264,21 +264,21 @@ class index8_wrapper img = object (self)
 
   method blocks = Index8.blocks img
   method dump_block = Index8.dump_block img
-end;;
+end
 
 class index8 width height = object
   inherit index8_wrapper (create width height)
-end;;
+end
 
 class index8_filled width height init = object
   inherit index8_wrapper (make width height init)
-end;;
+end
 
 class index8_with width height infos cmap trans bitmap = object
   inherit index8_wrapper (create_with width height infos cmap trans bitmap)
-end;;
+end
 
-open Index16;;
+open Index16
 
 class type index16_class = object
   inherit oimage
@@ -294,7 +294,7 @@ class type index16_class = object
 
   method to_rgb24 : rgb24_class
   method to_rgba32 : rgba32_class
-end;;
+end
 
 class index16_wrapper img = object (self)
   inherit oimage_impl
@@ -334,21 +334,21 @@ class index16_wrapper img = object (self)
 
   method blocks = Index16.blocks img
   method dump_block = Index16.dump_block img
-end;;
+end
 
 class index16 width height = object
   inherit index16_wrapper (create width height)
-end;;
+end
 
 class index16_filled width height init = object
   inherit index16_wrapper (make width height init)
-end;;
+end
 
 class index16_with width height infos cmap trans bitmap = object
   inherit index16_wrapper (create_with width height infos cmap trans bitmap)
-end;;
+end
 
-open Cmyk32;;
+open Cmyk32
 
 class type cmyk32_class = object
   inherit oimage
@@ -357,7 +357,7 @@ class type cmyk32_class = object
   method sub : int -> int -> int -> int -> cmyk32_class
   method blit : int -> int -> cmyk32_class -> int -> int -> int -> int -> unit
   method resize : (float -> unit) option -> int -> int -> cmyk32_class
-end;;
+end
 
 class cmyk32_wrapper img = object 
   inherit oimage_impl
@@ -389,46 +389,46 @@ class cmyk32_wrapper img = object
 
   method blocks = Cmyk32.blocks img
   method dump_block = Cmyk32.dump_block img
-end;;
+end
 
 class cmyk32 width height = object
   inherit cmyk32_wrapper (create width height)
-end;;
+end
 
 class cmyk32_filled width height init = object
   inherit cmyk32_wrapper (make width height init)
-end;;
+end
 
 class cmyk32_with width height data bitmap = object
   inherit cmyk32_wrapper (create_with width height data bitmap)
-end;;
+end
 
 type tagged =
   | Rgb24 of rgb24_class
   | Index8 of index8_class
   | Index16 of index16_class
   | Rgba32 of rgba32_class
-  | Cmyk32 of cmyk32_class;;
+  | Cmyk32 of cmyk32_class
 
 let rgb24 oimage =
   if oimage#image_class = ClassRgb24 then (Obj.magic oimage : rgb24_class)
-  else raise Wrong_image_class;;
+  else raise Wrong_image_class
 
 let index8 oimage =
   if oimage#image_class = ClassIndex8 then (Obj.magic oimage : index8_class)
-  else raise Wrong_image_class;;
+  else raise Wrong_image_class
 
 let index16 oimage =
   if oimage#image_class = ClassIndex16 then (Obj.magic oimage : index16_class)
-  else raise Wrong_image_class;;
+  else raise Wrong_image_class
 
 let rgba32 oimage =
   if oimage#image_class = ClassRgba32 then (Obj.magic oimage : rgba32_class)
-  else raise Wrong_image_class;;
+  else raise Wrong_image_class
 
 let cmyk32 oimage =
   if oimage#image_class = ClassCmyk32 then (Obj.magic oimage : cmyk32_class)
-  else raise Wrong_image_class;;
+  else raise Wrong_image_class
 
 let tag img =
   match img#image_class with
@@ -436,14 +436,14 @@ let tag img =
   | ClassIndex8 -> Index8 (Obj.magic img : index8_class)
   | ClassIndex16 -> Index16 (Obj.magic img : index16_class)
   | ClassRgba32 -> Rgba32 (Obj.magic img : rgba32_class)
-  | ClassCmyk32 -> Cmyk32 (Obj.magic img : cmyk32_class);;
+  | ClassCmyk32 -> Cmyk32 (Obj.magic img : cmyk32_class)
 
 let make = function
   | Images.Index8 img -> (new index8_wrapper img)#coerce
   | Images.Rgb24 img -> (new rgb24_wrapper img)#coerce
   | Images.Index16 img -> (new index16_wrapper img)#coerce
   | Images.Rgba32 img -> (new rgba32_wrapper img)#coerce
-  | Images.Cmyk32 img -> (new cmyk32_wrapper img)#coerce;;
+  | Images.Cmyk32 img -> (new cmyk32_wrapper img)#coerce
 
 let sub img x y w h =
   match tag img with
@@ -451,6 +451,6 @@ let sub img x y w h =
   | Index8 i -> (i#sub x y w h)#coerce
   | Index16 i -> (i#sub x y w h)#coerce
   | Rgba32 i -> (i#sub x y w h)#coerce
-  | Cmyk32 i -> (i#sub x y w h)#coerce;;
+  | Cmyk32 i -> (i#sub x y w h)#coerce
 
-let load filename load_options = make (Images.load filename load_options);;
+let load filename load_options = make (Images.load filename load_options)

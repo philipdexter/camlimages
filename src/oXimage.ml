@@ -14,9 +14,9 @@
 
 (* $Id: oXimage.ml,v 1.1.2.1 2010/05/13 13:14:47 furuse Exp $*)
 
-open OImages;;
-open Ximage;;
-open Gdk;;
+open OImages
+open Ximage
+open Gdk
 
 class ximage xim = object
   method width = xim.width
@@ -27,17 +27,17 @@ class ximage xim = object
   method set = Ximage.set xim 
   method data = xim.data
   method destroy = Ximage.destroy xim
-end;;
+end
 
 let create ~kind ~visual ~width ~height =
   let xim = Ximage.create ~kind ~visual ~width ~height in
-  new ximage xim;;
+  new ximage xim
 
 let get_image drawable ~x ~y ~width ~height = 
-  new ximage (Ximage.get_image drawable ~x ~y ~width ~height);;
+  new ximage (Ximage.get_image drawable ~x ~y ~width ~height)
 
 let of_image visual progress img =
-  new ximage (Ximage.of_image visual progress img#image);;
+  new ximage (Ximage.of_image visual progress img#image)
 
 let mask_of_image win img = (* It is really inefficient *)
   let mono_gc = get_mono_gc win in 
@@ -68,16 +68,16 @@ let mask_of_image win img = (* It is really inefficient *)
     else Some (plain_mask win img#width img#height)
   | _ -> 
     Some (plain_mask win img#width img#height)
-  end;;
+  end
 
 let pixmap_of win ximage =
   pixmap_of win
    { width= ximage#width; height= ximage#height;
-     data= ximage#data; (* finalised= false*) };;
+     data= ximage#data; (* finalised= false*) }
 
 let pixmap_of_image win progress img =
   let visual = Gdk.Window.get_visual win in
   let ximage = of_image visual progress img in
   let msk = mask_of_image win img in
   let pixmap = new GDraw.pixmap ?mask: msk (pixmap_of win ximage) in
-  pixmap;;
+  pixmap

@@ -12,23 +12,23 @@
 
 (* $Id: fttext.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
-open Images;;
-open Freetype;;
+open Images
+open Freetype
 
-type 'a drawer = 'a -> int -> 'a;;
+type 'a drawer = 'a -> int -> 'a
 
 let func_darken_only org level =
   let level = 255 - level in
   { r = if org.r > level then level else org.r;
     g = if org.g > level then level else org.g;
-    b = if org.b > level then level else org.b };;
+    b = if org.b > level then level else org.b }
 
-let func_red_only _org _level = { r = 255; g = 0; b = 0 };;
+let func_red_only _org _level = { r = 255; g = 0; b = 0 }
 
 let unicode_of_latin s =
   Array.init (String.length s) @@ fun i -> Char.code s.[i]
 
-let unicode_of_euc_japan s = Jis_unicode.encode s;;
+let unicode_of_euc_japan s = Jis_unicode.encode s
 
 let draw_gen render_mode renderf rot func face px py string =
   let matrix = matrix_rotate rot in
@@ -61,17 +61,17 @@ let draw_gen render_mode renderf rot func face px py string =
     done;
     curx := !curx +. advx;
     cury := !cury +. advy;
-  done;;
+  done
 
-let draw_rotated_text = draw_gen Render_Normal render_char;;
-let draw_rotated_glyphs = draw_gen Render_Normal render_glyph;;
-let draw_text = draw_rotated_text 0.0;;
-let draw_glyphs = draw_rotated_glyphs 0.0;;
+let draw_rotated_text = draw_gen Render_Normal render_char
+let draw_rotated_glyphs = draw_gen Render_Normal render_glyph
+let draw_text = draw_rotated_text 0.0
+let draw_glyphs = draw_rotated_glyphs 0.0
 
-let draw_mono_rotated_text = draw_gen Render_Mono render_char;;
-let draw_mono_rotated_glyphs = draw_gen Render_Mono render_glyph;;
-let draw_mono_text = draw_mono_rotated_text 0.0;;
-let draw_mono_glyphs = draw_mono_rotated_glyphs 0.0;;
+let draw_mono_rotated_text = draw_gen Render_Mono render_char
+let draw_mono_rotated_glyphs = draw_gen Render_Mono render_glyph
+let draw_mono_text = draw_mono_rotated_text 0.0
+let draw_mono_glyphs = draw_mono_rotated_glyphs 0.0
 
 
 module type T = sig
@@ -84,7 +84,7 @@ module type T = sig
   val set : t -> int -> int -> elt -> unit
   val unsafe_get : t -> int -> int -> elt
   val unsafe_set : t -> int -> int -> elt -> unit
-end;;
+end
 
 module Make(T : T) = struct
 
@@ -119,7 +119,7 @@ module Make(T : T) = struct
   let draw_mono_glyphs face func bitmap px py string =
     draw_mono_glyphs (putpixel func bitmap) face px py string
 
-end;;
+end
 
 let size_gen face loadf string =
   let curx = ref 0.0
@@ -156,10 +156,10 @@ let size_gen face loadf string =
   done;
   match !leftmost, !downmost, !rightmost, !upmost with
     Some l, Some d, Some r, Some u -> l,d,r,u
-  | _ -> assert false;;
+  | _ -> assert false
 
-let size face string = size_gen face load_char string;;
-let size_of_glyphs face string = size_gen face load_glyph string;;
+let size face string = size_gen face load_char string
+let size_of_glyphs face string = size_gen face load_glyph string
 
 let vector_gen loadf turn_y rot func face px py string =
   let matrix = matrix_rotate rot in
@@ -177,10 +177,10 @@ let vector_gen loadf turn_y rot func face px py string =
     func (get_outline_contents face);
     curx := !curx +. advx;
     cury := !cury +. advy
-  done;;
+  done
 
 let vector_text turn_y func face px py rot string =
-  vector_gen load_char turn_y rot func face px py string;;
+  vector_gen load_char turn_y rot func face px py string
   
 let vector_glyphs turn_y func face px py rot string =
-  vector_gen load_glyph turn_y rot func face px py string;;
+  vector_gen load_glyph turn_y rot func face px py string

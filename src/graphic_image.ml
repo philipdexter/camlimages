@@ -14,9 +14,9 @@
 
 (* $Id: graphic_image.ml,v 1.2 2009/02/08 15:01:56 weis Exp $ *)
 
-open Images;;
+open Images
 
-open Graphics;;
+open Graphics
 
 let array_of_image img =
   match img with
@@ -46,11 +46,11 @@ let array_of_image img =
           let {r = r; g = g; b = b} = Rgb24.unsafe_get bitmap j i in
           rgb r g b))
   | Rgba32 _ | Cmyk32 _ -> failwith "RGBA and CMYK not supported"
-;;
 
-let of_image img = Graphics.make_image (array_of_image img);;
 
-let draw_image img x y = Graphics.draw_image (of_image img) x y;;
+let of_image img = Graphics.make_image (array_of_image img)
+
+let draw_image img x y = Graphics.draw_image (of_image img) x y
 
 let image_of grpimg =
   let rgb_of_color color =
@@ -67,6 +67,6 @@ let image_of grpimg =
     done
   done;
   img
-;;
 
-let get_image x y w h = image_of (Graphics.get_image x y w h);;
+
+let get_image x y w h = image_of (Graphics.get_image x y w h)

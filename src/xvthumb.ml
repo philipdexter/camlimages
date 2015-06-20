@@ -14,7 +14,7 @@
 
 (* XV thumbnail loader/saver *)
 
-open Images;;
+open Images
 
 (********************************************************************** load *)
 
@@ -30,7 +30,7 @@ let read_id ic =
   with
   | _ ->
       prerr_endline "wrong header id";
-      raise Wrong_image_type;;
+      raise Wrong_image_type
 
 let read_header ic =
   read_id ic;
@@ -68,14 +68,14 @@ let read_header ic =
 	      raise Wrong_image_type
     	with
 	| _ ->
-	    raise Wrong_image_type;;
+	    raise Wrong_image_type
 
 let cmap_332 () =
   { max = 256;
     map = Array.init 256 (fun x ->
       { r = (255*((x land (7 lsl 5)) lsr 5))/ 7;
         g = (255*((x land (7 lsl 2)) lsr 2))/ 7;
-        b = (255*((x land (3 lsl 0)) lsr 0))/ 3 }) };;
+        b = (255*((x land (3 lsl 0)) lsr 0))/ 3 }) }
 
 let load_body ic w h =
   let length = w * h in
@@ -86,19 +86,19 @@ let load_body ic w h =
   with
   | _ ->
       prerr_endline "short";
-      raise Wrong_image_type;;
+      raise Wrong_image_type
 
 let load name =
   let ic = open_in_bin name in
   let info, w, h = read_header ic in
   let img = load_body ic w h in
   close_in ic;
-  info, img;;
+  info, img
 
 (********************************************************************** save *)
-open Index8;;
+open Index8
 
-let write_id oc = output_string oc "P7 332\n";;
+let write_id oc = output_string oc "P7 332\n"
 
 let write_header oc info width height =
   write_id oc;
@@ -112,24 +112,24 @@ let write_header oc info width height =
   output_string oc (string_of_int width);
   output_char oc ' ';
   output_string oc (string_of_int height);
-  output_string oc " 255\n";;
+  output_string oc " 255\n"
 
 let convert_332 rgb =
   (* no dithering !!! *)
-  (rgb.r / 32) lsl 5 + (rgb.g / 32) lsl 2 + rgb.b / 64;;
+  (rgb.r / 32) lsl 5 + (rgb.g / 32) lsl 2 + rgb.b / 64
 
 let save_body oc img =
   for y = 0 to img.height - 1 do
     for x = 0 to img.width - 1 do
       output_byte oc (convert_332 (unsafe_get_rgb img x y))
     done
-  done;;
+  done
 
 let save name info img =
   let oc = open_out name in
   write_header oc info img.width img.height;
   save_body oc img;
-  close_out oc;;
+  close_out oc
 
 let create img =
   let w, h = Images.size img in
@@ -171,4 +171,4 @@ let create img =
     done
   done;
   Rgb24.destroy resized24;
-  thumb;;
+  thumb

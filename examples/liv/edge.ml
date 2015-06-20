@@ -12,8 +12,8 @@
 
 (* $Id: edge.ml,v 1.12 2006/01/13 14:18:16 rousse Exp $ *)
 
-open Images;;
-open OImages;;
+open Images
+open OImages
 
 let edge (bmp : index8) =
   let width = bmp#width in
@@ -68,5 +68,5 @@ let edge (bmp : index8) =
   for x = 0 to width -1 do
     for y = 0 to height -1 do rgb24#unsafe_set x y (cc x y) done
   done;
-  rgb24;;
+  rgb24
 

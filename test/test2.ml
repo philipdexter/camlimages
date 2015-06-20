@@ -14,8 +14,8 @@
 
 (* $Id: test.ml,v 1.32.2.1 2010/05/13 13:14:47 furuse Exp $ *)
 
-open Images;;
-open Format;;
+open Images
+open Format
 
 let capabilities () =
   let supported b = if b then "supported" else "not supported" in
@@ -31,7 +31,7 @@ let capabilities () =
   printf "xv thumbnails\t: %s@." (supported Camlimages.lib_xvthumb);
   printf "postscript\t: %s@." (supported Camlimages.lib_ps);
   printf "freetype\t: %s@." (supported Camlimages.lib_freetype);
-  printf "*******************************************************@.";;
+  printf "*******************************************************@."
 
 let show_image img x y =
   let img = 
@@ -40,16 +40,16 @@ let show_image img x y =
     | _ -> img
   in
   let gr_img = Graphics.make_image (Graphic_image.array_of_image img) in
-  Graphics.draw_image gr_img x y;;
+  Graphics.draw_image gr_img x y
 
-module FtDraw = Fttext.Make(Rgb24);;
+module FtDraw = Fttext.Make(Rgb24)
 
 let images = [
   "apbm.pbm"; "apgm.pgm"; "appm.ppm";
   "pbm.pbm"; "pgm.pgm"; "ppm.ppm";
   "jpg.jpg"; "png.png"; "png-alpha.png"; "bmp.bmp"; "tif.tif";
   "xpm.xpm"; "eps.eps"; "gif.gif"; "mmm.anim.gif";
-];;
+]
 
 let treat_image name0 =
   let name = "images/" ^ name0 in
@@ -68,7 +68,7 @@ let treat_image name0 =
         Images.save ("out-" ^ name0) (Some format) [] img;
   with
   | Wrong_file_type -> prerr_endline "file format detection failed"
-  | Failure s -> prerr_endline s;;
+  | Failure s -> prerr_endline s
 
 let main () =
   capabilities ();
@@ -76,6 +76,6 @@ let main () =
   with
   | Exit -> exit 0
   | End_of_file -> exit 0
-  | Sys.Break -> exit 2;;
+  | Sys.Break -> exit 2
 
-main ();;
+let () = main ()

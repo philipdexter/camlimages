@@ -12,8 +12,8 @@
 
 (* $Id: edge.ml,v 1.12 2004/09/12 21:47:43 weis Exp $ *)
 
-open Images;;
-open OImages;;
+open Images
+open OImages
 
 let edge (bmp : rgb24) =
   let width = bmp#width in
@@ -79,40 +79,41 @@ let edge (bmp : rgb24) =
       rgb24#unsafe_set x y (f x y)
     done
   done;
-  rgb24;;
+  rgb24
 
-let files = ref [] in
-Arg.parse [] (fun s -> files := s :: !files) "edge files";
-let files = List.rev !files in
-List.iter (fun file ->
-  try
-    let rgb =
-      let oimage = OImages.load file [] in
-      match OImages.tag oimage with
-      | Index8 img ->
-          let rgb = img#to_rgb24 in
-          img#destroy;
-          rgb
-      | Index16 img ->
-          let rgb = img#to_rgb24 in
-          img#destroy;
-          rgb
-      | Rgb24 img -> img
-      | _ -> raise (Invalid_argument "not supported") in
-
-    let rgb' = edge rgb in
-
-    let get_extension s =
-      let dotpos = String.rindex s '.' in
-      String.sub s (dotpos + 1) (String.length s - dotpos - 1) in
-
-    let ext = get_extension file in
-    let body = String.sub file 0
-        (String.length file - String.length ext - 1) in
-    let outfile = body ^ ".edge.jpg" in
-
-    rgb'#save outfile (Some Jpeg) [];
-  with _ -> ()) files;;
-
+let () =
+  let files = ref [] in
+  Arg.parse [] (fun s -> files := s :: !files) "edge files";
+  let files = List.rev !files in
+  List.iter (fun file ->
+    try
+      let rgb =
+        let oimage = OImages.load file [] in
+        match OImages.tag oimage with
+        | Index8 img ->
+            let rgb = img#to_rgb24 in
+            img#destroy;
+            rgb
+        | Index16 img ->
+            let rgb = img#to_rgb24 in
+            img#destroy;
+            rgb
+        | Rgb24 img -> img
+        | _ -> raise (Invalid_argument "not supported") in
+  
+      let rgb' = edge rgb in
+  
+      let get_extension s =
+        let dotpos = String.rindex s '.' in
+        String.sub s (dotpos + 1) (String.length s - dotpos - 1) in
+  
+      let ext = get_extension file in
+      let body = String.sub file 0
+          (String.length file - String.length ext - 1) in
+      let outfile = body ^ ".edge.jpg" in
+  
+      rgb'#save outfile (Some Jpeg) [];
+    with _ -> ()) files
+  
 
 

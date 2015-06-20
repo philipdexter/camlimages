@@ -16,11 +16,11 @@ open OImages
 let _ =
   Bitmap.maximum_live := 15000000; (* 60MB *)
   Bitmap.maximum_block_size := !Bitmap.maximum_live / 16;
-;;
+
 *)
 
 
-let _ = prerr_endline "init done";;
+let _ = prerr_endline "init done"
 
 module D = Display
 open D
@@ -55,9 +55,9 @@ let convert_file file =
   in
   loop file;
   Buffer.contents b
-;;
 
-let base_filters = ref ([] : D.filter list);;
+
+let base_filters = ref ([] : D.filter list)
 
 let _ =
   let files = ref [] in

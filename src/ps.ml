@@ -12,14 +12,14 @@
 
 (* $Id: ps.ml,v 1.2 2008/06/16 22:35:42 furuse Exp $ *)
 
-open Images;;
-open Rgb24;;
+open Images
+open Rgb24
 
-type bounding_box = (int * int * int * int) option;;
+type bounding_box = (int * int * int * int) option
 
-let debug = try ignore (Sys.getenv "DEBUG_PS"); true with _ -> false;;
+let debug = try ignore (Sys.getenv "DEBUG_PS"); true with _ -> false
 
-let debug_endline = if debug then prerr_endline else fun _ -> ();;
+let debug_endline = if debug then prerr_endline else fun _ -> ()
 
 let check_header filename =
  let ic = open_in_bin filename in
@@ -34,7 +34,7 @@ let check_header filename =
  with
  | _ ->
    close_in ic;
-   raise Wrong_file_type;;
+   raise Wrong_file_type
 
 let get_bounding_box file =
   let ic = open_in_bin file in
@@ -65,7 +65,7 @@ let get_bounding_box file =
   with
   | _ ->
     close_in ic;
-    !bbox;;
+    !bbox
 
 let load_ps file bbox_opt options =
   if not Camlimages.lib_ps then failwith "ps is not supported" else
@@ -100,13 +100,13 @@ let load_ps file bbox_opt options =
     failwith "gs interpretation failed" end else
   let img = Ppm.load tmpfile [] in
   Tmpfile.remove_tmp_file tmpfile;
-  img;;
+  img
 
-let load file options = load_ps file None options;;
+let load file options = load_ps file None options
 
-open Printf;;
+open Printf
 
-type rot = Rot0 | Rot90 | Rot180 | Rot270 | RotMax;;
+type rot = Rot0 | Rot90 | Rot180 | Rot270 | RotMax
 
 type at =
    | TopLeft of float * float
@@ -114,20 +114,20 @@ type at =
    | BottomLeft of float * float
    | BottomRight of float * float
    | Center of float * float
-   | A4Center;;
+   | A4Center
 
 type crop = {
     mutable cx : int;
     mutable cy : int;
     mutable cw : int;
     mutable ch : int;
-  };;
+  }
 
 type size =
    | A4MaxSize
    | DPI of float
    | MaxBox of float * float
-   | MinBox of float * float;;
+   | MinBox of float * float
 
 type conf = {
     mutable crop : crop option;
@@ -136,7 +136,7 @@ type conf = {
     mutable pos : at;
     mutable mirror : bool;
     mutable mono : bool;
-  };;
+  }
 
 let super_save file conf comments showpage images =
   (* paper properties *)
@@ -348,7 +348,7 @@ let super_save file conf comments showpage images =
   if comments then p "%%Trailer";
   p "end";
   if comments then p "%%EOF";
-  close_out oc;;
+  close_out oc
 
 let default_conf = {
   crop = None;
@@ -357,17 +357,17 @@ let default_conf = {
   pos = A4Center;
   mirror = false;
   mono = false;
-};;
+}
 
 let save file _options im =
   match im with
   | Rgb24 img -> super_save file default_conf true false [img]
-  | _ -> raise Wrong_image_type;;
+  | _ -> raise Wrong_image_type
 
-add_methods Ps
+let () = add_methods Ps
  { check_header = check_header;
    load = Some load;
    save = Some save;
    load_sequence = None;
    save_sequence = None;
-};;
+}

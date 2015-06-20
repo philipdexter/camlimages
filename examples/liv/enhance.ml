@@ -12,10 +12,10 @@
 
 (* $Id: enhance.ml,v 1.5 2004/09/24 10:55:06 weis Exp $ *)
 
-open Images;;
-open Colorhist;;
+open Images
+open Colorhist
 
-let make_id_rgb rgb = rgb;;
+let make_id_rgb rgb = rgb
 
 let enhance keep t =
   let total = total_samples t in
@@ -80,5 +80,5 @@ let enhance keep t =
     } in
 
     log, make_table_rgb
-  end;;
+  end
 

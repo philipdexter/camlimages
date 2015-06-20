@@ -13,14 +13,14 @@
 (* $Id: imagegdk.ml,v 1.2 2009/03/01 09:49:53 furuse Exp $*)
 
 let initialized = ref None
-;;
+
 
 let try_initialize () =
   if !initialized = None then begin
     Gdk.Rgb.init ();
     initialized := Some (Gdk.Rgb.get_visual (), Gdk.Rgb.get_cmap ())
   end
-;;
+
 
 open OImages
 
@@ -33,7 +33,7 @@ let draw (obj : #GDraw.drawable) ?x ?y ?dither image =
       obj#put_rgb_data ~width: image#width ~height: image#height
 	?x ?y ?dither ~row_stride:(image#width * 3) buf
   | _ -> failwith "Gdkrgb.draw"
-;;
+
 
 let to_pixbuf image =
   match tag image, image#blocks with
@@ -71,4 +71,4 @@ let to_pixbuf image =
       dest
   | Cmyk32 _, _ -> failwith "Gdkrgb.draw cmyk32"
   | _ -> failwith "Gdkrgb.draw"
-;;
+

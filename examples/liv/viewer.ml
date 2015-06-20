@@ -12,17 +12,17 @@
 
 (* $Id: viewer.ml,v 1.5 2004/09/23 07:20:20 weis Exp $ *)
 
-open Gdk;;
-open Gtk;;
+open Gdk
+open Gtk
 
 (* image viewer widget *)
 
-let sync () = while Glib.Main.iteration false do () done;;
+let sync () = while Glib.Main.iteration false do () done
 
 (* screen *)
 
-let screen_width = Gdk.Screen.width ();;
-let screen_height = Gdk.Screen.height ();;
+let screen_width = Gdk.Screen.width ()
+let screen_height = Gdk.Screen.height ()
 
 (* the viewer *)
 
@@ -63,7 +63,7 @@ class viewer ?border_width ?width ?height ?packing ?show () =
         ~width: ximage#width ~height: ximage#height ();
       Gdk.Window.set_back_pixmap fixed#misc#window (`PIXMAP pixmap);
       sync ()
-end;;
+end
 
 let viewer ?border_width ?width ?height ?packing ?show () =
-  new viewer ?border_width ?width ?height ?packing ?show ();;
+  new viewer ?border_width ?width ?height ?packing ?show ()

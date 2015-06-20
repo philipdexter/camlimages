@@ -14,17 +14,17 @@
 
 (* $Id: colorhist.ml,v 1.1 2006/11/28 15:43:28 rousse Exp $ *)
 
-open Color;;
+open Color
 
-type t = int array;;
+type t = int array
 
-let create () = Array.make 256 0;;
+let create () = Array.make 256 0
 
-let total_samples t = Array.fold_left (fun st x -> st + x) 0 t;;
+let total_samples t = Array.fold_left (fun st x -> st + x) 0 t
 
 let store_sample t rgb =
   let brightness = Color.brightness rgb in
-  t.(brightness) <- t.(brightness) + 1;;
+  t.(brightness) <- t.(brightness) + 1
 
 let normalize keep t =
   let total = total_samples t in
@@ -59,9 +59,9 @@ let normalize keep t =
   	{ r = color_fix (rgb.r * new_b / b);
   	  g = color_fix (rgb.g * new_b / b);
   	  b = color_fix (rgb.b * new_b / b) }
-      end;;
+      end
 
-open OImages;;
+open OImages
 
 let gamma log img =
   let table =
@@ -78,7 +78,7 @@ let gamma log img =
       img'#unsafe_set x y (filter (img#unsafe_get x y))
     done
   done;
-  img';;
+  img'
 
 let filter f keep img =
   let hist = create () in
@@ -103,4 +103,4 @@ let filter f keep img =
       img'#unsafe_set x y (filter (img#unsafe_get x y))
     done
   done;
-  img';;  
+  img'  

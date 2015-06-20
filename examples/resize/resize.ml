@@ -12,33 +12,34 @@
 
 (* $Id: resize.ml,v 1.11 2004/09/21 18:15:48 weis Exp $ *)
 
-open Images;;
+open Images
 
-let file = ref "";;
-let scale = ref 1.0;;
+let file = ref ""
+let scale = ref 1.0
 
-Arg.parse [
+let () = Arg.parse [
   "-scale", Arg.Float (fun sc -> scale := sc), "scale"; ]
   (fun s -> file := s)
-  "resize -scale ? file";;
+  "resize -scale ? file"
 
-let file = !file;;
-let scale = !scale;;
-let outfile = "out" ^ file;;
+let file = !file
+let scale = !scale
+let outfile = "out" ^ file
 
-Bitmap.maximum_live := 15000000; (* 60MB *)
-Bitmap.maximum_block_size := !Bitmap.maximum_live / 16;
-let r = Gc.get () in
-r.Gc.max_overhead <- 30;
-Gc.set r;;
+let () = 
+  Bitmap.maximum_live := 15000000; (* 60MB *)
+  Bitmap.maximum_block_size := !Bitmap.maximum_live / 16;
+  let r = Gc.get () in
+  r.Gc.max_overhead <- 30;
+  Gc.set r;
 
-let fmt, _ = Images.file_format file in
-let img = OImages.load file [] in
+  let fmt, _ = Images.file_format file in
+  let img = OImages.load file [] in
 
-let img = OImages.rgb24 img in
+  let img = OImages.rgb24 img in
 
-let nw = truncate (float img#width *. scale)
-and nh = truncate (float img#height *. scale) in
-let newimage = img#resize None nw nh in
-img#destroy;
-newimage#save outfile (Some fmt) [Save_Quality 95];;
+  let nw = truncate (float img#width *. scale)
+  and nh = truncate (float img#height *. scale) in
+  let newimage = img#resize None nw nh in
+  img#destroy;
+  newimage#save outfile (Some fmt) [Save_Quality 95]

@@ -22,11 +22,11 @@ PBM: portable bitmap (binary digit map).
 
 *)
 
-open Images;;
+open Images
 
 (* Reading PPM images. *)
 
-type ppm_magic_number = | P1 | P2 | P3 | P4 | P5 | P6;;
+type ppm_magic_number = | P1 | P2 | P3 | P4 | P5 | P6
  (* Magic numbers for PPM images.
     P1 and P4 indicate bitmaps (P1 is ascii encoding, P4 is raw encoding).
     P2 and P5 indicate greymaps, in raw or ascii encoding.
@@ -42,9 +42,9 @@ let magic_number_of_string = function
   | "P4" (* BITMAP, RAW form *) -> P4
   | "P5" (* BITMAP, ASCII form *) -> P5
   | "P6" (* PIXMAP, RAW form *) -> P6
-  | s -> invalid_arg ("Unknown magic number for PPM image: " ^ s);;
+  | s -> invalid_arg ("Unknown magic number for PPM image: " ^ s)
 
-let read_ppm_magic_number ic = magic_number_of_string (input_line ic);;
+let read_ppm_magic_number ic = magic_number_of_string (input_line ic)
 
 let string_of_magic_number = function
   | P1 -> "P1"
@@ -52,7 +52,7 @@ let string_of_magic_number = function
   | P3 -> "P3"
   | P4 -> "P4"
   | P5 -> "P5"
-  | P6 -> "P6";;
+  | P6 -> "P6"
 
 (* Auxiliaries: skipping comments and reading numbers into strings. *)
 let skip_comment ic =
@@ -66,7 +66,7 @@ let skip_comment ic =
   match input_char ic with
   | '\n' -> r0 ()
   | _ -> r1 () in
- r0 ();;
+ r0 ()
 
 (* Read a sequence of digits eventually followed by a single space. *)
 let read_int_accu accu ic =
@@ -81,16 +81,16 @@ let read_int_accu accu ic =
  match input_char ic with
  | '0' .. '9' as c -> read1 (10 * accu + int_of_char c - 48)
  | _ -> accu in
- read accu;;
+ read accu
 
-let read_int ic = read_int_accu 0 ic;;
+let read_int ic = read_int_accu 0 ic
 
 let read_dims c ic =
  let cols = read_int_accu (int_of_char c - 48) ic in
  let lines = read_int ic in
- cols, lines;;
+ cols, lines
 
-let read_max ic = read_int ic;;
+let read_max ic = read_int ic
 
 let read_ppm_header ic =
  (* Reads something like
@@ -102,7 +102,7 @@ let read_ppm_header ic =
  let mn = read_ppm_magic_number ic in
  let char = skip_comment ic in
  let c, l = read_dims char ic in
- mn, l, c;;
+ mn, l, c
 
 let check_header filename =
  let ic = open_in_bin filename in
@@ -115,20 +115,20 @@ let check_header filename =
  with
  | _ ->
    close_in ic;
-   raise Wrong_file_type;;
+   raise Wrong_file_type
  
 (* Reading pixmaps. *)
 let read_raw_pixel24 ic =
  let r = input_byte ic in
  let g = input_byte ic in
  let b = input_byte ic in
- {r = r; g = g; b = b};;
+ {r = r; g = g; b = b}
 
 let read_ascii_pixel24 ic =
  let r = read_int ic in
  let g = read_int ic in
  let b = read_int ic in
- {r = r; g = g; b = b};;
+ {r = r; g = g; b = b}
 
 let read_raw_ppm_ic ic l c _max =
  let img = Rgb24.create c l in
@@ -137,7 +137,7 @@ let read_raw_ppm_ic ic l c _max =
    Rgb24.set img j i (read_raw_pixel24 ic)
   done
  done;
- img;;
+ img
 
 let read_ascii_ppm_ic ic l c _max =
  let img = Rgb24.create c l in
@@ -146,12 +146,12 @@ let read_ascii_ppm_ic ic l c _max =
    Rgb24.set img j i (read_ascii_pixel24 ic)
   done
  done;
- img;;
+ img
 
 (* Reading greymaps. *)
-let read_raw_grey = input_byte;;
+let read_raw_grey = input_byte
 
-let read_ascii_grey = read_int;;
+let read_ascii_grey = read_int
 
 let read_raw_gen_ic read_pixel ic l c max =
  let img = Index8.create c l in
@@ -166,14 +166,14 @@ let read_raw_gen_ic read_pixel ic l c max =
    Index8.set img j i (read_pixel ic)
   done
  done;
- img;;
+ img
 
-let read_raw_pgm_ic ic = read_raw_gen_ic read_raw_grey ic;;
+let read_raw_pgm_ic ic = read_raw_gen_ic read_raw_grey ic
 
-let read_ascii_pgm_ic ic = read_raw_gen_ic read_ascii_grey ic;;
+let read_ascii_pgm_ic ic = read_raw_gen_ic read_ascii_grey ic
 
-let black = 0 and white = 255;;
-let max_byte = 255;;
+let black = 0 and white = 255
+let max_byte = 255
 
 (* Reading bitmaps. *)
 let read_raw_pbm_ic ic l c =
@@ -198,16 +198,16 @@ let read_raw_pbm_ic ic l c =
   in
   loop 0 0 (input_byte ic)
  done;
- img;;
+ img
 
 let rec read_ascii_bit ic =
     match input_char ic with
     | '0' -> white
     | ' ' -> read_ascii_bit ic
     | '\n' -> read_ascii_bit ic
-    | _ -> black;;
+    | _ -> black
 
-let read_ascii_pbm_ic ic l c = read_raw_gen_ic read_ascii_bit ic l c max_byte;;
+let read_ascii_pbm_ic ic l c = read_raw_gen_ic read_ascii_bit ic l c max_byte
 
 let read_ppm_ic ic =
  let mn, l, c = read_ppm_header ic in
@@ -222,7 +222,7 @@ let read_ppm_ic ic =
        | P3 -> Rgb24 (read_ascii_ppm_ic ic l c max)
        | P5 -> Index8 (read_raw_pgm_ic ic l c max)
        | _ -> Rgb24 (read_raw_ppm_ic ic l c max) in
- img;;
+ img
 
 let read_ppm s =
  let ic = open_in_bin s in
@@ -231,12 +231,12 @@ let read_ppm s =
   close_in ic;
   img
  with End_of_file ->
-  close_in ic; invalid_arg "read_ppm: premature end of file";;
+  close_in ic; invalid_arg "read_ppm: premature end of file"
 
 let load_ppm s = 
   match read_ppm s with
   | Rgb24 img -> img
-  | _ -> invalid_arg (s ^ " is not a ppm file.");;
+  | _ -> invalid_arg (s ^ " is not a ppm file.")
 
 (* Saving images. *)
 
@@ -244,9 +244,9 @@ let save_ppm_header _img mn oc l c =
  output_string oc (Printf.sprintf "%s\n" (string_of_magic_number mn));
  output_string oc "# CREATOR: CamlImages package\n";
  output_string oc (Printf.sprintf "%d %d\n" c l);
- if mn <> P1 && mn <> P4 then output_string oc (Printf.sprintf "%d\n" 255);;
+ if mn <> P1 && mn <> P4 then output_string oc (Printf.sprintf "%d\n" 255)
 
-let bit_set = 1 and bit_cleared = 0;;
+let bit_set = 1 and bit_cleared = 0
 
 let gen_save_raw_pbm_oc is_white img oc l c =
   save_ppm_header img P4 oc l c;
@@ -263,11 +263,11 @@ let gen_save_raw_pbm_oc is_white img oc l c =
     loop (j + 1) (bn + 1) new_byte
    in
    loop 0 0 0
- done;;
+ done
 
 (* Save a bitmap in raw form. *)
 let save_raw_pbm_oc =
- gen_save_raw_pbm_oc (fun c -> c.r = 255 && c.g = 255 && c.b = 255);; 
+ gen_save_raw_pbm_oc (fun c -> c.r = 255 && c.g = 255 && c.b = 255) 
 
 (* Save a pixmap in raw form. *)
 let save_raw_ppm_oc img oc l c =
@@ -291,35 +291,35 @@ let save_ppm_oc img oc =
 let save_ppm s img =
  let oc = open_out_bin s in
  save_ppm_oc img oc;
- close_out oc;;
+ close_out oc
 
 let save_bitmap_oc img oc =
  let l = img.Index8.height in
  if l = 0 then invalid_arg "save_ppm: invalid null line number";
  let c = img.Index8.width in
  if c = 0 then invalid_arg "save_ppm: invalid null column number";
- save_raw_pbm_oc img oc l c;;
+ save_raw_pbm_oc img oc l c
 
 let save_bitmap s img =
  let oc = open_out_bin s in
  save_bitmap_oc img oc;
- close_out oc;;
+ close_out oc
 
-let load s _ = read_ppm s;;
+let load s _ = read_ppm s
 
 let load_bitmap s =
  match load s [] with
  | Index8 t -> t
- | _ -> invalid_arg "Not a pbm file.";;
+ | _ -> invalid_arg "Not a pbm file."
 
 let save s _ = function
   | Index8 t -> save_bitmap s t
   | Rgb24 t -> save_ppm s t
-  | _ -> invalid_arg "Ppm.save";;
+  | _ -> invalid_arg "Ppm.save"
 
-add_methods Ppm
+let () = add_methods Ppm
  { check_header = check_header;
    load = Some load;
    save = Some save;
    load_sequence = None;
-   save_sequence = None};;
+   save_sequence = None}

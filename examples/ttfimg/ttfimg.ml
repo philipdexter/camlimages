@@ -12,22 +12,22 @@
 
 (* $Id: ttfimg.ml,v 1.11 2004/09/21 18:15:50 weis Exp $ *)
 
-open Images;;
-open OImages;;
-open Freetype;;
-open Fttext;;
+open Images
+open OImages
+open Freetype
+open Fttext
 
-let fonts = ref [];;
-let message = ref None;;
-let csize = ref 100.0;;
-let outfile = ref None;;
-let fg = ref {r = 0; g = 0; b = 0};;
-let bg = ref {r = 255; g = 255; b = 255};;
-let kanjimode = ref false;;
-let dumpmode = ref false;;
-let verbosemode = ref false;;
+let fonts = ref []
+let message = ref None
+let csize = ref 100.0
+let outfile = ref None
+let fg = ref {r = 0; g = 0; b = 0}
+let bg = ref {r = 255; g = 255; b = 255}
+let kanjimode = ref false
+let dumpmode = ref false
+let verbosemode = ref false
 
-Arg.parse [
+let () = Arg.parse [
   "-o", Arg.String (fun s -> outfile := Some s), ": outputfile" ;
   "-message", Arg.String (fun s -> message := Some s), ": message" ;
   "-charsize", Arg.Float (fun f -> csize := f), ": charsize (in 72dpi)" ;
@@ -37,19 +37,19 @@ Arg.parse [
   "-dump", Arg.Unit (fun () -> dumpmode := true), "(dump mode)";
   "-verbose", Arg.Unit (fun () -> verbosemode := true), "(verbose mode)"; ]
   (fun s -> fonts := s :: !fonts)
-  "ttfimg font";;
+  "ttfimg font"
 
 let fonts =
   match !fonts with
   | [] -> failwith "specify font file!"
   | l -> List.rev l
-;;
 
-match !outfile, fonts with
+
+let () = match !outfile, fonts with
 | None, _ -> ()
 | Some _x, [ _ ] -> ()
 | Some _x, _ -> failwith "just one font if you specify -o !"
-;;
+
 
 let treat_font font =
   if !verbosemode then prerr_endline (Printf.sprintf "Processing %s" font);
@@ -202,6 +202,6 @@ let treat_font font =
     end
   with
   | Failure e -> prerr_endline (font ^ ": Failure " ^ e)
-;;
 
-List.iter treat_font fonts;;
+
+let () = List.iter treat_font fonts

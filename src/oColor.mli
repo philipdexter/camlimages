@@ -30,7 +30,7 @@ class rgbmap :
     method set_map : Color.rgb array -> unit
     method set_max : int -> unit
     method size : int
-  end;;
+  end
 
 class rgbamap :
   Color.rgba Color.map ->
@@ -46,7 +46,7 @@ class rgbamap :
     method set_map : Color.rgba array -> unit
     method set_max : int -> unit
     method size : int
-  end;;
+  end
 
 class cmykmap :
   Color.cmyk Color.map ->
@@ -62,4 +62,4 @@ class cmykmap :
     method set_map : Color.cmyk array -> unit
     method set_max : int -> unit
     method size : int
-  end;;
+  end

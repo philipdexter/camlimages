@@ -16,7 +16,7 @@
 
 (* Loading and saving image in the bmp format. *)
 
-open Images;;
+open Images
 open Util
 
 (*
@@ -98,7 +98,7 @@ and bibitcount =
      respectively, of a pixel. *)
   | ColorRGBA
   (* 32 The bitmap, RGBA *)
-;;
+
 
 (* =================================================================== *)
 (* ============= Reading bmp files as Caml images. =================== *)
@@ -106,18 +106,18 @@ and bibitcount =
 
 
 (* # of bytes read during loading : should be equal to the size of the file *)
-let bytes_read = ref 0;;
+let bytes_read = ref 0
 
-let read_byte ic = incr bytes_read; input_byte ic;;
+let read_byte ic = incr bytes_read; input_byte ic
 let skip_byte ic = incr bytes_read; ignore (input_byte ic)
-;;
+
 
 let read_word ic =
  let b0 = read_byte ic in
  let b1 = read_byte ic in
  (* little-endian form *)
  (b1 lsl 8) + b0
-;;
+
 
 let read_dword ic =
  let b0 = read_byte ic in
@@ -126,13 +126,13 @@ let read_dword ic =
  let b3 = read_byte ic in
  (* little-endian form *)
  (b3 lsl 24) + (b2 lsl 16) + (b1 lsl 8) + b0
-;;
+
 
 let read_bit_count ic =
  match read_word ic with
  | 1 -> Monochrome | 4 -> Color16 | 8 -> Color256 | 24 -> ColorRGB | 32 -> ColorRGBA
  | n -> failwith ("invalid colors number : " ^ string_of_int n)
-;;
+
 
 (*
 #define BI_RGB      0L
@@ -142,7 +142,7 @@ let read_compression ic =
  match read_dword ic with
  | 0 -> BI_RGB | 1 -> BI_RLE8 | 2 -> BI_RLE4
  | n -> failwith ("invalid compression mode : " ^ string_of_int n)
-;;
+
 
 
 (* Entries of color maps stored on disk have the following format
@@ -168,7 +168,7 @@ let load_rgbquad ic =
  let r = read_byte ic in
  let _u = read_byte ic in
  { b = b; g = g; r = r; }
-;;
+
 
 let load_bitmapfileheader ic =
   let bfType = read_word ic in
@@ -178,7 +178,7 @@ let load_bitmapfileheader ic =
   let bfReserved2 = read_word ic in
   let bfOffBits = read_dword ic in
   { bfType; bfSize; bfReserved1; bfReserved2; bfOffBits; }
-;;
+
 
 let load_bitmapinfoheader ic =
   try
@@ -205,7 +205,7 @@ let load_bitmapinfoheader ic =
   | (Failure s as e) -> 
       prerr_endline s;
       raise e
-;;
+
 
 let load_colors bfh _bih ic =
  (* Reading RGBQUADs *)
@@ -223,7 +223,7 @@ let load_colors bfh _bih ic =
      (* the number of entries given by biClrUsed... *)
      (bfh.bfOffBits - 54) / 4 in
  Array.init cmaplength (fun _i -> load_rgbquad ic)
-;;
+
 
 (* Loads image data when image has 8 bit depth *)
 let load_image8data bih ic =
@@ -298,7 +298,7 @@ let load_image8data bih ic =
      bitmap
  | BI_RLE4 ->
      failwith ("Invalid compression mode : BI_RLE4")
-;;
+
 
 let load_image1data bih ic =
  let bitmap = Bytes.create (bih.biWidth * bih.biHeight) in
@@ -325,7 +325,7 @@ let load_image1data bih ic =
     done
  done;
  bitmap
-;;
+
 
 let load_image4data bih ic =
  let bitmap = Bytes.create (bih.biWidth * bih.biHeight) in
@@ -409,7 +409,7 @@ let load_image4data bih ic =
     bitmap
  | BI_RLE8 ->
     failwith ("Invalid compression mode : BI_RLE8")
-;;
+
 
 let load_image24data bih ic =
   (* Bitmap is a string of RGB bytes *)
@@ -427,7 +427,7 @@ let load_image24data bih ic =
     for _j = 0 to pad - 1 do skip_byte ic done;
   done;
   bitmap
-;;
+
 
 let load_image32data bih ic =
   (* Bitmap is a string of RGB bytes *)
@@ -451,7 +451,7 @@ let load_image32data bih ic =
 *)
   done;
   bitmap
-;;
+
 
 let load_imagedata bih ic =
  (* The bits in the array are packed together, but each scan line *)
@@ -462,11 +462,11 @@ let load_imagedata bih ic =
  | Color256 -> load_image8data bih ic
  | ColorRGB -> load_image24data bih ic
  | ColorRGBA -> load_image32data bih ic
-;;
+
 
 let skip_to ic n =
   while !bytes_read <> n do skip_byte ic done
-;;
+
 
 let check_header fname =
   let ic = open_in_bin fname in
@@ -482,7 +482,7 @@ let check_header fname =
   | _ ->
       close_in ic;
       raise Wrong_file_type
-;;
+
 
 let read_bmp ic =
   bytes_read := 0;
@@ -495,14 +495,14 @@ let read_bmp ic =
     bmpInfoHeader = bih;
     bmpRgbQuad = colormap;
     bmpBytes = bitmap; }
-;;
+
 
 let read_bmp_file fname =
   let ic = open_in_bin fname in
   let bmp = read_bmp ic in
   close_in ic;
   bmp
-;;
+
 
 let image_of_bmp = function
  { bmpFileHeader = _bfh;
@@ -518,18 +518,18 @@ let image_of_bmp = function
        Index8
          (Index8.create_with bih.biWidth bih.biHeight []
             { map = colormap; max = 256; } (-1) bitmap)
-;;
 
-let load fname _opts = image_of_bmp (read_bmp_file fname);;
+
+let load fname _opts = image_of_bmp (read_bmp_file fname)
 
 (* =================================================================== *)
 (* ============= Writting images as bmp files. ======================= *)
 (* =================================================================== *)
 
 
-let bytes_written = ref 0;;
+let bytes_written = ref 0
 
-let write_byte oc b = incr bytes_written; output_byte oc b;;
+let write_byte oc b = incr bytes_written; output_byte oc b
 
 let output_word oc w =
  (* little-endian form *)
@@ -537,12 +537,12 @@ let output_word oc w =
  let b1 = (w lsr 8) land 255 in
  output_byte oc b0;
  output_byte oc b1
-;;
+
 
 let write_word oc w =
  output_word oc w;
  bytes_written := !bytes_written + 2
-;;
+
 
 let output_dword oc dw =
  (* little-endian form *)
@@ -554,24 +554,24 @@ let output_dword oc dw =
  output_byte oc b1;
  output_byte oc b2;
  output_byte oc b3
-;;
+
 
 let write_dword oc dw =
  output_dword oc dw;
  bytes_written := !bytes_written + 4
-;;
+
 
 let write_bit_count oc bc =
  let byte = match bc with
  | Monochrome -> 1 | Color16 -> 4 | Color256 -> 8 | ColorRGB -> 24 | ColorRGBA -> 32 in
  write_word oc byte
-;;
+
 
 let write_compression oc c =
  let dword = match c with
  | BI_RGB -> 0 | BI_RLE8 -> 1 | BI_RLE4 -> 2 in
  write_dword oc dword
-;;
+
 
 let write_rgbquad oc rgb =
  let b = rgb.b in
@@ -581,8 +581,8 @@ let write_rgbquad oc rgb =
  write_byte oc b;
  write_byte oc g;
  write_byte oc r;
- write_byte oc u;
-;;
+ write_byte oc u
+
 
 let write_bmpFileHeader oc = function {
     (* WORD *) bfType = bft;
@@ -601,7 +601,6 @@ let write_bmpFileHeader oc = function {
    write_dword oc bfob;
    let end_bmpFileHeader = !bytes_written in
    start_index, bfSize_index, bfOffBits_index, end_bmpFileHeader
-;;
 
 let write_bmpInfoHeader oc = function {
     (* DWORD *) biSize = bis;
@@ -631,23 +630,23 @@ let write_bmpInfoHeader oc = function {
    write_dword oc bici;
    let end_bmpInfoHeader = !bytes_written in
    biSize_index, biSizeImage_index, end_bmpInfoHeader
-;;
+
 
 let write_colors oc color_map =
  (* If color_map is empty, should output a NULL character *)
  if Array.length color_map = 0 then write_byte oc 0
  (* Otherwise write the rgb colors of the colormap *)
  else Array.iter (write_rgbquad oc) color_map
-;;
+
 
 (* To denote the end of a scan line *)
-let write_end_of_scan_line oc = write_byte oc 0; write_byte oc 0;;
+let write_end_of_scan_line oc = write_byte oc 0; write_byte oc 0
 
 (* To denote the end of the bitmap *)
-let write_end_of_bitmap oc = write_byte oc 0; write_byte oc 1;;
+let write_end_of_bitmap oc = write_byte oc 0; write_byte oc 1
 
 (* Writing padding bytes. *)
-let write_pad oc n = for _i = 0 to n - 1 do write_byte oc 0 done;;
+let write_pad oc n = for _i = 0 to n - 1 do write_byte oc 0 done
 
 (* Run length encoding: write the number n of pixels encoded *)
 (* the color number given by color index c *)
@@ -658,9 +657,9 @@ let rec write_rle_code oc n c =
   end else begin
    write_rle_code oc 255 c;
    write_rle_code oc (n - 255) c end
-;;
 
-let write_rle oc n char = write_rle_code oc n (Char.code char);;
+
+let write_rle oc n char = write_rle_code oc n (Char.code char)
 
 (* In biRLE4 encoded mode the color byte is interpreted as two 4 bits
    colors to alternatively write even and odd pixels.
@@ -669,10 +668,10 @@ let write_rle oc n char = write_rle_code oc n (Char.code char);;
 let write_rle4 oc n char =
   let code = Char.code char in
   write_rle_code oc n (code lsl 4 + code)
-;;
+
 
 (* (4 - (n mod 4)) mod 4 *)
-let pad_bytes n = (4 - (n mod 4)) land 0x03;;
+let pad_bytes n = (4 - (n mod 4)) land 0x03
 
 let write_image1data bmp oc =
  let bih = bmp.bmpInfoHeader in
@@ -707,7 +706,7 @@ let write_image1data bmp oc =
  done;
  let end_bitmap_index = !bytes_written in
  start_bitmap_index, end_bitmap_index
-;;
+
 
 let write_image24data bmp oc =
  let bih = bmp.bmpInfoHeader in
@@ -739,7 +738,7 @@ let write_image24data bmp oc =
  done;
  let end_bitmap_index = !bytes_written in
  start_bitmap_index, end_bitmap_index
-;;
+
 
 let write_image32data bmp oc =
   let bih = bmp.bmpInfoHeader in
@@ -776,7 +775,7 @@ let write_image32data bmp oc =
   done;
   let end_bitmap_index = !bytes_written in
   start_bitmap_index, end_bitmap_index
-;;
+
 
 let write_image4data bmp oc =
  let bih = bmp.bmpInfoHeader in
@@ -843,7 +842,7 @@ let write_image4data bmp oc =
     start_bitmap_index, end_bitmap_index
 
  | BI_RLE8 ->
-    failwith ("Invalid compression mode : BI_RLE8");;
+    failwith ("Invalid compression mode : BI_RLE8")
 
 let write_image8data bmp oc =
  let bih = bmp.bmpInfoHeader in
@@ -905,7 +904,7 @@ let write_image8data bmp oc =
     start_bitmap_index, end_bitmap_index
 
  | BI_RLE4 ->
-    failwith ("Invalid compression mode : BI_RLE8");;
+    failwith ("Invalid compression mode : BI_RLE8")
 
 let write_image_data oc bmp =
   let bih = bmp.bmpInfoHeader in
@@ -915,7 +914,7 @@ let write_image_data oc bmp =
   | Color256 -> write_image8data bmp oc
   | ColorRGB -> write_image24data bmp oc
   | ColorRGBA -> write_image32data bmp oc
-;;
+
 
 let bmp_of_image img =
   match img with
@@ -1031,7 +1030,7 @@ let bmp_of_image img =
        bmpInfoHeader = bih;
        bmpRgbQuad = colormap;
        bmpBytes = data; }
-  | _ -> raise Wrong_image_type;;
+  | _ -> raise Wrong_image_type
 
 let write_bmp oc = function
  { bmpFileHeader = bmpFileHeader;
@@ -1069,26 +1068,26 @@ let write_bmp oc = function
  let biSizeImage = (* Given in bytes *)
        end_bitmap_index - start_bitmap_index in
  seek_out oc biSizeImage_index;
- output_dword oc biSizeImage;
-;;
+ output_dword oc biSizeImage
+
 
 let write_bmp_file fname bmp =
  let oc = open_out_bin fname in
  write_bmp oc bmp;
- close_out oc;
-;;
+ close_out oc
 
-let save fname _opts img = write_bmp_file fname (bmp_of_image img);;
 
-add_methods Bmp
+let save fname _opts img = write_bmp_file fname (bmp_of_image img)
+
+let () = add_methods Bmp
  { check_header = check_header;
    load = Some load;
    save = Some save;
    load_sequence = None;
    save_sequence = None;
  }
-;;
+
 
 let save_bmp = write_bmp_file
 and load_bmp = read_bmp_file
-;;
+

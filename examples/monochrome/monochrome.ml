@@ -12,7 +12,7 @@
 
 (* $Id: monochrome.ml,v 1.7 2009/02/08 15:25:37 weis Exp $ *)
 
-open Images;;
+open Images
 
 let _ =
   let files = ref [] in
@@ -34,4 +34,4 @@ let _ =
   done;
 
   src#save dst None []
-;;
+

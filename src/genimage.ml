@@ -14,7 +14,7 @@
 
 (* $Id: genimage.ml,v 1.6 2009/07/04 03:39:28 furuse Exp $ *)
 
-open Color;;
+open Color
 open Image_intf
 
 module MakeRawImage(E:ENCODE) = struct
@@ -39,30 +39,30 @@ module MakeRawImage(E:ENCODE) = struct
       height= height;
       bitmap= Bitmap.create_with width height init_buffer;
     }
-  ;;
+  
 
   let create_with_scanlines width height init_scanlines =
     { width= width;
       height= height;
       bitmap= Bitmap.create_with_scanlines width height init_scanlines;
     }
-  ;;
+  
 
   let create width height =
     { width= width;
       height= height;
       bitmap= Bitmap.create width height None;
     }
-  ;;
+  
 
   let make width height init =
     { width= width;
       height= height;
       bitmap= Bitmap.create width height (Some (E.make init));
     }
-  ;;
+  
 
-  let unsafe_access t x y = Bitmap.access t.bitmap x y;;
+  let unsafe_access t x y = Bitmap.access t.bitmap x y
   let get_strip t = Bitmap.get_strip t.bitmap
   let set_strip t = Bitmap.set_strip t.bitmap
   let get_scanline t = Bitmap.get_scanline t.bitmap
@@ -72,26 +72,26 @@ module MakeRawImage(E:ENCODE) = struct
   let unsafe_get t x y =
     let str, pos = Bitmap.access t.bitmap x y in
     E.get str pos
-  ;;
+  
 
   let unsafe_set t x y c =
     let str, pos = Bitmap.access t.bitmap x y in
     E.set str pos c
-  ;;
+  
 
   let get t x y =
     Region.check t.width t.height x y;
     unsafe_get t x y
-  ;;
+  
 
   let set t x y c =
     Region.check t.width t.height x y;
     unsafe_set t x y c
-  ;;
+  
 
   let destroy t =
     Bitmap.destroy t.bitmap
-  ;;
+  
 
   let copy src = { src with bitmap = Bitmap.copy src.bitmap }
 
@@ -100,11 +100,11 @@ module MakeRawImage(E:ENCODE) = struct
       height= h;
       bitmap= Bitmap.sub src.bitmap x y w h;
     }
-  ;;
+  
 
   let blit src sx sy dst dx dy w h =
     Bitmap.blit src.bitmap sx sy dst.bitmap dx dy w h
-  ;;
+  
 
   let map f src sx sy dst dx dy w h =
     for y = 0 to h - 1 do
@@ -118,7 +118,7 @@ module MakeRawImage(E:ENCODE) = struct
 
   let blocks img = Bitmap.blocks img.bitmap
   let dump_block img = Bitmap.dump_block img.bitmap
-end;;
+end
 
 module Make(RI:RAWIMAGE)(CON:CONTAINER with type rawimage = RI.t) = struct
   type t = CON.container
@@ -157,7 +157,7 @@ module Make(RI:RAWIMAGE)(CON:CONTAINER with type rawimage = RI.t) = struct
 
   let blocks img = RI.blocks (CON.rawimage img)
   let dump_block img = RI.dump_block (CON.rawimage img)
-end;;
+end
 
 module MakeIndexed(RI:RAWIMAGE with type elt = int)
     (CON:CONTAINER_INDEXED with type rawimage = RI.t) = struct
@@ -173,4 +173,4 @@ module MakeIndexed(RI:RAWIMAGE with type elt = int)
 	  if i < 0 || i >= Array.length colormap.map then
 	    raise Not_found;
 	  colormap.map.(i)
-end;;
+end

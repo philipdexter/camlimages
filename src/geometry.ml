@@ -18,33 +18,33 @@
 type size =
    | Scale of float
    | Pixel of int
-   | Guess;;
+   | Guess
 
 type aspect_opts =
    | Keep_at_most
    | Keep_at_least
-   | Dont_keep;;
+   | Dont_keep
 
 type resize_switch =
    | Always
    | Bigger_only
-   | Smaller_only;;
+   | Smaller_only
 
 type from =
    | TopLeft
    | BottomRight
-   | Center;;
+   | Center
 
 type position =
    | AtPixel of from * int
-   | AtScale of from * float;;
+   | AtScale of from * float
 
 type t = {
     geom_width : int;
     geom_height : int;
     geom_x : int;
     geom_y : int;
-  };;
+  }
 
 type spec = {
     spec_width : size;
@@ -53,7 +53,7 @@ type spec = {
     spec_switch : resize_switch;
     spec_x : int;
     spec_y : int;
-  };;
+  }
 
 let compute spec orgw orgh =
   let w, h =
@@ -95,4 +95,4 @@ let compute spec orgw orgh =
   { geom_width = w';
     geom_height = h';
     geom_x = spec.spec_x;
-    geom_y = spec.spec_y; };;
+    geom_y = spec.spec_y; }
