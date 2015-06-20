@@ -1,5 +1,6 @@
-4.2.1 (not yet done)
+4.2.1
         * Load_only_the_first_frame load_option is added
+        * Fixes for 4.02.2 new warnings
  
 4.2.0
         * OCaml 4.02.0 string/bytes fix
