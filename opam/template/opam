@@ -1,7 +1,9 @@
-opam-version: "1"
+opam-version: "1.2"
 maintainer: "jun.furuse@gmail.com"
 build: [
   ["omake" "--configure"]
+]
+install: [
   ["omake" "install"]
 ]
 remove: [
@@ -9,7 +11,7 @@ remove: [
 ]
 depends: ["ocamlfind" "base-unix" "omake"]
 depopts: ["lablgtk"]
-ocaml-version: [>= "4.02.0"]
+available: [ ocaml-version >= "4.02.0" ]
 homepage: "https://bitbucket.org/camlspotter/camlimages"
 license: "LGPL-2 with OCaml linking exception"
 authors: [
