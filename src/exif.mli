@@ -134,7 +134,7 @@ module Entry : sig
   val unpack : Decoded.t -> unpacked_entry
 
   val format_unpacked_entry :
-    IFD.t -> Exifutil.Format.formatter -> Tag.t * Pack.unpacked -> unit
+    IFD.t -> Exifutil.Format.formatter -> unpacked_entry -> unit
   
   val format : IFD.t -> Exifutil.Format.formatter -> t -> unit
     (** [format] does decode + unpack *)
@@ -204,7 +204,7 @@ module Analyze : sig
   val parse_datetime : string -> [> datetime ]
 
   val analyze_ifd :
-    Entry.Pack.unpacked_entry 
+    Entry.unpacked_entry 
     -> [> `DateTime of [> datetime ]
        | `Make of string
        | `Model of string
@@ -218,13 +218,13 @@ module Analyze : sig
                          | `TopRight ]
        | `ResolutionUnit of [> `Centimeters | `Inches ]
        | `Software of Entry.Pack.unpacked
-       | `Unknown of Entry.Pack.unpacked_entry
+       | `Unknown of Entry.unpacked_entry
        | `XResolution of int64 * int64
     | `YResolution of int64 * int64 ]
   (** Analyze IFD.  The unpacked_entry must come from ifd_0 or ifd_1 sub-IFDs *)
     
   val analyze_exif :
-    Entry.Pack.unpacked_entry 
+    Entry.unpacked_entry 
     -> [> `DateTimeDigitized of [> datetime ]
        | `DateTimeOriginal of [> datetime ]
        | `ExifVersion of string
@@ -232,12 +232,12 @@ module Analyze : sig
        | `SubsecTime of string
        | `SubsecTimeDigitized of string
        | `SubsecTimeOriginal of string
-       | `Unknown of Entry.Pack.unpacked_entry
+       | `Unknown of Entry.unpacked_entry
        | `UserComment of string ]
   (** Analyze EXIF.  The unpacked_entry must come from exif sub-IFD *)
 
   val analyze_gps :
-    Entry.Pack.unpacked_entry 
+    Entry.unpacked_entry 
     -> [> `AboveSeaLevel
        | `Altitude of int64 * int64
        | `BelowSeaLevel
@@ -254,7 +254,7 @@ module Analyze : sig
        | `SouthLatitude
        | `TimeStampUTC of float * float * float
        | `TimeStampUTCinSRationals of float * float * float
-       | `Unknown of Entry.Pack.unpacked_entry
+       | `Unknown of Entry.unpacked_entry
        | `WestLongitude 
        ]
   (** Analyze GPS.  The unpacked_entry must come from gps sub-IFD *)

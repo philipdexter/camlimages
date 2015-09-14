@@ -68,9 +68,6 @@ module type S = sig
   val minus : t -> t -> t
   (** Subtracting colors.  No underflow is considered. *)
     
-  val merge : t -> t -> t
-  (** Merging colors.  No overflow or underflow may happen. *)
-    
   val size : t map -> int
   (** size of the color map *)
     
@@ -103,15 +100,20 @@ module Rgb : S with type t = rgb
 type rgba = { color: rgb; mutable alpha : int; }
 (** RGB with alpha (transparent) information *)
 
-module Rgba : S with type t = rgba
+module Rgba : sig
+  include S with type t = rgba
+  val merge : t -> t -> t
+  (** [merge src dst] merges colors.  
+      If [src] is completely opaque it overrides [dst] completely.
+      No overflow or underflow may happen. *)
+end                
 (** Colormap for RGBA *)
 
 
-type cmyk = Cmyk.t =
-  { mutable c : int; mutable m : int; mutable y : int; mutable k : int; }
+type cmyk = { mutable c : int; mutable m : int; mutable y : int; mutable k : int; }
  (** Cyan Magenta Yellow blacK color model *)
 
-module Cmyk = S with type t = cmyk
+module Cmyk : S with type t = cmyk
 (** Colormap for CMYK *)
 
 (** Rgb specialized functions (for backward compatibility) *)
