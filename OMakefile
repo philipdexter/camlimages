@@ -19,7 +19,7 @@ include OMyMakeroot
 # For release, -warn-error should not be put
 
 # OCAMLFLAGS= -w A-4-9-35-37-40-41-42-44-45-48
-OCAMLFLAGS= -w A-4-9-37-40-41-42-44-45-41-48
+OCAMLFLAGS= -w A-4-9-37-40-41-42-44-45-41-48-50
 
 # For the development, -warn-error A is turned on
 if $(file-exists DEV)

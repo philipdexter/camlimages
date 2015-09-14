@@ -78,6 +78,19 @@ let copy cmap = {
   map = Array.copy cmap.map;
 }
 
+module type S = sig
+  type t
+
+  val square_distance : t -> t -> int
+  val plus : t -> t -> t
+  val minus : t -> t -> t
+  val size : t map -> int
+  val find_exact : t map -> t -> int
+  val add_color : t map -> t -> int
+  val add_colors : t map -> t list -> int list
+  val find_nearest : t map -> t -> int
+end
+    
 module MakeMap(CM:COLORMODEL) = struct
   let size = (size : CM.t map -> int)
   let find_exact = (find_exact : CM.t map -> CM.t -> int)
@@ -118,6 +131,7 @@ module RgbModel = struct
     { r = rgb.r - rgb'.r;
       g = rgb.g - rgb'.g;
       b = rgb.b - rgb'.b; }
+
 end
 
 module Rgb = struct

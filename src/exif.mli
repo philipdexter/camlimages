@@ -1,3 +1,10 @@
+(** EXIF which is often found in photo images.
+
+  See https://en.wikipedia.org/wiki/Exchangeable_image_file_format
+
+  An example at test/jpgexif.ml
+*)
+
 module Numbers : sig
   type rational  = int64 * int64 (** unsigned 32bits int rational *)
 
@@ -12,7 +19,9 @@ end
 module Endian : sig
   type t = Big | Little 
   val to_string : t -> string 
-  val sys : t 
+
+  val sys : t
+    (** Endian of the system.  Based on [Sys.big_endian] *)
 end
 
 module IFD : sig
@@ -25,8 +34,9 @@ module IFD : sig
 end
 
 module Date : sig
-  (** Date for GPSDateStamp *)
   type t = { year : int; month : int; day : int; }
+  (** Date for GPSDateStamp *)
+
   val to_string : t -> string
   val of_string : string -> [> `Error of string | `Ok of t ]
 end
@@ -42,14 +52,13 @@ module DateTime : sig
   }
 
   val to_string : t -> string
-
   val of_string : string -> [> `Error of string | `Ok of t ]
-  (** To convert DateTime string to DateTime.t.
-  *)
 
   val of_string_packed_unix_time : string -> [> `Error of string | `Ok of t ]
-  (** I had an Android phone which created DateTime tag with
-      a little endian encoded unsigned int32 of unix time!
+  (** I had an old Android phone which created DateTime tag with
+      a little endian encoded unsigned int32 of unix time, which
+      seems not following the spec of EXIF.
+
       This function tries to fix the issue.
   *)
   
@@ -125,7 +134,7 @@ module Entry : sig
   val unpack : Decoded.t -> unpacked_entry
 
   val format_unpacked_entry :
-    IFD.t -> Exifutil.Format.formatter -> Tag.t * Pack.unpacked -> unit
+    IFD.t -> Exifutil.Format.formatter -> unpacked_entry -> unit
   
   val format : IFD.t -> Exifutil.Format.formatter -> t -> unit
     (** [format] does decode + unpack *)
@@ -141,14 +150,17 @@ end
 
 module Data : sig
   type t
-  
+  (** Raw EXIF data in C *)
+    
   val get_byte_order : t -> Endian.t
   val set_byte_order : t -> Endian.t -> unit
   val fix : t -> unit
   val dump : t -> unit
 
   val from_string : string -> t
-  val format : Exifutil.Format.formatter -> t -> unit
+  (** Parse the raw string of EXIF data which starts with "Exif\000\000". *)
+
+  val format : Format.formatter -> t -> unit
   
   type contents = {
     ifd_0   : Content.t option;
@@ -157,20 +169,24 @@ module Data : sig
     gps     : Content.t option;
     interop : Content.t option;
   }
+  (** Partially parsed EXIF data *)
   
   val contents : t -> contents
+  (** Partially parse the raw EXIF to bunch of Contents.t *)
 
   val get_ifd_0   : t -> Content.t option
   val get_ifd_1   : t -> Content.t option
   val get_exif    : t -> Content.t option
   val get_gps     : t -> Content.t option
   val get_interop : t -> Content.t option
+  (** Get Contents.t of the specific field *)
 
   val unpack_ifd_0 : t -> Entry.unpacked_entry list option
   val unpack_ifd_1 : t -> Entry.unpacked_entry list option
   val unpack_exif  : t -> Entry.unpacked_entry list option
   val unpack_gps   : t -> Entry.unpacked_entry list option
   val unpack_interop : t -> Entry.unpacked_entry list option
+  (** Get and parse the specific field *)
 
 end
 
@@ -178,17 +194,17 @@ module Analyze : sig
 
   type datetime = 
     [ `EncodedInUnixTime of DateTime.t
+         (** Photos from some old Androids have non Ascii datetime.
+             They have encoded 32 bit int in Unix time instead! :-(
+         *)
     | `Error of string
     | `Ok of DateTime.t 
     ]
-  (** I have some photos from my old Android with non Ascii datetime.
-      They have encoded 32 bit int in Unix time instead! :-(
-  *)
-
+        
   val parse_datetime : string -> [> datetime ]
 
   val analyze_ifd :
-    int * Entry.Pack.unpacked 
+    Entry.unpacked_entry 
     -> [> `DateTime of [> datetime ]
        | `Make of string
        | `Model of string
@@ -202,12 +218,13 @@ module Analyze : sig
                          | `TopRight ]
        | `ResolutionUnit of [> `Centimeters | `Inches ]
        | `Software of Entry.Pack.unpacked
-       | `Unknown of int * Entry.Pack.unpacked
+       | `Unknown of Entry.unpacked_entry
        | `XResolution of int64 * int64
     | `YResolution of int64 * int64 ]
-
+  (** Analyze IFD.  The unpacked_entry must come from ifd_0 or ifd_1 sub-IFDs *)
+    
   val analyze_exif :
-    int * Entry.Pack.unpacked 
+    Entry.unpacked_entry 
     -> [> `DateTimeDigitized of [> datetime ]
        | `DateTimeOriginal of [> datetime ]
        | `ExifVersion of string
@@ -215,11 +232,12 @@ module Analyze : sig
        | `SubsecTime of string
        | `SubsecTimeDigitized of string
        | `SubsecTimeOriginal of string
-       | `Unknown of int * Entry.Pack.unpacked
+       | `Unknown of Entry.unpacked_entry
        | `UserComment of string ]
+  (** Analyze EXIF.  The unpacked_entry must come from exif sub-IFD *)
 
   val analyze_gps :
-    int * Entry.Pack.unpacked 
+    Entry.unpacked_entry 
     -> [> `AboveSeaLevel
        | `Altitude of int64 * int64
        | `BelowSeaLevel
@@ -236,9 +254,10 @@ module Analyze : sig
        | `SouthLatitude
        | `TimeStampUTC of float * float * float
        | `TimeStampUTCinSRationals of float * float * float
-       | `Unknown of int * Entry.Pack.unpacked
+       | `Unknown of Entry.unpacked_entry
        | `WestLongitude 
        ]
+  (** Analyze GPS.  The unpacked_entry must come from gps sub-IFD *)
 
   val ifd_0_datetime : Data.t -> [> datetime ] option
   (** Get ifd_0 DateTime *)
