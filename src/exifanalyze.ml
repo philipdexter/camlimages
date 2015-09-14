@@ -1,8 +1,8 @@
-(* Exif data analyzer 
+(** Exif data analyzer 
 
-   Due to its updated-on-demand and lots-of-tags nature,
-   This module is implemented in a separate file from exif.ml
-   and its interface file is auto created.
+    Due to its updated-on-demand and lots-of-tags nature,
+    This module is implemented in a separate file from exif.ml
+    and its interface file is auto created.
 *)
 
 open Exifutil

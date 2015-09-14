@@ -23,7 +23,7 @@ val load : bytes -> Images.load_option list -> Images.t
 val save : bytes -> Images.save_option list -> Images.t -> unit
   (** Save an image in bmp format file. *)
 
-(*** Below, they are all lower interfaces *)
+(** Below, they are all lower interfaces *)
 
 (** The type of bmp images. *)
 

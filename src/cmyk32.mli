@@ -14,13 +14,13 @@
 
 (* $Id: cmyk32.mli,v 1.4 2009/07/04 03:39:28 furuse Exp $*)
  
-(* CMYK 32 bit depth image format *)
+(** CMYK 32 bit depth image format *)
 
 type elt = Color.cmyk
 
 type rawimage
 
-(* The image type *)
+(** The image type *)
 type t = {
   width : int; 
   height : int;
@@ -28,8 +28,13 @@ type t = {
   mutable infos : Info.info list;
  }
 
-(* Generic functions *)
-(* Please read the comments of IMAGE in genimage.mli *)
+(** Generic functions
+
+    Please read the comments of IMAGE in genimage.mli 
+*)
+
+(* CR jfuruse: 
+include Image_intf.RAWIMAGE with type t = t and type elt = elt *)
 
 val dump : t -> bytes
 val unsafe_access : t -> int -> int -> bytes * int
