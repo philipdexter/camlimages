@@ -94,8 +94,7 @@ let open_in_thumbnail name geom_spec =
     if scale < 4 then 2 else
     if scale < 8 then 4 else 8 in
   set_scale_denom ic denom;
-  image_width, image_height, open_in_start ic, 
-  List.rev_map Marker.t_of_raw rev_markers
+  image_width, image_height, open_in_start ic, List.rev_map Marker.t_of_raw rev_markers
 
 let load_aux prog ic w h = 
   let prog y = 
