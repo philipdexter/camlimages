@@ -119,7 +119,7 @@ let guess link_as_link f =
       try from_header f
       with
       | _ ->
-        Hashtbl.find suffixes (String.lowercase (snd (Livmisc.get_extension f)))
+        Hashtbl.find suffixes (String.lowercase_ascii (snd (Livmisc.get_extension f)))
     end
 
 let guess = guess false

@@ -50,7 +50,7 @@ let parse_length s = (* return in pt *)
     let digit, unit =
       if l > 2 then String.sub s 0 2, String.sub s (l-2) 2 else "", "" in
     try
-      List.assoc (String.lowercase unit) units *. float_of_string digit
+      List.assoc (String.lowercase_ascii unit) units *. float_of_string digit
     with
     | Not_found -> (* think it is in "pt" *) float_of_string s in
   prerr_endline (Printf.sprintf "%s -> %fpt" s v);
