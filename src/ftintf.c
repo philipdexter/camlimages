@@ -33,6 +33,7 @@ value init_FreeType()
     failwith( "init_FreeType: Memory over" );
   }
   if( FT_Init_FreeType( library ) ){
+    stat_free(library);
     failwith( "FT_Init_FreeType" );
   }
   CAMLreturn( (value) library );
@@ -57,11 +58,12 @@ value new_Face( library, fontpath, idx )
 {
   CAMLparam3(library, fontpath, idx );
   FT_Face *face;
-  
+
   if( (face = stat_alloc( sizeof(FT_Face) )) == NULL ){
     failwith( "new_Face: Memory over" );
   }
   if( FT_New_Face( *(FT_Library *)library, String_val( fontpath ), Int_val( idx ), face ) ){
+    stat_free(face);
     failwith( "new_Face: Could not open face" );
   }
   CAMLreturn( (value) face );
@@ -89,7 +91,7 @@ value face_info( facev )
   Store_field(res,11, Val_bool( FT_HAS_FAST_GLYPHS( face ) ));
   Store_field(res,12, Val_bool( FT_HAS_GLYPH_NAMES( face ) ));
   Store_field(res,13, Val_bool( FT_HAS_MULTIPLE_MASTERS( face ) ));
-  
+
   CAMLreturn(res);
 }
 
@@ -145,7 +147,7 @@ value val_CharMap( charmapp )
 {
   CAMLparam0();
   CAMLlocal1(res);
-  
+
   res = alloc_tuple(2);
   Store_field(res,0, Val_int((*charmapp)->platform_id));
   Store_field(res,1, Val_int((*charmapp)->encoding_id));
@@ -164,7 +166,7 @@ value get_CharMaps( facev )
   face = *(FT_Face *) facev;
 
   list = last_cell = Val_unit;
-  
+
   while( i < face->num_charmaps ){
     new_cell = alloc_tuple(2);
     Store_field(new_cell,0, val_CharMap( face->charmaps + i ));
@@ -190,14 +192,14 @@ value set_CharMap( facev, charmapv )
   FT_Face face;
   FT_CharMap charmap;
   int my_pid, my_eid;
-  
+
   face = *(FT_Face *) facev;
   my_pid = Int_val(Field(charmapv, 0));
   my_eid = Int_val(Field(charmapv, 1));
 
   while( i < face->num_charmaps ){
     charmap = face->charmaps[i];
-    if ( charmap->platform_id == my_pid && 
+    if ( charmap->platform_id == my_pid &&
 	 charmap->encoding_id == my_eid ){
       if ( FT_Set_Charmap( face, charmap ) ){
 	failwith("FT_Set_Charmap");
@@ -270,9 +272,9 @@ value render_Char( face, code, flags, mode )
   CAMLlocal1(res);
 
   /* FT_Load_Glyph(face, FT_Get_Char_Index( face, code ), FT_LOAD_RENDER) */
-  if( FT_Load_Char( *(FT_Face *) face, Int_val(code), 
-		    FT_LOAD_RENDER | 
-		    Int_val(flags) | 
+  if( FT_Load_Char( *(FT_Face *) face, Int_val(code),
+		    FT_LOAD_RENDER |
+		    Int_val(flags) |
 		    (Int_val(mode) ? FT_LOAD_MONOCHROME : 0)) ){
     failwith("FT_Load_Char");
   }
@@ -284,7 +286,7 @@ value render_Char( face, code, flags, mode )
   CAMLreturn(res);
 }
 
-value set_Transform( face, vmatrix, vpen ) 
+value set_Transform( face, vmatrix, vpen )
      value face, vmatrix, vpen;
 {
   CAMLparam3(face, vmatrix, vpen);
@@ -299,7 +301,7 @@ value set_Transform( face, vmatrix, vpen )
   pen.y = (FT_Fixed)( Int_val(Field(vpen,1)) );
 
   FT_Set_Transform( *(FT_Face *)face, &matrix, &pen );
-  
+
   CAMLreturn(Val_unit);
 }
 
@@ -346,7 +348,7 @@ value read_Bitmap( vface, vx, vy ) /* This "y" is in Y upwards convention */
 
   x = Int_val(vx);
   y = Int_val(vy);
-  
+
   switch ( bitmap.pixel_mode ) {
   case ft_pixel_mode_grays:
     if (bitmap.pitch > 0){
@@ -376,16 +378,16 @@ value get_Glyph_Metrics( face )
 {
   CAMLparam1(face);
   CAMLlocal3(res1,res2,res);
-  
+
   /* no soundness check ! */
   FT_Glyph_Metrics *metrics = &((*(FT_Face *)face)->glyph->metrics);
- 
-  res1 = alloc_tuple(3);  
+
+  res1 = alloc_tuple(3);
   Store_field(res1,0, Val_int(metrics->horiBearingX));
   Store_field(res1,1, Val_int(metrics->horiBearingY));
   Store_field(res1,2, Val_int(metrics->horiAdvance));
-			  
-  res2 = alloc_tuple(3);  
+
+  res2 = alloc_tuple(3);
   Store_field(res2,0, Val_int(metrics->vertBearingX));
   Store_field(res2,1, Val_int(metrics->vertBearingY));
   Store_field(res2,2, Val_int(metrics->vertAdvance));
@@ -418,14 +420,14 @@ value get_Size_Metrics( face )
 
 value get_Outline_Contents(value face) {
 /* *****************************************************************
-    
+
    Concrete definitions of TT_Outline might vary from version to
    version.
 
    This definition assumes freetype 2.0.1
 
      ( anyway, this function is wrong...)
-     
+
  ***************************************************************** */
   CAMLparam1(face);
   CAMLlocal5(points, tags, contours, res, tmp);
@@ -445,15 +447,15 @@ value get_Outline_Contents(value face) {
     char* raw_flags  = outline->tags;
     tmp = alloc_tuple(2);
     /* caution: 26.6 fixed into 31 bit */
-    Store_field(tmp, 0, Val_int(raw_points[i].x)); 
-    Store_field(tmp, 1, Val_int(raw_points[i].y)); 
+    Store_field(tmp, 0, Val_int(raw_points[i].x));
+    Store_field(tmp, 1, Val_int(raw_points[i].y));
     Store_field(points, i, tmp);
-    if ( raw_flags[i] & FT_Curve_Tag_On ) {  
+    if ( raw_flags[i] & FT_Curve_Tag_On ) {
       Store_field(tags, i, Val_int(0)); /* On point */
-    } else if ( raw_flags[i] & FT_Curve_Tag_Cubic ) {  
+    } else if ( raw_flags[i] & FT_Curve_Tag_Cubic ) {
       Store_field(tags, i, Val_int(2)); /* Off point, cubic */
     } else {
-      Store_field(tags, i, Val_int(1)); /* Off point, conic */ 
+      Store_field(tags, i, Val_int(1)); /* Off point, conic */
     }
   }
 
@@ -461,13 +463,13 @@ value get_Outline_Contents(value face) {
     short* raw_contours = outline->contours;
     Store_field(contours, i, Val_int(raw_contours[i]));
   }
-  
+
   res = alloc_tuple(5);
   Store_field(res, 0, Val_int(n_contours));
   Store_field(res, 1, Val_int(n_points));
   Store_field(res, 2, points);
   Store_field(res, 3, tags);
   Store_field(res, 4, contours);
-  
+
   CAMLreturn(res);
 }

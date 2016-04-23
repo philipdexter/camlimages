@@ -1,3 +1,5 @@
+ (** Histgrapm of colors *)
+
 type t = int array
 val create : unit -> int array
 val total_samples : int array -> int
