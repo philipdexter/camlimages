@@ -23,7 +23,7 @@ OCAMLFLAGS= -w A-4-9-37-40-41-42-44-45-41-48-50
 
 # For the development, -warn-error A is turned on
 if $(file-exists DEV)
-   OCAMLFLAGS += -warn-error A
+   OCAMLFLAGS += -warn-error A-3
    export
 
 ########################################## External arguments
