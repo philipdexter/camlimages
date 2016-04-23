@@ -102,7 +102,7 @@ let get_extension s =
   | _ -> s, ""
 
 let guess_extension s =
-  let s = String.lowercase_ascii s in
+  let s = String.lowercase s in
   match s with
   | "gif" -> Gif
   | "bmp" -> Bmp
