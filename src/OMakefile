@@ -275,6 +275,7 @@ INSTALL_TARGETS()=
       $(glob i, *.cmt) \
       $(glob i, *.cmti) \
       $(glob i, *.cma) \
+      $(glob i, *.cmx) \
       $(glob i, *.cmxa) \
       $(glob i, *.a) \
       $(glob i, *.so)
