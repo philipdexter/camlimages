@@ -1,3 +1,9 @@
+4.2.2
+        * Added some documents to mli files
+	* Fixed memory leaks in ftintf.c. Thanks to Max Mouratov!   
+        * Fixed warning switches for OCaml 4.03.0
+        * .cmx files are now installed
+
 4.2.1
         * Load_only_the_first_frame load_option is added
         * Fixes for 4.02.2 new warnings
