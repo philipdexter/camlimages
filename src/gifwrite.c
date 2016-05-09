@@ -111,7 +111,7 @@ void eGifCloseFile( value hdl )
   CAMLreturn0;
 }
 
-void eGifPutScreenDesc( value oc, value sdesc )
+value eGifPutScreenDesc( value oc, value sdesc )
 {
   CAMLparam2(oc,sdesc);
 
@@ -127,7 +127,7 @@ void eGifPutScreenDesc( value oc, value sdesc )
   CAMLreturn0;
 }
 
-void eGifPutImageDesc( value oc, value idesc )
+value eGifPutImageDesc( value oc, value idesc )
 {
   CAMLparam2(oc,idesc);
 
@@ -144,7 +144,7 @@ void eGifPutImageDesc( value oc, value idesc )
   CAMLreturn0;
 }
 
-void eGifPutLine( value oc, value buf )
+value eGifPutLine( value oc, value buf )
 {
   CAMLparam2(oc,buf);
 
@@ -158,7 +158,7 @@ void eGifPutLine( value oc, value buf )
   CAMLreturn0;
 }
 
-void eGifPutExtension( value oc, value ext )
+value eGifPutExtension( value oc, value ext )
 {
   CAMLparam2(oc,ext);
   CAMLlocal1(l);

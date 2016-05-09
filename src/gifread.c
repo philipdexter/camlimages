@@ -163,7 +163,7 @@ value dGifOpenFileName( value name )
   CAMLreturn(res);
 } 
 
-void dGifCloseFile( value hdl )
+value dGifCloseFile( value hdl )
 {
   CAMLparam1(hdl);
 
