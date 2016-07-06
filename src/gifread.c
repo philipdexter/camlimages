@@ -43,7 +43,7 @@ value Val_GifColorType( GifColorType *color )
   r[1] = Val_int( color->Green );
   r[2] = Val_int( color->Blue );
   res = alloc_small(3,0);
-  for(i=0; i<3; i++) Field(res, i) = r[i];
+  for(i=0; i<3; i++) caml_modify_field(res, i, r[i]);
 #ifdef DEBUG_GIF
 fprintf(stderr, "Color(%d,%d,%d)\n", color->Red, color->Green, color->Blue);
 fflush(stderr);
@@ -113,7 +113,7 @@ fflush(stderr);
   r[4] = Val_int( imageDesc->Interlace );
   r[5] = Val_ColorMapObject( imageDesc->ColorMap );
   res = alloc_small(6,0);
-  for(i=0; i<6; i++) Field(res, i) = r[i];
+  for(i=0; i<6; i++) caml_modify_field(res, i, r[i]);
   CAMLreturn(res);
 }
 
@@ -131,7 +131,7 @@ value Val_ScreenInfo( GifFileType *GifFile )
   r[3] = Val_int(GifFile->SBackGroundColor);
   r[4] = Val_ColorMapObject(GifFile->SColorMap);
   res = alloc_small(5,0);
-  for(i=0; i<5; i++) Field(res, i) = r[i];
+  for(i=0; i<5; i++) caml_modify_field(res, i, r[i]);
 
   CAMLreturn(res);
 }
@@ -158,7 +158,7 @@ value dGifOpenFileName( value name )
   r[0] = Val_ScreenInfo( GifFile );
   r[1] = (value) GifFile;
   res = alloc_small(2,0);
-  for(i=0; i<2; i++) Field(res, i) = r[i];
+  for(i=0; i<2; i++) caml_modify_field(res, i, r[i]);
 
   CAMLreturn(res);
 } 
@@ -241,14 +241,14 @@ value dGifGetExtension( value hdl )
     ext= alloc_string(extData[0]);
     memcpy(String_val(ext), &extData[1], extData[0]);
     newres = alloc_small(2,0);
-    Field(newres, 0)= ext;
-    Field(newres, 1)= exts;
+    caml_modify_field(newres, 0, ext);
+    caml_modify_field(newres, 1, exts);
     exts= newres;
     DGifGetExtensionNext(GifFile, &extData);
   }
   res = alloc_small(2,0);
-  Field(res,0) = Val_int(func);
-  Field(res,1) = exts;
+  caml_modify_field(res,0, Val_int(func));
+  caml_modify_field(res,1, exts);
 
   CAMLreturn(res);
 }

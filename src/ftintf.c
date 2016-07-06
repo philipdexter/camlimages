@@ -194,8 +194,8 @@ value set_CharMap( facev, charmapv )
   int my_pid, my_eid;
 
   face = *(FT_Face *) facev;
-  my_pid = Int_val(Field(charmapv, 0));
-  my_eid = Int_val(Field(charmapv, 1));
+  my_pid = Int_val(((value*)charmapv)[0]);
+  my_eid = Int_val(((value*)charmapv)[1]);
 
   while( i < face->num_charmaps ){
     charmap = face->charmaps[i];
@@ -293,12 +293,12 @@ value set_Transform( face, vmatrix, vpen )
   FT_Matrix matrix;
   FT_Vector pen;
 
-  matrix.xx = (FT_Fixed)( Int_val(Field(vmatrix,0)) );
-  matrix.xy = (FT_Fixed)( Int_val(Field(vmatrix,1)) );
-  matrix.yx = (FT_Fixed)( Int_val(Field(vmatrix,2)) );
-  matrix.yy = (FT_Fixed)( Int_val(Field(vmatrix,3)) );
-  pen.x = (FT_Fixed)( Int_val(Field(vpen,0)) );
-  pen.y = (FT_Fixed)( Int_val(Field(vpen,1)) );
+  matrix.xx = (FT_Fixed)( Int_val(((value*)vmatrix)[0]) );
+  matrix.xy = (FT_Fixed)( Int_val(((value*)vmatrix)[1]) );
+  matrix.yx = (FT_Fixed)( Int_val(((value*)vmatrix)[2]) );
+  matrix.yy = (FT_Fixed)( Int_val(((value*)vmatrix)[3]) );
+  pen.x = (FT_Fixed)( Int_val(((value*)vpen)[0]) );
+  pen.y = (FT_Fixed)( Int_val(((value*)vpen)[1]) );
 
   FT_Set_Transform( *(FT_Face *)face, &matrix, &pen );
 

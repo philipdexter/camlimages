@@ -108,9 +108,9 @@ value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace
   jpeg_start_compress(cinfop, TRUE);
 
   res = alloc_small(3,0);
-  Field(res, 0) = (value)cinfop;
-  Field(res, 1) = (value)outfile;
-  Field(res, 2) = (value)jerrp;
+  caml_modify_field(res, 0, (value)cinfop);
+  caml_modify_field(res, 1, (value)outfile);
+  caml_modify_field(res, 2, (value)jerrp);
 
   /*
   fprintf(stderr, "cinfop= %d outfile= %d %d %d \n", cinfop, infile, cinfop->output_scanline, cinfop->output_height); 
@@ -142,15 +142,15 @@ value open_jpeg_file_for_write_cmyk( name, width, height, qual )
 void caml_jpeg_write_marker( value jpegh, value raw )
 {
     struct jpeg_compress_struct *cinfop;
-    cinfop = (struct jpeg_compress_struct *) Field( jpegh, 0 );
+    cinfop = (struct jpeg_compress_struct *) ((value*)jpegh)[0];
 
     // EXTERN(void) jpeg_write_marker
 	// JPP((j_compress_ptr cinfo, int marker,
     // const JOCTET * dataptr, unsigned int datalen));
     
-    int code = Int_val(Field(raw,0));
-    char *data = String_val(Field(raw,1));
-    unsigned int len = caml_string_length(Field(raw,1));
+    int code = Int_val(((value*)raw)[0]);
+    char *data = String_val(((value*)raw)[1]);
+    unsigned int len = caml_string_length(((value*)raw)[1]);
     jpeg_write_marker(cinfop, code, data, len); // This actually writes bytes, so data seems to be ok being GCed.
 }
 
@@ -170,7 +170,7 @@ value jpegh, buf;
   struct jpeg_compress_struct *cinfop;
   JSAMPROW row[1];
 
-  cinfop = (struct jpeg_compress_struct *) Field( jpegh, 0 );
+  cinfop = (struct jpeg_compress_struct *) ((value*)jpegh)[0];
 
   row[0] = String_val( buf );
 
@@ -187,9 +187,9 @@ value close_jpeg_file_for_write( jpegh )
 
   DEBUGF( "closing\n");
 
-  cinfop = (struct jpeg_compress_struct *) Field( jpegh, 0 );
+  cinfop = (struct jpeg_compress_struct *) ((value*)jpegh)[0];
   outfile = (FILE *) Field( jpegh, 1 );
-  jerrp = (struct my_error_mgr *) Field( jpegh, 2 );
+  jerrp = (struct my_error_mgr *) ((value*)jpegh)[2];
 
   DEBUGF( "cinfop= %d outfile= %d %d %d \n", cinfop, outfile, cinfop->next_scanline, cinfop->image_height); 
 

@@ -157,9 +157,9 @@ value read_png_file_as_rgb24( name )
       Store_field( r, i, tmp );
     }
     res = alloc_small(3,0);
-    Field( res, 0 ) =  Val_int(width);
-    Field( res, 1 ) =  Val_int(height);
-    Field( res, 2 ) =  r;
+    caml_modify_field( res, 0 , Val_int(width));
+    caml_modify_field( res, 1 , Val_int(height));
+    caml_modify_field( res, 2 , r);
 
     /* close the file */
     fclose(fp);
@@ -184,7 +184,7 @@ value Val_PngColor( png_color *col )
   r[1] = Val_int( col->green );
   r[2] = Val_int( col->blue );
   res = alloc_small(3,0);
-  for(i=0; i<3; i++) Field(res, i) = r[i];
+  for(i=0; i<3; i++) caml_modify_field(res, i, r[i]);
 
   CAMLreturn(res);
 }

@@ -83,7 +83,7 @@ value jpeg_set_scale_denom( jpegh, denom )
   CAMLparam2(jpegh,denom);
   struct jpeg_decompress_struct *cinfop;
 
-  cinfop = (struct jpeg_decompress_struct *) Field ( jpegh, 0 );
+  cinfop = (struct jpeg_decompress_struct *) ((value*)jpegh)[0];
   cinfop->scale_num = 1;
   cinfop->scale_denom = Int_val( denom );
   CAMLreturn(Val_unit);
@@ -98,8 +98,8 @@ value caml_val_jpeg_marker( jpeg_saved_marker_ptr p )
     memcpy( String_val(tmp), p->data, p->data_length);
 
     res = alloc_small(2,0);
-    Field(res, 0) = Val_int(p->marker);
-    Field(res, 1) = tmp;
+    caml_modify_field(res, 0, Val_int(p->marker));
+    caml_modify_field(res, 1, tmp);
     // fprintf(stderr, "mark %x %d\n", p->marker, p->data_length);
 
     CAMLreturn(res);
@@ -117,8 +117,8 @@ value caml_val_jpeg_rev_markers( jpeg_saved_marker_ptr q )
         // This cannot come before the call of caml_val_jpeg_marker!
         // New allocation with non-initialized blocks crashes GC!
         tmp = alloc_small(2,0); 
-        Field(tmp, 0) = hd;
-        Field(tmp, 1) = res;
+        caml_modify_field(tmp, 0, hd);
+        caml_modify_field(tmp, 1, res);
         res = tmp;
         p = p->next;
     }
@@ -197,14 +197,14 @@ value open_jpeg_file_for_read( name )
   r[0] = Val_int(cinfop->image_width);
   r[1] = Val_int(cinfop->image_height);
   r[2] = alloc_small(3,0);
-  Field(r[2], 0) = (value)cinfop;
-  Field(r[2], 1) = (value)infile;
-  Field(r[2], 2) = (value)jerrp;
+  caml_modify_field(r[2], 0, (value)cinfop);
+  caml_modify_field(r[2], 1, (value)infile);
+  caml_modify_field(r[2], 2, (value)jerrp);
 
   r[3] = caml_val_jpeg_rev_markers( cinfop->marker_list );
 
   res = alloc_small(4,0);
-  for(i=0; i<4; i++) Field(res, i) = r[i];
+  for(i=0; i<4; i++) caml_modify_field(res, i, r[i]);
 
   CAMLreturn(res);
 }
@@ -220,9 +220,9 @@ value open_jpeg_file_for_read_start( jpegh )
   FILE *infile;
   int i;
 
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
-  infile = (FILE *) Field( jpegh, 1 );
-  jerrp = (struct my_error_mgr *) Field( jpegh, 2 );
+  cinfop = (struct jpeg_decompress_struct *) ((value*)jpegh)[0];
+  infile = (FILE *) ((value*)jpegh)[1];
+  jerrp = (struct my_error_mgr *) ((value*)jpegh)[2];
 
   /* We can ignore the return value from jpeg_read_header since
    *   (a) suspension is not possible with the stdio data source, and
@@ -261,11 +261,11 @@ value open_jpeg_file_for_read_start( jpegh )
   r[0] = Val_int(cinfop->output_width);
   r[1] = Val_int(cinfop->output_height);
   r[2] = alloc_small(3,0);
-  Field(r[2], 0) = (value)cinfop;
-  Field(r[2], 1) = (value)infile;
-  Field(r[2], 2) = (value)jerrp;
+  caml_modify_field(r[2], 0, (value)cinfop);
+  caml_modify_field(r[2], 1, (value)infile);
+  caml_modify_field(r[2], 2, (value)jerrp);
   res = alloc_small(3,0);
-  for(i=0; i<3; i++) Field(res, i) = r[i];
+  for(i=0; i<3; i++) caml_modify_field(res, i, r[i]);
 
   DEBUGF("cinfop= %d infile= %d %d %d \n", (int)cinfop, (int)infile, cinfop->output_scanline, cinfop->output_height); 
   CAMLreturn(res);
@@ -278,7 +278,7 @@ value jpegh, offset, buf;
   struct jpeg_decompress_struct *cinfop;
   JSAMPROW row[1];
 
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
+  cinfop = (struct jpeg_decompress_struct *) ((value*)jpegh)[0];
   row[0] = String_val( buf ) + Int_val( offset );
   jpeg_read_scanlines( cinfop, row, 1 );
 
@@ -294,7 +294,7 @@ void read_jpeg_scanlines( value jpegh, value buf, value offset, value lines )
   int clines = Int_val(lines);
   int i;
   row[0] = String_val(buf) + Int_val(offset);
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
+  cinfop = (struct jpeg_decompress_struct *) ((value*)jpegh)[0];
   // width is NOT image_width since we may have scale_denom <> 1
   int scanline_bytes = cinfop->output_width * 3; // no padding (size 3 is fixed? )
   for(i=0; i<clines; i++){
@@ -315,9 +315,9 @@ value close_jpeg_file_for_read( jpegh )
 
   DEBUGF("closing\n");
 
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
-  infile = (FILE *) Field( jpegh, 1 );
-  jerrp = (struct my_error_mgr *) Field( jpegh, 2 );
+  cinfop = (struct jpeg_decompress_struct *) ((value*)jpegh)[0];
+  infile = (FILE *) ((value*)jpegh)[1];
+  jerrp = (struct my_error_mgr *) ((value*)jpegh)[2];
 
   DEBUGF("cinfop= %d infile= %d %d %d \n", (int)cinfop, (int)infile, cinfop->output_scanline, cinfop->output_height); 
 

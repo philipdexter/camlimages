@@ -129,9 +129,9 @@ void PngPalette_val( value cmap, png_colorp *pltep, int *lenp )
   *pltep = malloc( sizeof( png_color ) * *lenp );
 
   for(i=0; i< *lenp; i++){
-    (*pltep)[i].red = Int_val(Field(Field(cmap,i),0));
-    (*pltep)[i].green = Int_val(Field(Field(cmap,i),1));
-    (*pltep)[i].blue = Int_val(Field(Field(cmap,i),2));
+    (*pltep)[i].red = Int_val(((value**)cmap)[i][0]);
+    (*pltep)[i].green = Int_val(((value**)cmap)[i][1]);
+    (*pltep)[i].blue = Int_val(((value**)cmap)[i][2]);
   }
   return;
 }

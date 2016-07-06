@@ -78,10 +78,10 @@ value read_xpm_file( name )
     
     /* connect the result */
     result = alloc_small(4,0);
-    Field(result,0) = Val_int(image.width);
-    Field(result,1) = Val_int(image.height);
-    Field(result,2) = cmap;
-    Field(result,3) = imap;
+    caml_modify_field(result,0,Val_int(image.width));
+    caml_modify_field(result,1,Val_int(image.height));
+    caml_modify_field(result,2,cmap);
+    caml_modify_field(result,3,imap);
 
     XpmFreeXpmImage( &image );
 
